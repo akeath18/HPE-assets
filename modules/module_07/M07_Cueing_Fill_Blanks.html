@@ -232,14 +232,33 @@ window.PETE346_CONFIG = {
 (function () {
   /* ── DOM score reader ───────────────────────────── */
   function extractScore() {
-    var el = document.querySelector(
-      '.score-circle, .score-box, #score-circle, #score-box, ' +
-      '[class*="score-circle"], [class*="score-box"], ' +
-      '#scoreDisplay, .score-display, .final-score'
+    /* Scan all score/result/feedback containers for a percentage value */
+    var candidates = document.querySelectorAll(
+      '.score-circle, .score-box, .score, .summary, .final-score, ' +
+      '#score-circle, #score-box, #scoreDisplay, .score-display, ' +
+      '.feedback, .feedback.show, .result, .results-content, ' +
+      '[class*="score"], [class*="result"]'
     );
-    if (!el) return 0;
-    var m = el.textContent.match(/\d+/);
-    return m ? Math.min(parseInt(m[0], 10), 100) : 0;
+    var bestPct = 0;
+    for (var _i = 0; _i < candidates.length; _i++) {
+      var _txt = candidates[_i].textContent;
+      /* Prefer explicit percentage like "83%" */
+      var _pm = _txt.match(/(\d{1,3})%/);
+      if (_pm) {
+        var _p = parseInt(_pm[1], 10);
+        if (_p > 0 && _p <= 100 && _p > bestPct) bestPct = _p;
+      }
+    }
+    if (bestPct > 0) return bestPct;
+    /* Fallback: fraction like "10/12" */
+    for (var _j = 0; _j < candidates.length; _j++) {
+      var _fm = candidates[_j].textContent.match(/(\d+)\s*\/\s*(\d+)/);
+      if (_fm) {
+        var _n = parseInt(_fm[1], 10), _d = parseInt(_fm[2], 10);
+        if (_d > 0 && _n <= _d) return Math.round(_n / _d * 100);
+      }
+    }
+    return 0;
   }
 
   /* ── Weakness reader (reads from DOM after results render) ── */
