@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 1: Fitness-Based PE Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1E293B;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            background: white;
+            height: 8px;
+            border-radius: 4px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress {
+            background: #02C39A;
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .question-card {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .question-card.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-number {
+            color: #065A82;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1E293B;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            border: 2px solid #E2E8F0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option:hover {
+            border-color: #065A82;
+            background: #F8FAFC;
+        }
+
+        .option input[type="radio"] {
+            margin-top: 3px;
+            margin-right: 12px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: #065A82;
+        }
+
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .option.selected {
+            border-color: #065A82;
+            background: #F0F9FF;
+        }
+
+        .option.correct {
+            border-color: #02C39A;
+            background: #F0FDFB;
+        }
+
+        .option.incorrect {
+            border-color: #EF4444;
+            background: #FEF2F2;
+        }
+
+        .feedback-box {
+            background: #F8FAFC;
+            border-left: 4px solid #065A82;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #475569;
+            display: none;
+        }
+
+        .feedback-box.show {
+            display: block;
+        }
+
+        .feedback-box.correct {
+            border-color: #02C39A;
+            background: #F0FDFB;
+        }
+
+        .feedback-box.incorrect {
+            border-color: #EF4444;
+            background: #FEF2F2;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-next:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(6, 90, 130, 0.3);
+        }
+
+        .btn-next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-prev {
+            background: #E2E8F0;
+            color: #1E293B;
+        }
+
+        .btn-prev:hover:not(:disabled) {
+            background: #CBD5E1;
+        }
+
+        .btn-prev:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .results {
+            display: none;
+            text-align: center;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .results-content {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .score-circle.excellent {
+            background: linear-gradient(135deg, #02C39A 0%, #059669 100%);
+        }
+
+        .score-circle.good {
+            background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
+        }
+
+        .score-circle.needs-work {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        }
+
+        .results h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #1E293B;
+        }
+
+        .results p {
+            font-size: 16px;
+            color: #475569;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            color: white;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(6, 90, 130, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .question-text {
+                font-size: 16px;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .btn-prev, .btn-next {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Module 1: Fitness-Based Physical Education Quiz</h1>
+            <p>Test your knowledge of wellness and fitness-based PE concepts</p>
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div id="quizContainer"></div>
+        <div id="resultsContainer" class="results"></div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Which of the following is NOT one of the six dimensions of wellness?",
+                options: [
+                    { text: "Physical wellness", correct: false },
+                    { text: "Financial wellness", correct: true },
+                    { text: "Mental wellness", correct: false },
+                    { text: "Social wellness", correct: false }
+                ],
+                feedback: "While financial wellness is important in life, the SHAPE America framework identifies six wellness dimensions: physical, mental, emotional, social, spiritual, and environmental. Financial wellness is not a primary dimension in this model."
+            },
+            {
+                question: "What is the primary difference between fitness-based PE and traditional PE?",
+                options: [
+                    { text: "Fitness-based PE focuses on skill development while traditional PE focuses on fitness", correct: false },
+                    { text: "Fitness-based PE emphasizes personal fitness improvement and healthy lifestyle habits", correct: true },
+                    { text: "Fitness-based PE only teaches cardio workouts", correct: false },
+                    { text: "There is no meaningful difference between the two approaches", correct: false }
+                ],
+                feedback: "Fitness-based PE prioritizes students' personal fitness development and the adoption of lifelong healthy habits. It emphasizes fitness assessment, goal-setting, and individualized fitness improvement rather than competition or sport skill mastery."
+            },
+            {
+                question: "According to SHAPE America standards, physical educators should emphasize:",
+                options: [
+                    { text: "Competitive athletics and winning", correct: false },
+                    { text: "Personal fitness development and lifelong health habits", correct: true },
+                    { text: "Sport-specific skills only", correct: false },
+                    { text: "Team sports exclusively", correct: false }
+                ],
+                feedback: "SHAPE America standards emphasize that physical education should develop students' personal fitness, knowledge of health concepts, and motivation to be physically active throughout their lives."
+            },
+            {
+                question: "Which wellness dimension includes developing a sense of purpose and meaning?",
+                options: [
+                    { text: "Physical wellness", correct: false },
+                    { text: "Mental wellness", correct: false },
+                    { text: "Spiritual wellness", correct: true },
+                    { text: "Social wellness", correct: false }
+                ],
+                feedback: "Spiritual wellness involves developing a sense of purpose, meaning, and connection to something larger than oneself. This can be achieved through various practices like meditation, volunteering, or engaging with nature."
+            },
+            {
+                question: "Environmental wellness includes which of the following?",
+                options: [
+                    { text: "Using clean, well-maintained exercise facilities", correct: true },
+                    { text: "Only outdoor exercise", correct: false },
+                    { text: "Avoiding all artificial environments", correct: false },
+                    { text: "Never using gym equipment", correct: false }
+                ],
+                feedback: "Environmental wellness encompasses having access to clean, safe, and supportive physical environments for exercise and wellness activities. This includes well-maintained gyms, parks, and recreational facilities."
+            },
+            {
+                question: "A student who participates in group fitness classes to overcome social anxiety is primarily developing:",
+                options: [
+                    { text: "Physical wellness", correct: false },
+                    { text: "Social and emotional wellness", correct: true },
+                    { text: "Spiritual wellness only", correct: false },
+                    { text: "Environmental wellness", correct: false }
+                ],
+                feedback: "While the activity is physically active, the primary benefit in this scenario is social and emotional wellness. The student is building social connections and managing emotional health through group participation."
+            },
+            {
+                question: "Which of the following best represents a fitness-based PE learning outcome?",
+                options: [
+                    { text: "Students can perform a perfect tennis serve", correct: false },
+                    { text: "Students can calculate and maintain their target heart rate zone for aerobic exercise", correct: true },
+                    { text: "Students can win a game of basketball", correct: false },
+                    { text: "Students understand the history of sports", correct: false }
+                ],
+                feedback: "Fitness-based PE outcomes focus on personal fitness knowledge and skills, like understanding heart rate zones, fitness components, and how to create personal fitness plans—not competitive sport skills."
+            },
+            {
+                question: "Mental wellness in physical education can be promoted through:",
+                options: [
+                    { text: "Stress management techniques and mindfulness practices", correct: true },
+                    { text: "Competitive grading systems only", correct: false },
+                    { text: "High-intensity sports training exclusively", correct: false },
+                    { text: "Eliminating all recreational activities", correct: false }
+                ],
+                feedback: "Mental wellness is supported through stress-reducing activities, mindfulness, deep breathing exercises, and creating a supportive, non-judgmental exercise environment."
+            },
+            {
+                question: "How does fitness-based PE promote emotional wellness?",
+                options: [
+                    { text: "By focusing only on competition and rankings", correct: false },
+                    { text: "By helping students develop confidence, self-efficacy, and positive body image through personal fitness goals", correct: true },
+                    { text: "By emphasizing weight loss exclusively", correct: false },
+                    { text: "By comparing students to their peers", correct: false }
+                ],
+                feedback: "Fitness-based PE builds emotional wellness by helping students set achievable personal goals, experience success, build confidence in their abilities, and develop a positive relationship with physical activity."
+            },
+            {
+                question: "The primary goal of wellness-focused physical education is to:",
+                options: [
+                    { text: "Identify elite athletes for competition", correct: false },
+                    { text: "Develop lifelong habits of physical activity and wellness across all dimensions", correct: true },
+                    { text: "Teach competitive sports only", correct: false },
+                    { text: "Improve students' grades in other classes", correct: false }
+                ],
+                feedback: "Wellness-focused PE aims to develop in all students the knowledge, skills, confidence, and habits needed to maintain physical activity and overall wellness throughout their lives."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let responses = new Array(questions.length).fill(null);
+        let showingFeedback = false;
+
+        function init() {
+            renderQuestions();
+            showQuestion(0);
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = '';
+
+            questions.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `question-${index}`;
+
+                let optionsHTML = '';
+                q.options.forEach((option, optIndex) => {
+                    optionsHTML += `
+                        <div class="option" onclick="selectOption(${index}, ${optIndex})">
+                            <input type="radio" name="question-${index}" id="option-${index}-${optIndex}" value="${optIndex}">
+                            <label for="option-${index}-${optIndex}">${option.text}</label>
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="question-number">Question ${index + 1} of ${questions.length}</div>
+                    <div class="question-text">${q.question}</div>
+                    <div class="options">${optionsHTML}</div>
+                    <div class="feedback-box" id="feedback-${index}"></div>
+                    <div class="controls">
+                        <button class="btn-prev" onclick="previousQuestion()" ${index === 0 ? 'disabled' : ''}>← Previous</button>
+                        <button class="btn-next" onclick="nextQuestion()" id="btn-next-${index}">Next →</button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function showQuestion(index) {
+            document.querySelectorAll('.question-card').forEach(card => {
+                card.classList.remove('active');
+            });
+
+            document.getElementById(`question-${index}`).classList.add('active');
+
+            if (responses[index] !== null) {
+                const radio = document.querySelector(`input[name="question-${index}"][value="${responses[index]}"]`);
+                if (radio) {
+                    radio.checked = true;
+                }
+                showFeedback(index);
+            }
+
+            updateProgress();
+            currentQuestion = index;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function selectOption(questionIndex, optionIndex) {
+            responses[questionIndex] = optionIndex;
+            showFeedback(questionIndex);
+            document.getElementById(`btn-next-${questionIndex}`).disabled = false;
+        }
+
+        function showFeedback(index) {
+            const response = responses[index];
+            if (response === null) return;
+
+            const question = questions[index];
+            const isCorrect = question.options[response].correct;
+            const feedbackBox = document.getElementById(`feedback-${index}`);
+
+            const options = document.querySelectorAll(`input[name="question-${index}"]`);
+            options.forEach((option, optIndex) => {
+                const optionDiv = option.closest('.option');
+                optionDiv.classList.remove('selected', 'correct', 'incorrect');
+
+                if (optIdx === response) {
+                    optionDiv.classList.add('selected');
+                    if (isCorrect) {
+                        optionDiv.classList.add('correct');
+                    } else {
+                        optionDiv.classList.add('incorrect');
+                    }
+                } else if (question.options[optIndex].correct) {
+                    optionDiv.classList.add('correct');
+                }
+            });
+
+            feedbackBox.classList.add('show');
+            feedbackBox.innerHTML = `
+                <strong>${isCorrect ? '✓ Correct!' : '✗ Incorrect'}</strong><br>
+                ${question.feedback}
+            `;
+            feedbackBox.classList.toggle('correct', isCorrect);
+            feedbackBox.classList.toggle('incorrect', !isCorrect);
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                showQuestion(currentQuestion + 1);
+            } else {
+                showResults();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                showQuestion(currentQuestion - 1);
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function showResults() {
+            const correct = responses.filter((r, i) => {
+                return r !== null && questions[i].options[r].correct;
+            }).length;
+
+            const percentage = Math.round((correct / questions.length) * 100);
+            let resultClass = 'needs-work';
+            let resultMessage = 'Keep studying! Review the material and try again.';
+
+            if (percentage >= 90) {
+                resultClass = 'excellent';
+                resultMessage = 'Excellent work! You have mastered this content.';
+            } else if (percentage >= 80) {
+                resultClass = 'good';
+                resultMessage = 'Good job! You have a solid understanding of the concepts.';
+            } else if (percentage >= 70) {
+                resultClass = 'good';
+                resultMessage = 'Nice effort! Review the areas where you had difficulty.';
+            }
+
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = '';
+
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.classList.add('show');
+            resultsContainer.innerHTML = `
+                <div class="results-content">
+                    <div class="score-circle ${resultClass}">${percentage}%</div>
+                    <h2>Quiz Complete!</h2>
+                    <p>You answered <strong>${correct} out of ${questions.length}</strong> questions correctly.</p>
+                    <p>${resultMessage}</p>
+                    <button class="btn-restart" onclick="restartQuiz()">Restart Quiz</button>
+                </div>
+            `;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            responses = new Array(questions.length).fill(null);
+            showingFeedback = false;
+            document.getElementById('resultsContainer').classList.remove('show');
+            document.getElementById('resultsContainer').innerHTML = '';
+            init();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

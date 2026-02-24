@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDT Needs Matching - Module 12</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 900px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #065A82;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .instructions {
+            color: #1E293B;
+            font-size: 14px;
+            background: #F0F9FF;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #02C39A;
+        }
+
+        .theory-box {
+            background: #F0F9FF;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #065A82;
+            font-size: 13px;
+        }
+
+        .theory-box strong {
+            display: block;
+            color: #065A82;
+            margin-bottom: 8px;
+        }
+
+        .progress {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #02C39A;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .matching-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .column-title {
+            font-weight: 600;
+            color: #065A82;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .strategy-item {
+            background: #F0F9FF;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            cursor: grab;
+            user-select: none;
+            transition: all 0.2s ease;
+            font-size: 13px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+        }
+
+        .strategy-item:hover {
+            background: #E0F2FE;
+            border-color: #02C39A;
+        }
+
+        .strategy-item.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+
+        .strategy-item.matched {
+            background: #D4EDDA;
+            border-color: #02C39A;
+            cursor: default;
+        }
+
+        .need-item {
+            background: #F0F9FF;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #ccc;
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-size: 13px;
+            position: relative;
+        }
+
+        .need-item.drag-over {
+            background: #FFE5B4;
+            border-color: #FF9800;
+        }
+
+        .need-item.matched {
+            background: #D4EDDA;
+            border-color: #02C39A;
+        }
+
+        .need-definition {
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .matched-label {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 11px;
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .check-btn {
+            background: #02C39A;
+            color: white;
+        }
+
+        .check-btn:hover {
+            background: #01a879;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(2, 195, 154, 0.3);
+        }
+
+        .reset-btn {
+            background: #1E293B;
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background: #0f172a;
+            transform: translateY(-2px);
+        }
+
+        .feedback {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.success {
+            background: #D4EDDA;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .feedback.error {
+            background: #F8D7DA;
+            color: #721c24;
+            border-left: 4px solid #f5222d;
+        }
+
+        .score {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .matching-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Self-Determination Theory Needs Matcher</h1>
+            <p style="color: #666; margin-top: 5px;">Module 12: Motivation & Behavior Change</p>
+        </div>
+
+        <div class="theory-box">
+            <strong>Self-Determination Theory (SDT):</strong> Humans have three basic psychological needs: Autonomy (choice and control), Competence (feeling capable and successful), and Relatedness (feeling connected to others). Instructors should support these needs to enhance intrinsic motivation.
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> Drag each instructional strategy from the left to match it with the SDT need it supports on the right. Complete all 12 matches and click "Check Answers".
+        </div>
+
+        <div class="matching-container">
+            <div class="column">
+                <div class="column-title">Instructional Strategies</div>
+                <div class="strategy-item" draggable="true" data-strategy="Let client choose between two workout options">Let client choose between two workout options</div>
+                <div class="strategy-item" draggable="true" data-strategy="Provide specific feedback on technique improvement">Provide specific feedback on technique improvement</div>
+                <div class="strategy-item" draggable="true" data-strategy="Create partner activities and team challenges">Create partner activities and team challenges</div>
+                <div class="strategy-item" draggable="true" data-strategy="Allow modifications to exercises based on preference">Allow modifications to exercises based on preference</div>
+                <div class="strategy-item" draggable="true" data-strategy="Celebrate progress milestones with the client">Celebrate progress milestones with the client</div>
+                <div class="strategy-item" draggable="true" data-strategy="Offer a group fitness class with community vibe">Offer a group fitness class with community vibe</div>
+                <div class="strategy-item" draggable="true" data-strategy="Explain the 'why' behind each exercise">Explain the 'why' behind each exercise</div>
+                <div class="strategy-item" draggable="true" data-strategy="Set achievable short-term goals with client input">Set achievable short-term goals with client input</div>
+                <div class="strategy-item" draggable="true" data-strategy="Recognize improvements and build confidence">Recognize improvements and build confidence</div>
+                <div class="strategy-item" draggable="true" data-strategy="Create a supportive, non-judgmental environment">Create a supportive, non-judgmental environment</div>
+                <div class="strategy-item" draggable="true" data-strategy="Allow clients to self-direct their fitness plan">Allow clients to self-direct their fitness plan</div>
+                <div class="strategy-item" draggable="true" data-strategy="Show results and measurable progress">Show results and measurable progress</div>
+            </div>
+
+            <div class="column">
+                <div class="column-title">SDT Needs</div>
+                <div class="need-item" data-answer="Autonomy">
+                    <div class="need-definition">AUTONOMY</div>
+                    <div style="font-size: 12px; color: #666;">Need for choice, control, and self-direction in activities</div>
+                </div>
+                <div class="need-item" data-answer="Competence">
+                    <div class="need-definition">COMPETENCE</div>
+                    <div style="font-size: 12px; color: #666;">Need to feel capable, effective, and successful</div>
+                </div>
+                <div class="need-item" data-answer="Relatedness">
+                    <div class="need-definition">RELATEDNESS</div>
+                    <div style="font-size: 12px; color: #666;">Need to feel connected and belonging with others</div>
+                </div>
+                <div class="need-item" data-answer="Autonomy">
+                    <div class="need-definition">AUTONOMY</div>
+                    <div style="font-size: 12px; color: #666;">Need for choice, control, and self-direction in activities</div>
+                </div>
+                <div class="need-item" data-answer="Competence">
+                    <div class="need-definition">COMPETENCE</div>
+                    <div style="font-size: 12px; color: #666;">Need to feel capable, effective, and successful</div>
+                </div>
+                <div class="need-item" data-answer="Relatedness">
+                    <div class="need-definition">RELATEDNESS</div>
+                    <div style="font-size: 12px; color: #666;">Need to feel connected and belonging with others</div>
+                </div>
+                <div class="need-item" data-answer="Autonomy">
+                    <div class="need-definition">AUTONOMY</div>
+                    <div style="font-size: 12px; color: #666;">Need for choice, control, and self-direction in activities</div>
+                </div>
+                <div class="need-item" data-answer="Autonomy">
+                    <div class="need-definition">AUTONOMY</div>
+                    <div style="font-size: 12px; color: #666;">Need for choice, control, and self-direction in activities</div>
+                </div>
+                <div class="need-item" data-answer="Competence">
+                    <div class="need-definition">COMPETENCE</div>
+                    <div style="font-size: 12px; color: #666;">Need to feel capable, effective, and successful</div>
+                </div>
+                <div class="need-item" data-answer="Relatedness">
+                    <div class="need-definition">RELATEDNESS</div>
+                    <div style="font-size: 12px; color: #666;">Need to feel connected and belonging with others</div>
+                </div>
+                <div class="need-item" data-answer="Autonomy">
+                    <div class="need-definition">AUTONOMY</div>
+                    <div style="font-size: 12px; color: #666;">Need for choice, control, and self-direction in activities</div>
+                </div>
+                <div class="need-item" data-answer="Competence">
+                    <div class="need-definition">COMPETENCE</div>
+                    <div style="font-size: 12px; color: #666;">Need to feel capable, effective, and successful</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="check-btn" onclick="checkAnswers()">Check Answers</button>
+            <button class="reset-btn" onclick="resetActivity()">Reset</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <script>
+        let draggedElement = null;
+        let matches = {};
+
+        const answers = {
+            'Let client choose between two workout options': 'Autonomy',
+            'Provide specific feedback on technique improvement': 'Competence',
+            'Create partner activities and team challenges': 'Relatedness',
+            'Allow modifications to exercises based on preference': 'Autonomy',
+            'Celebrate progress milestones with the client': 'Competence',
+            'Offer a group fitness class with community vibe': 'Relatedness',
+            'Explain the \'why\' behind each exercise': 'Autonomy',
+            'Set achievable short-term goals with client input': 'Autonomy',
+            'Recognize improvements and build confidence': 'Competence',
+            'Create a supportive, non-judgmental environment': 'Relatedness',
+            'Allow clients to self-direct their fitness plan': 'Autonomy',
+            'Show results and measurable progress': 'Competence'
+        };
+
+        const strategyItems = document.querySelectorAll('.strategy-item');
+        const needItems = document.querySelectorAll('.need-item');
+
+        strategyItems.forEach(item => {
+            item.addEventListener('dragstart', handleDragStart);
+            item.addEventListener('dragend', handleDragEnd);
+        });
+
+        needItems.forEach(item => {
+            item.addEventListener('dragover', handleDragOver);
+            item.addEventListener('dragleave', handleDragLeave);
+            item.addEventListener('drop', handleDrop);
+        });
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            this.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+
+            if (draggedElement) {
+                const strategy = draggedElement.dataset.strategy;
+                const answer = this.dataset.answer;
+
+                matches[strategy] = answer;
+                this.classList.add('matched');
+
+                const origHTML = this.innerHTML;
+                const labelHtml = '<span class="matched-label">✓</span>';
+                this.innerHTML = labelHtml + origHTML;
+
+                draggedElement.classList.add('matched');
+
+                updateProgress();
+            }
+        }
+
+        function updateProgress() {
+            const matched = Object.keys(matches).length;
+            const percentage = (matched / 12) * 100;
+            document.getElementById('progressBar').style.width = percentage + '%';
+        }
+
+        function checkAnswers() {
+            let correct = 0;
+            const feedback = document.getElementById('feedback');
+
+            Object.entries(answers).forEach(([strategy, need]) => {
+                if (matches[strategy] === need) {
+                    correct++;
+                }
+            });
+
+            const score = Math.round((correct / 12) * 100);
+
+            if (correct === 12) {
+                feedback.className = 'feedback show success';
+                feedback.innerHTML = `
+                    <strong>Perfect! 🎉</strong><br>
+                    You correctly matched all 12 strategies to their corresponding SDT needs. You understand how to support autonomy, competence, and relatedness!
+                    <div class="score">Score: ${score}%</div>
+                `;
+            } else {
+                feedback.className = 'feedback show error';
+                feedback.innerHTML = `
+                    <strong>Review Needed</strong><br>
+                    You matched ${correct} out of 12 correctly. Review Self-Determination Theory and the three basic psychological needs.
+                    <div class="score">Score: ${score}%</div>
+                `;
+            }
+        }
+
+        function resetActivity() {
+            matches = {};
+            document.getElementById('progressBar').style.width = '0%';
+            document.getElementById('feedback').classList.remove('show');
+
+            strategyItems.forEach(s => s.classList.remove('matched'));
+            needItems.forEach(item => {
+                item.classList.remove('matched');
+                const label = item.querySelector('.matched-label');
+                if (label) label.remove();
+            });
+        }
+    </script>
+</body>
+</html>

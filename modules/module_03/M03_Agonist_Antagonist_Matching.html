@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 3: Agonist-Antagonist Matching</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1E293B;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .instructions {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #02C39A;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .instructions h3 {
+            color: #065A82;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .instructions p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #475569;
+        }
+
+        .matching-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .column {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .column h3 {
+            color: #065A82;
+            font-size: 16px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #E2E8F0;
+            padding-bottom: 10px;
+        }
+
+        .pair-row {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #F8FAFC;
+            border-radius: 6px;
+        }
+
+        .pair-label {
+            font-size: 12px;
+            color: #65748B;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .item {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            color: white;
+            border-radius: 6px;
+            cursor: grab;
+            user-select: none;
+            text-align: center;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .item:active {
+            cursor: grabbing;
+            opacity: 0.8;
+        }
+
+        .drop-zone {
+            min-height: 50px;
+            padding: 10px;
+            background: #F0FDFB;
+            border: 2px dashed #CBD5E1;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .drop-zone.dragover {
+            border-color: #02C39A;
+            background: #ECFDF5;
+            transform: scale(1.02);
+        }
+
+        .paired-item {
+            padding: 10px;
+            background: linear-gradient(135deg, #02C39A 0%, #059669 100%);
+            color: white;
+            border-radius: 6px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+
+        .remove-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .remove-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            color: white;
+            min-width: 150px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(6, 90, 130, 0.3);
+        }
+
+        .btn-reset {
+            background: #E2E8F0;
+            color: #1E293B;
+            min-width: 120px;
+        }
+
+        .btn-reset:hover {
+            background: #CBD5E1;
+        }
+
+        .feedback {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            border-left: 4px solid #02C39A;
+        }
+
+        .feedback.incorrect {
+            border-left: 4px solid #EF4444;
+        }
+
+        .feedback h3 {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .feedback.correct h3 {
+            color: #059669;
+        }
+
+        .feedback.incorrect h3 {
+            color: #DC2626;
+        }
+
+        .score-box {
+            background: linear-gradient(135deg, #02C39A 0%, #059669 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .score-box h3 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .matching-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Module 3: Agonist-Antagonist Pairs</h1>
+            <p>Muscle Relationships & Function</p>
+        </div>
+
+        <div class="instructions">
+            <h3>Instructions</h3>
+            <p>Drag antagonist muscles (right) to match them with their correct agonist muscles (left). Agonist and antagonist muscles work together - when one contracts, the other relaxes.</p>
+        </div>
+
+        <div class="matching-container" id="matchingContainer"></div>
+
+        <div class="controls">
+            <button class="btn-submit" onclick="checkAnswers()">Check Answers</button>
+            <button class="btn-reset" onclick="resetActivity()">Reset</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <script>
+        const pairs = [
+            { agonist: 'Biceps Brachii', antagonist: 'Triceps Brachii', id: 'pair1' },
+            { agonist: 'Quadriceps', antagonist: 'Hamstrings', id: 'pair2' },
+            { agonist: 'Pectoralis Major', antagonist: 'Rhomboids', id: 'pair3' },
+            { agonist: 'Anterior Deltoid', antagonist: 'Posterior Deltoid', id: 'pair4' },
+            { agonist: 'Rectus Abdominis', antagonist: 'Erector Spinae', id: 'pair5' },
+            { agonist: 'Hip Flexors (Iliopsoas)', antagonist: 'Gluteus Maximus', id: 'pair6' },
+            { agonist: 'Tibialis Anterior', antagonist: 'Gastrocnemius', id: 'pair7' },
+            { agonist: 'Latissimus Dorsi', antagonist: 'Anterior Deltoid', id: 'pair8' },
+            { agonist: 'Internal Obliques', antagonist: 'External Obliques', id: 'pair9' },
+            { agonist: 'Wrist Flexors', antagonist: 'Wrist Extensors', id: 'pair10' }
+        ];
+
+        let currentMatches = {};
+        let draggedItem = null;
+
+        function init() {
+            renderMatchingPairs();
+        }
+
+        function renderMatchingPairs() {
+            const container = document.getElementById('matchingContainer');
+            container.innerHTML = '';
+
+            const leftColumn = document.createElement('div');
+            leftColumn.className = 'column';
+            leftColumn.innerHTML = '<h3>Agonist Muscles (Primary)</h3>';
+
+            const rightColumn = document.createElement('div');
+            rightColumn.className = 'column';
+            rightColumn.innerHTML = '<h3>Antagonist Muscles (Opposite)</h3>';
+
+            pairs.forEach((pair, index) => {
+                // Left column - agonist items
+                const leftRow = document.createElement('div');
+                leftRow.className = 'pair-row';
+                leftRow.innerHTML = `
+                    <div class="pair-label">Pair ${index + 1}</div>
+                    <div class="item" draggable="true" id="agonist-${pair.id}" data-id="${pair.id}" data-type="agonist">
+                        ${pair.agonist}
+                    </div>
+                `;
+
+                leftColumn.appendChild(leftRow);
+
+                // Attach drag listeners
+                leftRow.querySelector('.item').addEventListener('dragstart', handleDragStart);
+                leftRow.querySelector('.item').addEventListener('dragend', handleDragEnd);
+
+                // Right column - antagonist dropzones
+                const rightRow = document.createElement('div');
+                rightRow.className = 'pair-row';
+                rightRow.innerHTML = `
+                    <div class="pair-label">Pair ${index + 1}</div>
+                    <div class="drop-zone" id="drop-${pair.id}" data-id="${pair.id}"></div>
+                `;
+
+                rightColumn.appendChild(rightRow);
+
+                rightRow.querySelector('.drop-zone').addEventListener('dragover', handleDragOver);
+                rightRow.querySelector('.drop-zone').addEventListener('dragleave', handleDragLeave);
+                rightRow.querySelector('.drop-zone').addEventListener('drop', (e) => handleDrop(e, pair.id));
+
+                if (currentMatches[pair.id]) {
+                    renderMatchedAntagonist(pair.id);
+                }
+            });
+
+            container.appendChild(leftColumn);
+            container.appendChild(rightColumn);
+            renderAntagonistItems();
+        }
+
+        function renderAntagonistItems() {
+            const antagonistPool = document.querySelector('.column:nth-child(2)');
+            const poolContainer = document.createElement('div');
+            poolContainer.style.marginTop = '20px';
+            poolContainer.style.padding = '15px';
+            poolContainer.style.background = '#F8FAFC';
+            poolContainer.style.borderRadius = '6px';
+            poolContainer.innerHTML = '<div class="pair-label" style="margin-bottom: 10px;">Drag from here:</div>';
+
+            const itemsContainer = document.createElement('div');
+            itemsContainer.style.display = 'grid';
+            itemsContainer.style.gridTemplateColumns = 'repeat(auto-fit, minmax(120px, 1fr))';
+            itemsContainer.style.gap = '8px';
+
+            pairs.forEach(pair => {
+                if (!Object.values(currentMatches).includes(pair.id)) {
+                    const item = document.createElement('div');
+                    item.className = 'item';
+                    item.id = `antagonist-${pair.id}`;
+                    item.draggable = true;
+                    item.dataset.id = pair.id;
+                    item.dataset.type = 'antagonist';
+                    item.textContent = pair.antagonist;
+                    item.style.fontSize = '12px';
+
+                    item.addEventListener('dragstart', handleDragStart);
+                    item.addEventListener('dragend', handleDragEnd);
+
+                    itemsContainer.appendChild(item);
+                }
+            });
+
+            poolContainer.appendChild(itemsContainer);
+            antagonistPool.appendChild(poolContainer);
+        }
+
+        function renderMatchedAntagonist(pairId) {
+            const dropZone = document.getElementById(`drop-${pairId}`);
+            const pair = pairs.find(p => p.id === pairId);
+
+            if (currentMatches[pairId]) {
+                dropZone.innerHTML = `
+                    <div class="paired-item">
+                        <span>${pair.antagonist}</span>
+                        <button class="remove-btn" onclick="removeMatch('${pairId}')">✕</button>
+                    </div>
+                `;
+            }
+        }
+
+        function handleDragStart(e) {
+            draggedItem = e.target.dataset.id;
+            e.target.style.opacity = '0.5';
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            e.target.style.opacity = '1';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(e, pairId) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+
+            if (draggedItem) {
+                currentMatches[pairId] = draggedItem;
+                renderMatchingPairs();
+            }
+        }
+
+        function removeMatch(pairId) {
+            delete currentMatches[pairId];
+            renderMatchingPairs();
+        }
+
+        function checkAnswers() {
+            let correct = 0;
+            const total = pairs.length;
+
+            pairs.forEach(pair => {
+                if (currentMatches[pair.id] === pair.id) {
+                    correct++;
+                }
+            });
+
+            const allCorrect = correct === total;
+
+            const feedback = document.getElementById('feedback');
+            feedback.classList.add('show');
+
+            if (allCorrect) {
+                feedback.classList.remove('incorrect');
+                feedback.classList.add('correct');
+                feedback.innerHTML = `
+                    <h3>🎉 Perfect! All pairs matched correctly!</h3>
+                    <p>Excellent understanding of agonist-antagonist muscle relationships.</p>
+                    <div class="score-box">
+                        <h3>${correct}/${total}</h3>
+                        <p>Score: 100%</p>
+                    </div>
+                `;
+            } else {
+                feedback.classList.remove('correct');
+                feedback.classList.add('incorrect');
+                feedback.innerHTML = `
+                    <h3>✓ Review your answers</h3>
+                    <p>You correctly matched <strong>${correct} out of ${total}</strong> pairs. Review the incorrect matches and try again!</p>
+                    <div class="score-box" style="background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);">
+                        <h3>${correct}/${total}</h3>
+                        <p>Score: ${Math.round((correct/total)*100)}%</p>
+                    </div>
+                `;
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetActivity() {
+            currentMatches = {};
+            document.getElementById('feedback').classList.remove('show');
+            renderMatchingPairs();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 7: Motor Learning Stages</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%); min-height: 100vh; padding: 20px; color: #1E293B; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .header { background: linear-gradient(135deg, #065A82 0%, #1C7293 100%); color: white; padding: 30px 20px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .header h1 { font-size: 28px; margin-bottom: 5px; }
+        .header p { font-size: 14px; opacity: 0.9; }
+        .progress-bar { background: white; height: 8px; border-radius: 4px; margin-top: 20px; overflow: hidden; }
+        .progress { background: #02C39A; height: 100%; transition: width 0.3s ease; }
+        .scenario-box { background: white; padding: 25px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); border-left: 4px solid #065A82; display: none; }
+        .scenario-box.active { display: block; }
+        .question-number { background: linear-gradient(135deg, #065A82 0%, #1C7293 100%); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; margin-bottom: 15px; }
+        .scenario-text { background: #F8FAFC; padding: 15px; border-radius: 6px; margin-bottom: 20px; font-size: 15px; line-height: 1.6; border-left: 3px solid #02C39A; }
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option { display: flex; align-items: flex-start; padding: 15px; border: 2px solid #E2E8F0; border-radius: 6px; cursor: pointer; }
+        .option:hover { border-color: #065A82; background: #F8FAFC; }
+        .option input[type="radio"] { margin-top: 3px; margin-right: 12px; cursor: pointer; width: 18px; height: 18px; accent-color: #065A82; }
+        .option label { cursor: pointer; flex: 1; font-size: 14px; }
+        .option.selected { border-color: #065A82; background: #F0F9FF; }
+        .feedback-box { background: #F8FAFC; border-left: 4px solid #065A82; padding: 15px; border-radius: 6px; margin-top: 15px; font-size: 13px; line-height: 1.6; color: #475569; display: none; }
+        .feedback-box.show { display: block; }
+        .feedback-box.correct { border-color: #02C39A; background: #F0FDFB; }
+        .feedback-box.incorrect { border-color: #EF4444; background: #FEF2F2; }
+        .controls { display: flex; gap: 10px; justify-content: space-between; margin-top: 30px; }
+        button { padding: 12px 24px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .btn-next { background: linear-gradient(135deg, #065A82 0%, #1C7293 100%); color: white; flex: 1; }
+        .btn-next:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(6, 90, 130, 0.3); }
+        .btn-prev { background: #E2E8F0; color: #1E293B; }
+        .btn-prev:hover:not(:disabled) { background: #CBD5E1; }
+        .results { display: none; text-align: center; }
+        .results.show { display: block; }
+        .results-content { background: white; padding: 40px 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
+        .score-circle { width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 30px; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: bold; color: white; background: linear-gradient(135deg, #02C39A 0%, #059669 100%); }
+        .results h2 { font-size: 24px; margin-bottom: 15px; }
+        .results p { font-size: 16px; margin-bottom: 20px; }
+        .btn-restart { background: linear-gradient(135deg, #065A82 0%, #1C7293 100%); color: white; padding: 12px 32px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Module 7: Motor Learning Stages</h1>
+            <p>Fitts & Posner Learning Stages</p>
+            <div class="progress-bar"><div class="progress" id="progressBar"></div></div>
+        </div>
+        <div id="quizContainer"></div>
+        <div id="resultsContainer" class="results"></div>
+    </div>
+
+    <script>
+        const scenarios = [
+            {
+                scenario: 'A student learns to throw a basketball. They make many errors, lack rhythm, and require constant conscious attention to each movement component. They often pause to think about hand position and release.',
+                options: ['Cognitive stage', 'Associative stage', 'Autonomous stage'],
+                correct: 0,
+                feedback: 'Early learning (cognitive stage): Many errors, high cognitive demand, slow movements, frequent pauses to think.'
+            },
+            {
+                scenario: 'A tennis player practices serves repeatedly. They\'re more consistent than before, make fewer major errors, and can focus on strategy rather than body mechanics. The basic form feels more natural.',
+                options: ['Cognitive stage', 'Associative stage', 'Autonomous stage'],
+                correct: 1,
+                feedback: 'Middle learning (associative stage): Fewer errors, lower cognitive demand, movement becoming automatic, can attend to other aspects.'
+            },
+            {
+                scenario: 'A swimmer performs the backstroke flawlessly during competition while also thinking about race strategy and opponent positioning. Their movements are fluid, quick, and require minimal conscious thought.',
+                options: ['Cognitive stage', 'Associative stage', 'Autonomous stage'],
+                correct: 2,
+                feedback: 'Advanced learning (autonomous stage): Minimal errors, low cognitive demand, movements automatic, can focus on strategy.'
+            },
+            {
+                scenario: 'A beginning volleyball player is learning the spike. They concentrate heavily on arm motion, timing, and approach. Each practice session requires significant mental effort and they make frequent timing errors.',
+                options: ['Cognitive stage', 'Associative stage', 'Autonomous stage'],
+                correct: 0,
+                feedback: 'Cognitive stage characteristics: high attention, frequent errors, conscious thought about each component.'
+            },
+            {
+                scenario: 'A golf instructor observes that her student\'s swing is becoming smoother. The student occasionally makes small adjustments but mostly executes the swing consistently. They can now think about club selection and green reading.',
+                options: ['Cognitive stage', 'Associative stage', 'Autonomous stage'],
+                correct: 1,
+                feedback: 'Associative stage: Movement becoming consistent, occasional refinements, shifting attention to strategy and context.'
+            },
+            {
+                scenario: 'A professional musician plays a complex piece without looking at sheet music. Their fingers find the right keys automatically, and they can focus entirely on emotional expression and interpretation of the music.',
+                options: ['Cognitive stage', 'Associative stage', 'Autonomous stage'],
+                correct: 2,
+                feedback: 'Autonomous stage: Automatic movement, high performance quality, attention available for artistic expression.'
+            }
+        ];
+
+        let currentScenario = 0;
+        let responses = new Array(scenarios.length).fill(null);
+
+        function init() {
+            renderScenarios();
+            showScenario(0);
+        }
+
+        function renderScenarios() {
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = '';
+
+            scenarios.forEach((scenario, index) => {
+                const card = document.createElement('div');
+                card.className = 'scenario-box';
+                card.id = `scenario-${index}`;
+
+                let optionsHTML = '';
+                scenario.options.forEach((option, optIndex) => {
+                    optionsHTML += `
+                        <div class="option" onclick="selectOption(${index}, ${optIndex})">
+                            <input type="radio" name="scenario-${index}" id="option-${index}-${optIndex}" value="${optIndex}">
+                            <label for="option-${index}-${optIndex}">${option}</label>
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="question-number">${index + 1}</div>
+                    <div class="scenario-text">${scenario.scenario}</div>
+                    <div style="font-weight: 600; margin-bottom: 15px;">Which learning stage is this?</div>
+                    <div class="options">${optionsHTML}</div>
+                    <div class="feedback-box" id="feedback-${index}"></div>
+                    <div class="controls">
+                        <button class="btn-prev" onclick="previousScenario()" ${index === 0 ? 'disabled' : ''}>← Previous</button>
+                        <button class="btn-next" onclick="nextScenario()">Next →</button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function showScenario(index) {
+            document.querySelectorAll('.scenario-box').forEach(card => {
+                card.classList.remove('active');
+            });
+
+            document.getElementById(`scenario-${index}`).classList.add('active');
+
+            if (responses[index] !== null) {
+                const radio = document.querySelector(`input[name="scenario-${index}"][value="${responses[index]}"]`);
+                if (radio) {
+                    radio.checked = true;
+                    radio.closest('.option').classList.add('selected');
+                }
+                showFeedback(index);
+            }
+
+            updateProgress();
+            currentScenario = index;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function selectOption(scenarioIndex, optionIndex) {
+            responses[scenarioIndex] = optionIndex;
+            showFeedback(scenarioIndex);
+
+            document.querySelectorAll(`input[name="scenario-${scenarioIndex}"]`).forEach(option => {
+                option.closest('.option').classList.remove('selected');
+            });
+            document.getElementById(`option-${scenarioIndex}-${optionIndex}`).closest('.option').classList.add('selected');
+        }
+
+        function showFeedback(index) {
+            const response = responses[index];
+            if (response === null) return;
+
+            const scenario = scenarios[index];
+            const isCorrect = response === scenario.correct;
+            const feedbackBox = document.getElementById(`feedback-${index}`);
+
+            feedbackBox.classList.add('show');
+            feedbackBox.innerHTML = `<strong>${isCorrect ? '✓ Correct!' : '✗ Incorrect'}</strong> ${scenario.feedback}`;
+            feedbackBox.classList.toggle('correct', isCorrect);
+            feedbackBox.classList.toggle('incorrect', !isCorrect);
+        }
+
+        function nextScenario() {
+            if (responses[currentScenario] === null) {
+                alert('Please select an answer.');
+                return;
+            }
+            if (currentScenario < scenarios.length - 1) {
+                showScenario(currentScenario + 1);
+            } else {
+                showResults();
+            }
+        }
+
+        function previousScenario() {
+            if (currentScenario > 0) {
+                showScenario(currentScenario - 1);
+            }
+        }
+
+        function updateProgress() {
+            const p = ((currentScenario + 1) / scenarios.length) * 100;
+            document.getElementById('progressBar').style.width = p + '%';
+        }
+
+        function showResults() {
+            const correct = responses.filter((r, i) => r === scenarios[i].correct).length;
+            const percent = Math.round((correct / scenarios.length) * 100);
+
+            document.getElementById('quizContainer').style.display = 'none';
+            const rc = document.getElementById('resultsContainer');
+            rc.classList.add('show');
+            rc.innerHTML = `
+                <div class="results-content">
+                    <div class="score-circle">${percent}%</div>
+                    <h2>Quiz Complete!</h2>
+                    <p>You answered <strong>${correct} out of ${scenarios.length}</strong> correctly.</p>
+                    <button class="btn-restart" onclick="restartQuiz()">Restart Quiz</button>
+                </div>
+            `;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function restartQuiz() {
+            currentScenario = 0;
+            responses = new Array(scenarios.length).fill(null);
+            document.getElementById('quizContainer').style.display = 'block';
+            document.getElementById('resultsContainer').classList.remove('show');
+            document.getElementById('resultsContainer').innerHTML = '';
+            init();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

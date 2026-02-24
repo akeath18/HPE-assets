@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movement Combination Builder - Module 14</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #065A82;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .instructions {
+            color: #1E293B;
+            font-size: 14px;
+            background: #F0F9FF;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #02C39A;
+        }
+
+        .progress {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #02C39A;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .builder-section {
+            background: #F0F9FF;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 4px solid #065A82;
+        }
+
+        .section-title {
+            font-weight: 600;
+            color: #065A82;
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .select-group {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .select-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #065A82;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        select {
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            font-size: 13px;
+            background: white;
+            cursor: pointer;
+        }
+
+        select:hover {
+            border-color: #02C39A;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #02C39A;
+            box-shadow: 0 0 0 3px rgba(2, 195, 154, 0.1);
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 13px;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .quiz-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 25px;
+            border-left: 4px solid #065A82;
+        }
+
+        .quiz-title {
+            font-weight: 600;
+            color: #065A82;
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .combo-item {
+            background: #F0F9FF;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 3px solid #02C39A;
+        }
+
+        .combo-description {
+            color: #1E293B;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .question {
+            font-weight: 600;
+            color: #065A82;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 12px;
+        }
+
+        .option-label:hover {
+            background: #E0F2FE;
+        }
+
+        .option-label input[type="radio"],
+        .option-label input[type="checkbox"] {
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .check-btn {
+            background: #02C39A;
+            color: white;
+        }
+
+        .check-btn:hover {
+            background: #01a879;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(2, 195, 154, 0.3);
+        }
+
+        .reset-btn {
+            background: #1E293B;
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background: #0f172a;
+            transform: translateY(-2px);
+        }
+
+        .feedback {
+            display: none;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            font-size: 14px;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.success {
+            background: #D4EDDA;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .feedback.error {
+            background: #F8D7DA;
+            color: #721c24;
+            border-left: 4px solid #f5222d;
+        }
+
+        .score {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Movement Combination Builder</h1>
+            <p style="color: #666; margin-top: 5px;">Module 14: Movement Skills & Combinations</p>
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="instructions">
+            <strong>Part 1:</strong> Design a movement combination by selecting locomotor, nonlocomotor, and manipulative skills. Describe the activity you'd create.<br><br>
+            <strong>Part 2:</strong> Answer 6 questions about pre-built movement combinations, identifying component skills and developmentally appropriate grade levels.
+        </div>
+
+        <div class="builder-section">
+            <div class="section-title">Part 1: Design Your Activity</div>
+
+            <div class="select-group">
+                <div class="select-item">
+                    <label for="locomotor">Locomotor Skill:</label>
+                    <select id="locomotor">
+                        <option value="">Select locomotor skill...</option>
+                        <option value="walking">Walking</option>
+                        <option value="running">Running</option>
+                        <option value="hopping">Hopping</option>
+                        <option value="jumping">Jumping</option>
+                        <option value="skipping">Skipping</option>
+                        <option value="galloping">Galloping</option>
+                        <option value="crawling">Crawling</option>
+                        <option value="climbing">Climbing</option>
+                    </select>
+                </div>
+
+                <div class="select-item">
+                    <label for="nonlocomotor">Nonlocomotor Skill:</label>
+                    <select id="nonlocomotor">
+                        <option value="">Select nonlocomotor skill...</option>
+                        <option value="stretching">Stretching</option>
+                        <option value="twisting">Twisting</option>
+                        <option value="bending">Bending</option>
+                        <option value="balancing">Balancing</option>
+                        <option value="swinging">Swinging</option>
+                        <option value="turning">Turning</option>
+                        <option value="ducking">Ducking</option>
+                    </select>
+                </div>
+
+                <div class="select-item">
+                    <label for="manipulative">Manipulative Skill:</label>
+                    <select id="manipulative">
+                        <option value="">Select manipulative skill...</option>
+                        <option value="throwing">Throwing</option>
+                        <option value="catching">Catching</option>
+                        <option value="kicking">Kicking</option>
+                        <option value="striking">Striking</option>
+                        <option value="bouncing">Bouncing</option>
+                        <option value="rolling">Rolling</option>
+                        <option value="dribbling">Dribbling</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="select-item">
+                <label for="activity-desc">Describe an activity that combines these three skill types:</label>
+                <textarea id="activity-desc" placeholder="Example: Students run across the gymnasium while balancing a beanbag on their head, then twist their body to throw the beanbag into a hula hoop..."></textarea>
+            </div>
+        </div>
+
+        <div class="quiz-section">
+            <div class="quiz-title">Part 2: Identify Skills & Appropriate Grade Levels</div>
+
+            <!-- Combo 1 -->
+            <div class="combo-item">
+                <div class="combo-description">Activity 1: Students hop in a zigzag pattern around cones while reaching and bending to pick up and place small balls in different containers.</div>
+                <div class="question">Which skills are used?</div>
+                <div class="options">
+                    <label class="option-label"><input type="checkbox" name="c1-skill" value="hop"> Hopping (locomotor)</label>
+                    <label class="option-label"><input type="checkbox" name="c1-skill" value="bend"> Bending (nonlocomotor)</label>
+                    <label class="option-label"><input type="checkbox" name="c1-skill" value="manip"> Manipulative (picking/placing)</label>
+                </div>
+                <div class="question" style="margin-top: 10px;">Most appropriate grade level:</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="c1-grade" value="k-1"> K-1st Grade</label>
+                    <label class="option-label"><input type="radio" name="c1-grade" value="2-3"> 2nd-3rd Grade</label>
+                    <label class="option-label"><input type="radio" name="c1-grade" value="4-5"> 4th-5th Grade</label>
+                </div>
+            </div>
+
+            <!-- Combo 2 -->
+            <div class="combo-item">
+                <div class="combo-description">Activity 2: Students skip while tossing and catching a ball, then perform a 360-degree turn while maintaining the toss-catch pattern.</div>
+                <div class="question">Which skills are used?</div>
+                <div class="options">
+                    <label class="option-label"><input type="checkbox" name="c2-skill" value="skip"> Skipping (locomotor)</label>
+                    <label class="option-label"><input type="checkbox" name="c2-skill" value="turn"> Turning (nonlocomotor)</label>
+                    <label class="option-label"><input type="checkbox" name="c2-skill" value="toss"> Throwing & Catching (manipulative)</label>
+                </div>
+                <div class="question" style="margin-top: 10px;">Most appropriate grade level:</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="c2-grade" value="k-1"> K-1st Grade</label>
+                    <label class="option-label"><input type="radio" name="c2-grade" value="2-3"> 2nd-3rd Grade</label>
+                    <label class="option-label"><input type="radio" name="c2-grade" value="4-5"> 4th-5th Grade</label>
+                </div>
+            </div>
+
+            <!-- Combo 3 -->
+            <div class="combo-item">
+                <div class="combo-description">Activity 3: Students run to a batting tee, strike a ball, balance on one foot while watching the ball's trajectory, then collect it.</div>
+                <div class="question">Which skills are used?</div>
+                <div class="options">
+                    <label class="option-label"><input type="checkbox" name="c3-skill" value="run"> Running (locomotor)</label>
+                    <label class="option-label"><input type="checkbox" name="c3-skill" value="bal"> Balancing (nonlocomotor)</label>
+                    <label class="option-label"><input type="checkbox" name="c3-skill" value="strike"> Striking (manipulative)</label>
+                </div>
+                <div class="question" style="margin-top: 10px;">Most appropriate grade level:</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="c3-grade" value="k-1"> K-1st Grade</label>
+                    <label class="option-label"><input type="radio" name="c3-grade" value="2-3"> 2nd-3rd Grade</label>
+                    <label class="option-label"><input type="radio" name="c3-grade" value="4-5"> 4th-5th Grade</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="check-btn" onclick="checkAnswers()">Check Answers (Part 2)</button>
+            <button class="reset-btn" onclick="resetActivity()">Reset</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <script>
+        const correctAnswers = {
+            c1: { skills: ['hop', 'bend', 'manip'], grade: '2-3' },
+            c2: { skills: ['skip', 'turn', 'toss'], grade: '4-5' },
+            c3: { skills: ['run', 'bal', 'strike'], grade: '4-5' }
+        };
+
+        function checkAnswers() {
+            const locomotor = document.getElementById('locomotor').value;
+            const nonlocomotor = document.getElementById('nonlocomotor').value;
+            const manipulative = document.getElementById('manipulative').value;
+            const description = document.getElementById('activity-desc').value;
+
+            if (!locomotor || !nonlocomotor || !manipulative || !description) {
+                alert('Please complete Part 1 - Design Your Activity');
+                return;
+            }
+
+            let correct = 0;
+            let details = '<strong>Part 1 Design (Not graded, for reference):</strong><br>';
+            details += `Locomotor: ${locomotor} | Nonlocomotor: ${nonlocomotor} | Manipulative: ${manipulative}<br><br>`;
+            details += '<strong>Part 2: Combination Recognition</strong><br>';
+
+            for (let i = 1; i <= 3; i++) {
+                const skillCheckboxes = document.querySelectorAll(`input[name="c${i}-skill"]:checked`);
+                const gradeRadio = document.querySelector(`input[name="c${i}-grade"]:checked`);
+
+                const selectedSkills = Array.from(skillCheckboxes).map(cb => cb.value);
+                const selectedGrade = gradeRadio ? gradeRadio.value : null;
+
+                const skillsMatch = JSON.stringify(selectedSkills.sort()) === JSON.stringify(correctAnswers[`c${i}`].skills.sort());
+                const gradeMatch = selectedGrade === correctAnswers[`c${i}`].grade;
+
+                if (skillsMatch && gradeMatch) correct++;
+
+                const isCorrect = skillsMatch && gradeMatch;
+                details += `<div style="margin: 10px 0; padding: 10px; background: ${isCorrect ? '#D4EDDA' : '#F8D7DA'}; border-radius: 6px; border-left: 3px solid ${isCorrect ? '#28a745' : '#f5222d'};">`;
+                details += `<strong>Combo ${i}: ${isCorrect ? '✓ Correct' : '✗ Incorrect'}</strong>`;
+                if (!skillsMatch || !gradeMatch) {
+                    if (!skillsMatch) details += `<div style="font-size: 12px;">Skills should be: ${correctAnswers[`c${i}`].skills.join(', ')}</div>`;
+                    if (!gradeMatch) details += `<div style="font-size: 12px;">Grade should be: ${correctAnswers[`c${i}`].grade}</div>`;
+                }
+                details += '</div>';
+            }
+
+            const score = Math.round((correct / 3) * 100);
+            const feedback = document.getElementById('feedback');
+
+            feedback.innerHTML = details + `<div class="score">Part 2 Score: ${score}% (${correct}/3 combinations correct)</div>`;
+
+            if (correct === 3) {
+                feedback.className = 'feedback show success';
+            } else {
+                feedback.className = 'feedback show error';
+            }
+
+            document.getElementById('progressBar').style.width = '100%';
+        }
+
+        function resetActivity() {
+            document.getElementById('locomotor').value = '';
+            document.getElementById('nonlocomotor').value = '';
+            document.getElementById('manipulative').value = '';
+            document.getElementById('activity-desc').value = '';
+            document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(input => {
+                input.checked = false;
+            });
+            document.getElementById('feedback').classList.remove('show');
+            document.getElementById('progressBar').style.width = '0%';
+        }
+    </script>
+</body>
+</html>

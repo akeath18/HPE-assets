@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safety Decision Scenarios - Module 13</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #065A82;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .instructions {
+            color: #1E293B;
+            font-size: 14px;
+            background: #F0F9FF;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #02C39A;
+        }
+
+        .progress {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #02C39A;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .scenario-block {
+            background: #F0F9FF;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ef4444;
+        }
+
+        .scenario-number {
+            font-weight: 600;
+            color: #065A82;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .scenario-situation {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 3px solid #ef4444;
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .question {
+            font-weight: 600;
+            color: #065A82;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 0.3px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 13px;
+        }
+
+        .option-label:hover {
+            background: #E0F2FE;
+        }
+
+        .option-label input[type="radio"] {
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .check-btn {
+            background: #02C39A;
+            color: white;
+        }
+
+        .check-btn:hover {
+            background: #01a879;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(2, 195, 154, 0.3);
+        }
+
+        .reset-btn {
+            background: #1E293B;
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background: #0f172a;
+            transform: translateY(-2px);
+        }
+
+        .feedback {
+            display: none;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            font-size: 14px;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.success {
+            background: #D4EDDA;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .feedback.error {
+            background: #F8D7DA;
+            color: #721c24;
+            border-left: 4px solid #f5222d;
+        }
+
+        .feedback-item {
+            margin: 12px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 6px;
+            border-left: 3px solid;
+        }
+
+        .feedback-item.correct {
+            border-color: #28a745;
+        }
+
+        .feedback-item.incorrect {
+            border-color: #f5222d;
+        }
+
+        .feedback-detail {
+            font-size: 12px;
+            margin-top: 5px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .score {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Safety Decision Scenarios</h1>
+            <p style="color: #666; margin-top: 5px;">Module 13: Emergency Response & Client Safety</p>
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> For each safety emergency scenario, select the most appropriate immediate action. Answer all 8 scenarios, then click "Check Answers" to see your score.
+        </div>
+
+        <form id="scenarioForm">
+            <!-- Scenario 1 -->
+            <div class="scenario-block">
+                <div class="scenario-number">Scenario 1: Dizziness During Squat</div>
+                <div class="scenario-situation">A client suddenly becomes dizzy and lightheaded in the middle of a barbell squat. They haven't eaten much today and did an intense warm-up.</div>
+                <div class="question">Immediate Action:</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="s1" value="a"> Stop exercise, help them sit down, check vitals, offer water, assess condition</label>
+                    <label class="option-label"><input type="radio" name="s1" value="b"> Have them continue with lighter weight to "work through it"</label>
+                    <label class="option-label"><input type="radio" name="s1" value="c"> Tell them to lie down flat on the floor immediately</label>
+                    <label class="option-label"><input type="radio" name="s1" value="d"> Call 911 without assessing the situation first</label>
+                </div>
+            </div>
+
+            <!-- Scenario 2 -->
+            <div class="scenario-block">
+                <div class="scenario-number">Scenario 2: Extreme Heat Index</div>
+                <div class="scenario-situation">It's outdoor PE class and the heat index is 105°F. Several students are beginning to show signs of heat exhaustion: heavy sweating, weakness, dizziness.</div>
+                <div class="question">Immediate Action:</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="s2" value="a"> Move students indoors/to shade, reduce intensity, provide water breaks, monitor closely</label>
+                    <label class="option-label"><input type="radio" name="s2" value="b"> Continue the scheduled class as planned with water breaks</label>
+                    <label class="option-label"><input type="radio" name="s2" value="c"> Have students sit in the sun but drink more water</label>
+                    <label class="option-label"><input type="radio" name="s2" value="d"> Cancel class entirely and send students home</label>
+                </div>
+            </div>
+
+            <!-- Scenario 3 -->
+            <div class="scenario-block">
+                <div class="scenario-number">Scenario 3: Asthmatic Student Wheezing</div>
+                <div class="scenario-situation">During running drills, an asthmatic student begins wheezing heavily. You know they have their rescue inhaler.</div>
+                <div class="question">Immediate Action:</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="s3" value="a"> Stop exercise, help them use their rescue inhaler, sit them down, monitor breathing</label>
+                    <label class="option-label"><input type="radio" name="s3" value="b"> Tell them to slow down but continue running to build respiratory strength</label>
+                    <label class="option-label"><input type="radio" name="s3" value="c"> Suggest they're just out of shape and need to push harder</label>
+                    <label class="option-label"><input type="radio" name="s3" value="d"> Send them to nurse without assisting with their inhaler</label>
+                </div>
+            </div>
+
+            <!-- Scenario 4 -->
+            <div class="scenario-block">
+                <div class="scenario-number">Scenario 4: Equipment Damage</div>
+                <div class="scenario-situation">You notice a cable machine has a frayed cable with visible rust. Several students are waiting to use it.</div>
+                <div class="question">Immediate Action:</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="s4" value="a"> Immediately take the machine out of service, post warning, report to supervisor</label>
+                    <label class="option-label"><input type="radio" name="s4" value="b"> Let students use it but warn them to "be careful"</label>
+                    <label class="option-label"><input type="radio" name="s4" value="c"> Ignore it since no one has been injured yet</label>
+                    <label class="option-label"><input type="radio" name="s4" value="d"> Try to fix it yourself before anyone uses it</label>
+                </div>
+            </div>
+
+            <!-- Scenario 5 -->
+            <div class="scenario-block">
+                <div class="scenario-number">Scenario 5: Chest Tightness</div>
+                <div class="scenario-situation">A 48-year-old client mentions during training that they're experiencing chest tightness and slight pressure. They say "It's probably nothing."</div>
+                <div class="question">Immediate Action:</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="s5" value="a"> Stop activity immediately, call 911, monitor vitals, keep reassured until help arrives</label>
+                    <label class="option-label"><input type="radio" name="s5" value="b"> Continue training but at lower intensity</label>
+                    <label class="option-label"><input type="radio" name="s5" value="c"> Dismiss them and tell them to see a doctor later</label>
+                    <label class="option-label"><input type="radio" name="s5" value="d"> Tell them to take an antacid and return to training</label>
+                </div>
+            </div>
+
+            <!-- Scenario 6 -->
+            <div class="scenario-block">
+                <div class="scenario-number">Scenario 6: Refusal of PAR-Q</div>
+                <div class="scenario-situation">A new client refuses to fill out the PAR-Q (health screening) because "I don't want to share my medical info" and wants to start training immediately.</div>
+                <div class="question">Immediate Action:</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="s6" value="a"> Explain importance of screening, offer privacy, get informed consent in writing if refused</label>
+                    <label class="option-label"><input type="radio" name="s6" value="b"> Allow them to train without any screening or clearance</label>
+                    <label class="option-label"><input type="radio" name="s6" value="c"> Refuse to work with them entirely</label>
+                    <label class="option-label"><input type="radio" name="s6" value="d"> Start them on very light activity while screening can happen later</label>
+                </div>
+            </div>
+
+            <!-- Scenario 7 -->
+            <div class="scenario-block">
+                <div class="scenario-number">Scenario 7: Visual Disturbances</div>
+                <div class="scenario-situation">During a flexibility class, a student mentions seeing "spots" in their vision and feeling lightheaded during a prolonged stretch.</div>
+                <div class="question">Immediate Action:</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="s7" value="a"> Release the stretch, have them sit/lie down, assess symptoms, monitor, check for hyperventilation</label>
+                    <label class="option-label"><input type="radio" name="s7" value="b"> Have them continue the stretch but less intensely</label>
+                    <label class="option-label"><input type="radio" name="s7" value="c"> Tell them it's normal and to ignore it</label>
+                    <label class="option-label"><input type="radio" name="s7" value="d"> Send them immediately to the hospital</label>
+                </div>
+            </div>
+
+            <!-- Scenario 8 -->
+            <div class="scenario-block">
+                <div class="scenario-number">Scenario 8: Parent Exemption Request</div>
+                <div class="scenario-situation">A parent submits a note requesting their 15-year-old daughter be exempted from the fitness testing/assessment component of PE class without any medical documentation or reason provided.</div>
+                <div class="question">Immediate Action:</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="s8" value="a"> Require medical documentation or communication with parent to understand legitimate reasons</label>
+                    <label class="option-label"><input type="radio" name="s8" value="b"> Grant exemption without question to maintain parent relationship</label>
+                    <label class="option-label"><input type="radio" name="s8" value="c"> Require student to take the test regardless of parent request</label>
+                    <label class="option-label"><input type="radio" name="s8" value="d"> Give student a zero for the testing component</label>
+                </div>
+            </div>
+        </form>
+
+        <div class="buttons">
+            <button class="check-btn" onclick="checkAnswers()">Check Answers</button>
+            <button class="reset-btn" onclick="resetActivity()">Reset</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <script>
+        const answers = {
+            s1: 'a',
+            s2: 'a',
+            s3: 'a',
+            s4: 'a',
+            s5: 'a',
+            s6: 'a',
+            s7: 'a',
+            s8: 'a'
+        };
+
+        const explanations = {
+            s1: 'Stop activity immediately, ensure safety, assess condition. Dizziness can indicate dehydration, low blood sugar, or other medical issues.',
+            s2: 'Heat exhaustion is dangerous. Move to cool environment, reduce intensity, hydrate. High heat index may warrant program modification or cancellation.',
+            s3: 'Wheezing indicates respiratory distress. Stop activity, assist with inhaler use, monitor closely. Always take asthma symptoms seriously.',
+            s4: 'Damaged equipment is a liability and safety hazard. Remove from service immediately and report. Do not allow use.',
+            s5: 'Chest tightness/pressure can indicate cardiac issues. Never continue training. Call 911 immediately. Always err on the side of caution with cardiac symptoms.',
+            s6: 'Health screening is critical for safety. Explain its importance and get informed consent. Document refusal in writing for liability protection.',
+            s7: 'Visual disturbances with dizziness during stretching may indicate hyperventilation or postural hypotension. Stop stretch, monitor, assess condition.',
+            s8: 'Understand the reason for exemption request. Medical documentation provides legitimate basis. Unclear requests need clarification and possibly medical evaluation.'
+        };
+
+        function checkAnswers() {
+            const form = document.getElementById('scenarioForm');
+            let correct = 0;
+            let details = '';
+
+            for (let i = 1; i <= 8; i++) {
+                const selected = form.querySelector(`input[name="s${i}"]:checked`);
+
+                if (!selected) {
+                    alert(`Please answer Scenario ${i}`);
+                    return;
+                }
+
+                const isCorrect = selected.value === answers[`s${i}`];
+                if (isCorrect) correct++;
+
+                details += `<div class="feedback-item ${isCorrect ? 'correct' : 'incorrect'}">
+                    <strong>Scenario ${i}: ${isCorrect ? '✓ Correct' : '✗ Incorrect'}</strong>
+                    <div class="feedback-detail">
+                        ${!isCorrect ? `<div>You selected: Option ${selected.value.toUpperCase()} | Correct: Option ${answers[`s${i}`].toUpperCase()}</div>` : ''}
+                        <div>${explanations[`s${i}`]}</div>
+                    </div>
+                </div>`;
+            }
+
+            const score = Math.round((correct / 8) * 100);
+            const feedback = document.getElementById('feedback');
+
+            feedback.innerHTML = details + `<div class="score">Score: ${score}% (${correct}/8 correct)</div>`;
+
+            if (correct === 8) {
+                feedback.className = 'feedback show success';
+            } else {
+                feedback.className = 'feedback show error';
+            }
+
+            document.getElementById('progressBar').style.width = '100%';
+        }
+
+        function resetActivity() {
+            document.getElementById('scenarioForm').reset();
+            document.getElementById('feedback').classList.remove('show');
+            document.getElementById('progressBar').style.width = '0%';
+        }
+    </script>
+</body>
+</html>

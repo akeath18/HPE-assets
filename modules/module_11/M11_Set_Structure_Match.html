@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Structure Matching - Module 11</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 900px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #065A82;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .instructions {
+            color: #1E293B;
+            font-size: 14px;
+            background: #F0F9FF;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #02C39A;
+        }
+
+        .progress {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #02C39A;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .matching-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .column-title {
+            font-weight: 600;
+            color: #065A82;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .set-item {
+            background: #F0F9FF;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            cursor: grab;
+            user-select: none;
+            transition: all 0.2s ease;
+            font-size: 13px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .set-item:hover {
+            background: #E0F2FE;
+            border-color: #02C39A;
+        }
+
+        .set-item.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+
+        .set-item.matched {
+            background: #D4EDDA;
+            border-color: #02C39A;
+            cursor: default;
+        }
+
+        .description-item {
+            background: #F0F9FF;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #ccc;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-size: 13px;
+            position: relative;
+        }
+
+        .description-item.drag-over {
+            background: #FFE5B4;
+            border-color: #FF9800;
+        }
+
+        .description-item.matched {
+            background: #D4EDDA;
+            border-color: #02C39A;
+        }
+
+        .description-text {
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .when-to-use {
+            font-size: 12px;
+            color: #666;
+            font-style: italic;
+            padding-top: 8px;
+            border-top: 1px solid #ddd;
+        }
+
+        .matched-label {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 11px;
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .check-btn {
+            background: #02C39A;
+            color: white;
+        }
+
+        .check-btn:hover {
+            background: #01a879;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(2, 195, 154, 0.3);
+        }
+
+        .reset-btn {
+            background: #1E293B;
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background: #0f172a;
+            transform: translateY(-2px);
+        }
+
+        .feedback {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.success {
+            background: #D4EDDA;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .feedback.error {
+            background: #F8D7DA;
+            color: #721c24;
+            border-left: 4px solid #f5222d;
+        }
+
+        .score {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .matching-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Set Structure Matching</h1>
+            <p style="color: #666; margin-top: 5px;">Module 11: Resistance Training Variables</p>
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> Drag each set structure from the left column to match it with its correct description and use case on the right. Complete all 8 matches and click "Check Answers".
+        </div>
+
+        <div class="matching-container">
+            <div class="column">
+                <div class="column-title">Set Structures</div>
+                <div class="set-item" draggable="true" data-structure="Straight Sets">Straight Sets</div>
+                <div class="set-item" draggable="true" data-structure="Pyramid Ascending">Pyramid Ascending</div>
+                <div class="set-item" draggable="true" data-structure="Pyramid Descending">Pyramid Descending</div>
+                <div class="set-item" draggable="true" data-structure="Drop Sets">Drop Sets</div>
+                <div class="set-item" draggable="true" data-structure="Supersets">Supersets</div>
+                <div class="set-item" draggable="true" data-structure="Compound Sets">Compound Sets</div>
+                <div class="set-item" draggable="true" data-structure="Circuit Training">Circuit Training</div>
+                <div class="set-item" draggable="true" data-structure="Rest-Pause Sets">Rest-Pause Sets</div>
+            </div>
+
+            <div class="column">
+                <div class="column-title">Descriptions & Uses</div>
+                <div class="description-item" data-answer="Straight Sets">
+                    <div class="description-text">Complete all sets of one exercise before moving to the next; same reps and weight for each set</div>
+                    <div class="when-to-use">When: Strength building, foundational training, proper form development</div>
+                </div>
+                <div class="description-item" data-answer="Pyramid Ascending">
+                    <div class="description-text">Start with lighter weight and increase weight while decreasing reps with each set</div>
+                    <div class="when-to-use">When: Progressive strength building, warm-up while working, building to heavy singles</div>
+                </div>
+                <div class="description-item" data-answer="Pyramid Descending">
+                    <div class="description-text">Start heavy (low reps) and decrease weight while increasing reps with each set</div>
+                    <div class="when-to-use">When: Maximizing time under tension, muscle hypertrophy, metabolic stress</div>
+                </div>
+                <div class="description-item" data-answer="Drop Sets">
+                    <div class="description-text">Complete set to fatigue, immediately reduce weight by 20-25%, continue to fatigue without rest</div>
+                    <div class="when-to-use">When: Time-efficient training, muscle fatigue/hypertrophy, advanced techniques</div>
+                </div>
+                <div class="description-item" data-answer="Supersets">
+                    <div class="description-text">Two exercises for opposing muscle groups performed back-to-back with minimal rest</div>
+                    <div class="when-to-use">When: Time efficiency, agonist-antagonist pairing, circuit training, time-restricted sessions</div>
+                </div>
+                <div class="description-item" data-answer="Compound Sets">
+                    <div class="description-text">Two exercises for the same muscle group performed consecutively with no rest between</div>
+                    <div class="when-to-use">When: Muscle hypertrophy, metabolic stress, advanced training, finishing muscle groups</div>
+                </div>
+                <div class="description-item" data-answer="Circuit Training">
+                    <div class="description-text">Perform multiple exercises sequentially with minimal rest, targeting different body areas</div>
+                    <div class="when-to-use">When: Total body conditioning, time efficiency, cardiovascular benefits, group fitness</div>
+                </div>
+                <div class="description-item" data-answer="Rest-Pause Sets">
+                    <div class="description-text">Complete set to failure, rest 15-20 seconds, continue with same weight to failure again</div>
+                    <div class="when-to-use">When: Strength/hypertrophy training, overload without heavy load, fatigue management</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="check-btn" onclick="checkAnswers()">Check Answers</button>
+            <button class="reset-btn" onclick="resetActivity()">Reset</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <script>
+        let draggedElement = null;
+        let matches = {};
+
+        const answers = {
+            'Straight Sets': 'Straight Sets',
+            'Pyramid Ascending': 'Pyramid Ascending',
+            'Pyramid Descending': 'Pyramid Descending',
+            'Drop Sets': 'Drop Sets',
+            'Supersets': 'Supersets',
+            'Compound Sets': 'Compound Sets',
+            'Circuit Training': 'Circuit Training',
+            'Rest-Pause Sets': 'Rest-Pause Sets'
+        };
+
+        const setItems = document.querySelectorAll('.set-item');
+        const descriptions = document.querySelectorAll('.description-item');
+
+        setItems.forEach(item => {
+            item.addEventListener('dragstart', handleDragStart);
+            item.addEventListener('dragend', handleDragEnd);
+        });
+
+        descriptions.forEach(desc => {
+            desc.addEventListener('dragover', handleDragOver);
+            desc.addEventListener('dragleave', handleDragLeave);
+            desc.addEventListener('drop', handleDrop);
+        });
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            this.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+
+            if (draggedElement) {
+                const structure = draggedElement.dataset.structure;
+                const answer = this.dataset.answer;
+
+                matches[answer] = structure;
+                this.classList.add('matched');
+
+                const origHTML = this.innerHTML;
+                const labelHtml = '<span class="matched-label">✓</span>';
+                this.innerHTML = labelHtml + origHTML;
+
+                draggedElement.classList.add('matched');
+
+                updateProgress();
+            }
+        }
+
+        function updateProgress() {
+            const matched = Object.keys(matches).length;
+            const percentage = (matched / 8) * 100;
+            document.getElementById('progressBar').style.width = percentage + '%';
+        }
+
+        function checkAnswers() {
+            let correct = 0;
+            const feedback = document.getElementById('feedback');
+
+            descriptions.forEach(desc => {
+                const answer = desc.dataset.answer;
+                const selected = matches[answer];
+
+                if (selected === answer) {
+                    correct++;
+                }
+            });
+
+            const score = Math.round((correct / 8) * 100);
+
+            if (correct === 8) {
+                feedback.className = 'feedback show success';
+                feedback.innerHTML = `
+                    <strong>Perfect! 🎉</strong><br>
+                    You correctly matched all 8 set structures to their descriptions and use cases.
+                    <div class="score">Score: ${score}%</div>
+                `;
+            } else {
+                feedback.className = 'feedback show error';
+                feedback.innerHTML = `
+                    <strong>Review Needed</strong><br>
+                    You matched ${correct} out of 8 correctly. Review the set structure definitions and try again.
+                    <div class="score">Score: ${score}%</div>
+                `;
+            }
+        }
+
+        function resetActivity() {
+            matches = {};
+            document.getElementById('progressBar').style.width = '0%';
+            document.getElementById('feedback').classList.remove('show');
+
+            setItems.forEach(s => s.classList.remove('matched'));
+            descriptions.forEach(desc => {
+                desc.classList.remove('matched');
+                const label = desc.querySelector('.matched-label');
+                if (label) label.remove();
+            });
+        }
+    </script>
+</body>
+</html>

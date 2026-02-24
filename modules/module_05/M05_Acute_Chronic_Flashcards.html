@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 5: Acute vs Chronic Adaptations</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%); min-height: 100vh; padding: 20px; color: #1E293B; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .header { background: linear-gradient(135deg, #065A82 0%, #1C7293 100%); color: white; padding: 30px 20px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .header h1 { font-size: 28px; margin-bottom: 5px; }
+        .header p { font-size: 14px; opacity: 0.9; }
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; }
+        .stat { background: rgba(255, 255, 255, 0.2); padding: 12px; border-radius: 6px; text-align: center; font-size: 14px; }
+        .stat strong { display: block; font-size: 18px; margin-bottom: 5px; }
+        .instructions { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #02C39A; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); }
+        .instructions h3 { color: #065A82; margin-bottom: 10px; font-size: 16px; }
+        .instructions p { font-size: 14px; line-height: 1.6; color: #475569; }
+        .progress-indicator { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); }
+        .progress-text { font-size: 14px; color: #475569; }
+        .progress-bar-container { flex: 1; margin: 0 15px; background: #E2E8F0; height: 8px; border-radius: 4px; overflow: hidden; }
+        .progress-bar { background: linear-gradient(90deg, #02C39A 0%, #059669 100%); height: 100%; transition: width 0.3s ease; }
+        .flashcard-container { perspective: 1000px; margin-bottom: 30px; height: 300px; }
+        .flashcard { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
+        .flashcard.flipped { transform: rotateY(180deg); }
+        .flashcard-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; padding: 40px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); text-align: center; font-size: 18px; line-height: 1.6; }
+        .flashcard-front { background: linear-gradient(135deg, #065A82 0%, #1C7293 100%); color: white; }
+        .flashcard-back { background: linear-gradient(135deg, #02C39A 0%, #059669 100%); color: white; transform: rotateY(180deg); }
+        .flashcard-hint { position: absolute; bottom: 10px; right: 10px; font-size: 12px; opacity: 0.7; }
+        .controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 30px; flex-wrap: wrap; }
+        button { padding: 12px 24px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-primary { background: linear-gradient(135deg, #065A82 0%, #1C7293 100%); color: white; min-width: 140px; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(6, 90, 130, 0.3); }
+        .btn-secondary { background: #E2E8F0; color: #1E293B; min-width: 120px; }
+        .btn-secondary:hover { background: #CBD5E1; }
+        .btn-marked { background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%); color: white; padding: 8px 16px; font-size: 12px; }
+        .masteries { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); display: none; }
+        .masteries h3 { color: #065A82; margin-bottom: 15px; font-size: 16px; }
+        .mastery-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+        .mastery-tag { background: linear-gradient(135deg, #02C39A 0%, #059669 100%); color: white; padding: 10px 12px; border-radius: 20px; font-size: 13px; text-align: center; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Module 5: Acute vs Chronic Adaptations</h1>
+            <p>Physiological Responses to Exercise</p>
+            <div class="stats">
+                <div class="stat">
+                    <strong id="currentCard">1</strong>
+                    Current Card
+                </div>
+                <div class="stat">
+                    <strong id="totalCards">16</strong>
+                    Total Cards
+                </div>
+                <div class="stat">
+                    <strong id="masteredCount">0</strong>
+                    Mastered
+                </div>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>Instructions</h3>
+            <p>Click each flashcard to flip it and learn acute (immediate) vs chronic (long-term) adaptations to exercise. Mark cards as "Mastered" to track your progress.</p>
+        </div>
+
+        <div class="progress-indicator">
+            <span class="progress-text">Progress:</span>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <span class="progress-text"><span id="progressPercent">0</span>%</span>
+        </div>
+
+        <div class="flashcard-container">
+            <div class="flashcard" id="flashcard" onclick="flipCard()">
+                <div class="flashcard-face flashcard-front">
+                    <div>
+                        <div id="frontText"></div>
+                        <div class="flashcard-hint">Click to reveal</div>
+                    </div>
+                </div>
+                <div class="flashcard-face flashcard-back">
+                    <div id="backText"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn-primary" onclick="previousCard()">← Previous</button>
+            <button class="btn-marked" id="masterBtn" onclick="markMastered()">✓ Mastered</button>
+            <button class="btn-primary" onclick="nextCard()">Next →</button>
+        </div>
+
+        <div class="controls">
+            <button class="btn-secondary" onclick="resetCards()">Reset Progress</button>
+            <button class="btn-secondary" onclick="shuffleCards()">Shuffle</button>
+        </div>
+
+        <div id="masteriesContainer" class="masteries">
+            <h3>Mastered Cards</h3>
+            <div class="mastery-list" id="masteryList"></div>
+        </div>
+    </div>
+
+    <script>
+        const flashcards = [
+            { term: 'Resting Heart Rate - Chronic', definition: 'DECREASES with training. Chronic adaptation showing improved cardiac efficiency.' },
+            { term: 'Heart Rate During Exercise - Acute', definition: 'INCREASES immediately during exercise to meet oxygen demands.' },
+            { term: 'Blood Pressure - Acute', definition: 'INCREASES during exercise to deliver more blood to working muscles.' },
+            { term: 'Blood Pressure (Resting) - Chronic', definition: 'DECREASES with regular aerobic training; sign of cardiovascular adaptation.' },
+            { term: 'Oxygen Uptake (VO2) - Acute', definition: 'INCREASES during exercise as working muscles demand more oxygen.' },
+            { term: 'Maximum Oxygen Uptake (VO2 Max) - Chronic', definition: 'INCREASES with training; sign of improved aerobic capacity.' },
+            { term: 'Muscle Fiber Size - Acute', definition: 'NO immediate change; muscle appears pumped due to blood/fluid accumulation.' },
+            { term: 'Muscle Fiber Size (Hypertrophy) - Chronic', definition: 'INCREASES with resistance training; chronic muscle growth adaptation.' },
+            { term: 'Blood Glucose - Acute', definition: 'DECREASES during moderate exercise as muscles use glucose for fuel.' },
+            { term: 'Muscle Glycogen - Chronic', definition: 'INCREASES with training; muscles store more fuel for endurance.' },
+            { term: 'Core Body Temperature - Acute', definition: 'INCREASES during exercise; body sweats to maintain temperature.' },
+            { term: 'Heat Tolerance - Chronic', definition: 'IMPROVES with training; body becomes better at thermoregulation.' },
+            { term: 'Lactate Levels - Acute', definition: 'INCREASE during intense exercise; accumulated in muscles and blood.' },
+            { term: 'Lactate Threshold - Chronic', definition: 'INCREASES with training; body can work harder before lactate accumulates.' },
+            { term: 'Muscle Soreness (DOMS) - Acute', definition: 'APPEARS 24-48 hours after new/intense exercise; micro-tears repair.' },
+            { term: 'Injury Recovery - Chronic', definition: 'IMPROVES with training; connective tissues strengthen and adapt.' }
+        ];
+
+        let currentIndex = 0;
+        let mastered = new Set();
+        let isFlipped = false;
+
+        function init() {
+            renderCard();
+            updateStats();
+        }
+
+        function flipCard() {
+            isFlipped = !isFlipped;
+            const card = document.getElementById('flashcard');
+            if (isFlipped) {
+                card.classList.add('flipped');
+            } else {
+                card.classList.remove('flipped');
+            }
+        }
+
+        function renderCard() {
+            const card = flashcards[currentIndex];
+            document.getElementById('frontText').textContent = card.term;
+            document.getElementById('backText').textContent = card.definition;
+            document.getElementById('currentCard').textContent = currentIndex + 1;
+
+            isFlipped = false;
+            document.getElementById('flashcard').classList.remove('flipped');
+
+            const masterBtn = document.getElementById('masterBtn');
+            if (mastered.has(currentIndex)) {
+                masterBtn.style.background = 'linear-gradient(135deg, #02C39A 0%, #059669 100%)';
+                masterBtn.textContent = '✓ Mastered';
+            } else {
+                masterBtn.style.background = 'linear-gradient(135deg, #F59E0B 0%, #F97316 100%)';
+                masterBtn.textContent = 'Mark Mastered';
+            }
+
+            updateProgress();
+        }
+
+        function nextCard() {
+            if (currentIndex < flashcards.length - 1) {
+                currentIndex++;
+                renderCard();
+            }
+        }
+
+        function previousCard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderCard();
+            }
+        }
+
+        function markMastered() {
+            if (mastered.has(currentIndex)) {
+                mastered.delete(currentIndex);
+            } else {
+                mastered.add(currentIndex);
+            }
+            renderCard();
+            updateStats();
+            updateMasteryList();
+        }
+
+        function updateStats() {
+            document.getElementById('masteredCount').textContent = mastered.size;
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const percent = Math.round((mastered.size / flashcards.length) * 100);
+            document.getElementById('progressPercent').textContent = percent;
+            document.getElementById('progressBar').style.width = percent + '%';
+        }
+
+        function updateMasteryList() {
+            const container = document.getElementById('masteriesContainer');
+            if (mastered.size > 0) {
+                container.style.display = 'block';
+                const list = document.getElementById('masteryList');
+                list.innerHTML = '';
+
+                mastered.forEach(index => {
+                    const tag = document.createElement('div');
+                    tag.className = 'mastery-tag';
+                    tag.textContent = flashcards[index].term;
+                    list.appendChild(tag);
+                });
+            } else {
+                container.style.display = 'none';
+            }
+        }
+
+        function resetCards() {
+            mastered.clear();
+            currentIndex = 0;
+            renderCard();
+            updateStats();
+            updateMasteryList();
+        }
+
+        function shuffleCards() {
+            for (let i = flashcards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [flashcards[i], flashcards[j]] = [flashcards[j], flashcards[i]];
+            }
+            mastered.clear();
+            currentIndex = 0;
+            renderCard();
+            updateStats();
+            updateMasteryList();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

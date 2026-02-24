@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 5: Heart Rate Zone Calculator</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%); min-height: 100vh; padding: 20px; color: #1E293B; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .header { background: linear-gradient(135deg, #065A82 0%, #1C7293 100%); color: white; padding: 30px 20px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .header h1 { font-size: 28px; margin-bottom: 5px; }
+        .header p { font-size: 14px; opacity: 0.9; }
+        .instructions { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #02C39A; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); }
+        .instructions h3 { color: #065A82; margin-bottom: 10px; font-size: 16px; }
+        .instructions p { font-size: 14px; line-height: 1.6; color: #475569; }
+        .calculator { background: white; padding: 30px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #065A82; font-size: 14px; }
+        input { width: 100%; padding: 12px; border: 2px solid #E2E8F0; border-radius: 6px; font-size: 16px; transition: all 0.2s ease; }
+        input:focus { outline: none; border-color: #065A82; background: #F0F9FF; }
+        .btn-calculate { background: linear-gradient(135deg, #065A82 0%, #1C7293 100%); color: white; padding: 12px 32px; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; transition: all 0.3s ease; }
+        .btn-calculate:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(6, 90, 130, 0.3); }
+        .zones { display: none; margin-top: 30px; }
+        .zones.show { display: block; }
+        .zone { background: #F8FAFC; padding: 15px; margin-bottom: 12px; border-left: 4px solid #065A82; border-radius: 6px; }
+        .zone h4 { color: #065A82; margin-bottom: 5px; font-size: 15px; }
+        .zone p { font-size: 13px; color: #475569; line-height: 1.5; }
+        .zone-value { background: white; padding: 10px; border-radius: 4px; margin-top: 8px; font-weight: 600; color: #1E293B; font-size: 14px; }
+        .zone:nth-child(1) { border-left-color: #EF4444; }
+        .zone:nth-child(1) h4 { color: #EF4444; }
+        .zone:nth-child(2) { border-left-color: #F59E0B; }
+        .zone:nth-child(2) h4 { color: #F59E0B; }
+        .zone:nth-child(3) { border-left-color: #02C39A; }
+        .zone:nth-child(3) h4 { color: #02C39A; }
+        .zone:nth-child(4) { border-left-color: #3B82F6; }
+        .zone:nth-child(4) h4 { color: #3B82F6; }
+        .zone:nth-child(5) { border-left-color: #8B5CF6; }
+        .zone:nth-child(5) h4 { color: #8B5CF6; }
+        .quiz { background: white; padding: 30px; border-radius: 8px; margin-top: 30px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); display: none; }
+        .quiz.show { display: block; }
+        .quiz h3 { color: #065A82; margin-bottom: 20px; font-size: 18px; }
+        .quiz-question { background: #F8FAFC; padding: 20px; border-radius: 6px; margin-bottom: 20px; }
+        .quiz-question p { font-weight: 600; margin-bottom: 12px; color: #1E293B; }
+        .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+        .quiz-option { padding: 10px; border: 2px solid #E2E8F0; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; }
+        .quiz-option:hover { border-color: #065A82; background: #F0F9FF; }
+        .quiz-option input { margin-right: 10px; }
+        .quiz-feedback { background: #F0FDFB; border-left: 4px solid #02C39A; padding: 12px; border-radius: 4px; margin-top: 10px; font-size: 13px; display: none; }
+        .quiz-feedback.show { display: block; }
+        .quiz-feedback.correct { border-left-color: #02C39A; background: #F0FDFB; }
+        .quiz-feedback.incorrect { border-left-color: #EF4444; background: #FEF2F2; }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Module 5: Heart Rate Zone Calculator</h1>
+            <p>Karvonen Method for Training Zones</p>
+        </div>
+
+        <div class="instructions">
+            <h3>Instructions</h3>
+            <p>Enter your age and resting heart rate. The calculator will determine your five training heart rate zones using the Karvonen formula. Then answer zone-appropriate training questions.</p>
+        </div>
+
+        <div class="calculator">
+            <div class="form-group">
+                <label for="age">Age (years):</label>
+                <input type="number" id="age" placeholder="Enter your age" min="10" max="120" value="30">
+            </div>
+            <div class="form-group">
+                <label for="rhr">Resting Heart Rate (bpm):</label>
+                <input type="number" id="rhr" placeholder="Enter your resting heart rate" min="40" max="100" value="60">
+            </div>
+            <button class="btn-calculate" onclick="calculateZones()">Calculate Heart Rate Zones</button>
+        </div>
+
+        <div class="zones" id="zones"></div>
+
+        <div class="quiz" id="quiz"></div>
+    </div>
+
+    <script>
+        function calculateZones() {
+            const age = parseInt(document.getElementById('age').value) || 0;
+            const rhr = parseInt(document.getElementById('rhr').value) || 0;
+
+            if (age < 10 || age > 120 || rhr < 40 || rhr > 100) {
+                alert('Please enter valid age (10-120) and resting heart rate (40-100)');
+                return;
+            }
+
+            const maxHR = 220 - age;
+            const hrr = maxHR - rhr;
+
+            const zones = [
+                { name: 'Zone 1: Recovery', percent: 0.50, color: '#EF4444', desc: 'Light activity, active recovery' },
+                { name: 'Zone 2: Aerobic Base', percent: 0.60, color: '#F59E0B', desc: 'Steady-state, conversational pace' },
+                { name: 'Zone 3: Tempo', percent: 0.70, color: '#02C39A', desc: 'Moderate intensity, harder breathing' },
+                { name: 'Zone 4: Lactate Threshold', percent: 0.80, color: '#3B82F6', desc: 'High intensity, near max effort' },
+                { name: 'Zone 5: VO2 Max', percent: 0.90, color: '#8B5CF6', desc: 'Maximum intensity, short bursts' }
+            ];
+
+            const zonesContainer = document.getElementById('zones');
+            zonesContainer.innerHTML = '<h3 style="color: #065A82; margin-bottom: 20px; font-size: 18px;">Your Training Heart Rate Zones (Karvonen Method)</h3><p style="margin-bottom: 20px; font-size: 14px; color: #475569;"><strong>Maximum Heart Rate:</strong> ' + maxHR + ' bpm | <strong>Heart Rate Reserve:</strong> ' + hrr + ' bpm</p>';
+
+            zones.forEach(zone => {
+                const lower = Math.round(rhr + (hrr * (zone.percent - 0.10)));
+                const upper = Math.round(rhr + (hrr * zone.percent));
+
+                const zoneDiv = document.createElement('div');
+                zoneDiv.className = 'zone';
+                zoneDiv.innerHTML = `
+                    <h4>${zone.name}</h4>
+                    <p>${zone.desc}</p>
+                    <div class="zone-value">${lower} - ${upper} bpm</div>
+                `;
+                zonesContainer.appendChild(zoneDiv);
+            });
+
+            zonesContainer.classList.add('show');
+            renderQuiz(rhr, hrr);
+        }
+
+        function renderQuiz(rhr, hrr) {
+            const quizContainer = document.getElementById('quiz');
+            quizContainer.innerHTML = '<h3>Training Zone Scenarios</h3>';
+
+            const questions = [
+                {
+                    q: 'A beginner wants to build aerobic base fitness safely. Which zone?',
+                    options: ['Zone 1 (Recovery)', 'Zone 2 (Aerobic Base)', 'Zone 3 (Tempo)', 'Zone 4 (Lactate)', 'Zone 5 (VO2 Max)'],
+                    correct: 1,
+                    feedback: 'Zone 2 is perfect for base building. It\'s sustainable and builds aerobic capacity.'
+                },
+                {
+                    q: 'An athlete recovering from hard training. Which zone?',
+                    options: ['Zone 1 (Recovery)', 'Zone 2 (Aerobic Base)', 'Zone 3 (Tempo)', 'Zone 4 (Lactate)', 'Zone 5 (VO2 Max)'],
+                    correct: 0,
+                    feedback: 'Zone 1 recovery work helps clear lactate and promotes blood flow without stress.'
+                },
+                {
+                    q: 'Improving lactate threshold for a 10K runner. Which zone?',
+                    options: ['Zone 1 (Recovery)', 'Zone 2 (Aerobic Base)', 'Zone 3 (Tempo)', 'Zone 4 (Lactate)', 'Zone 5 (VO2 Max)'],
+                    correct: 3,
+                    feedback: 'Zone 4 training raises your lactate threshold, allowing faster sustained efforts.'
+                },
+                {
+                    q: 'Building VO2 Max with short intense intervals. Which zone?',
+                    options: ['Zone 1 (Recovery)', 'Zone 2 (Aerobic Base)', 'Zone 3 (Tempo)', 'Zone 4 (Lactate)', 'Zone 5 (VO2 Max)'],
+                    correct: 4,
+                    feedback: 'Zone 5 intervals maximize oxygen utilization and build maximum aerobic power.'
+                },
+                {
+                    q: 'Long steady endurance workout. Which zone is most appropriate?',
+                    options: ['Zone 1 (Recovery)', 'Zone 2 (Aerobic Base)', 'Zone 3 (Tempo)', 'Zone 4 (Lactate)', 'Zone 5 (VO2 Max)'],
+                    correct: 2,
+                    feedback: 'Zone 3 tempo work builds both aerobic and anaerobic fitness for endurance events.'
+                }
+            ];
+
+            questions.forEach((question, index) => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'quiz-question';
+
+                let optionsHTML = '';
+                question.options.forEach((option, optIndex) => {
+                    optionsHTML += `
+                        <label class="quiz-option">
+                            <input type="radio" name="q${index}" value="${optIndex}" onchange="checkQuizAnswer(${index}, ${optIndex}, '${question.feedback}', ${question.correct})">
+                            ${option}
+                        </label>
+                    `;
+                });
+
+                qDiv.innerHTML = `
+                    <p>${question.q}</p>
+                    <div class="quiz-options">${optionsHTML}</div>
+                    <div class="quiz-feedback" id="feedback-${index}"></div>
+                `;
+                quizContainer.appendChild(qDiv);
+            });
+
+            quizContainer.classList.add('show');
+        }
+
+        function checkQuizAnswer(index, selected, feedback, correct) {
+            const isCorrect = selected === correct;
+            const feedbackBox = document.getElementById(`feedback-${index}`);
+            feedbackBox.classList.add('show');
+            feedbackBox.classList.toggle('correct', isCorrect);
+            feedbackBox.classList.toggle('incorrect', !isCorrect);
+            feedbackBox.innerHTML = `<strong>${isCorrect ? '✓ Correct!' : '✗ Incorrect'}</strong> ${feedback}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            calculateZones();
+        });
+    </script>
+</body>
+</html>

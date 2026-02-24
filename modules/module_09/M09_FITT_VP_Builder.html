@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FITT-VP Builder - Module 9</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #065A82;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .instructions {
+            color: #1E293B;
+            font-size: 14px;
+            background: #F0F9FF;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #02C39A;
+        }
+
+        .goal-selector {
+            margin-bottom: 30px;
+        }
+
+        .goal-selector label {
+            display: block;
+            color: #065A82;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .goal-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .goal-btn {
+            padding: 12px;
+            border: 2px solid #ccc;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .goal-btn:hover {
+            border-color: #02C39A;
+            background: #F0F9FF;
+        }
+
+        .goal-btn.selected {
+            background: #02C39A;
+            color: white;
+            border-color: #02C39A;
+        }
+
+        .fitt-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .fitt-item {
+            background: #F0F9FF;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+        }
+
+        .fitt-label {
+            color: #065A82;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            font-size: 13px;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        select:hover {
+            border-color: #02C39A;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #02C39A;
+            box-shadow: 0 0 0 3px rgba(2, 195, 154, 0.1);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .check-btn {
+            background: #02C39A;
+            color: white;
+        }
+
+        .check-btn:hover:not(:disabled) {
+            background: #01a879;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(2, 195, 154, 0.3);
+        }
+
+        .check-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .reset-btn {
+            background: #1E293B;
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background: #0f172a;
+            transform: translateY(-2px);
+        }
+
+        .feedback {
+            display: none;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.success {
+            background: #D4EDDA;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .feedback.warning {
+            background: #FFF3CD;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+
+        .feedback.error {
+            background: #F8D7DA;
+            color: #721c24;
+            border-left: 4px solid #f5222d;
+        }
+
+        .feedback-item {
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feedback-item.correct::before {
+            content: "✓";
+            color: #28a745;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .feedback-item.incorrect::before {
+            content: "✗";
+            color: #f5222d;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .summary {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .fitt-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .goal-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>FITT-VP Builder</h1>
+            <p style="color: #666; margin-top: 5px;">Module 9: Exercise Prescription Design</p>
+        </div>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> Select a training goal, then build a complete exercise prescription using FITT-VP (Frequency, Intensity, Time, Type, Volume, Progression). Click "Check Answers" to see how your prescription compares to ACSM guidelines.
+        </div>
+
+        <div class="goal-selector">
+            <label>Select Your Training Goal</label>
+            <div class="goal-buttons">
+                <button class="goal-btn" onclick="selectGoal('cardio')">Cardiovascular Endurance</button>
+                <button class="goal-btn" onclick="selectGoal('strength')">Muscular Strength</button>
+                <button class="goal-btn" onclick="selectGoal('flexibility')">Flexibility</button>
+            </div>
+        </div>
+
+        <div class="fitt-grid">
+            <div class="fitt-item">
+                <label class="fitt-label">Frequency (days/week)</label>
+                <select id="frequency">
+                    <option value="">Select frequency...</option>
+                    <option value="1">1 day per week</option>
+                    <option value="2">2 days per week</option>
+                    <option value="3">3 days per week</option>
+                    <option value="4">4 days per week</option>
+                    <option value="5">5 days per week</option>
+                    <option value="6">6 days per week</option>
+                    <option value="7">7 days per week</option>
+                </select>
+            </div>
+
+            <div class="fitt-item">
+                <label class="fitt-label">Intensity</label>
+                <select id="intensity">
+                    <option value="">Select intensity...</option>
+                    <option value="light">Light (40-50% HRR)</option>
+                    <option value="moderate">Moderate (50-70% HRR)</option>
+                    <option value="vigorous">Vigorous (70-85% HRR)</option>
+                    <option value="very-high">Very High (85%+ HRR)</option>
+                    <option value="rpe-light">Light (RPE 2-3/10)</option>
+                    <option value="rpe-moderate">Moderate (RPE 5-6/10)</option>
+                    <option value="rpe-hard">Hard (RPE 7-8/10)</option>
+                </select>
+            </div>
+
+            <div class="fitt-item">
+                <label class="fitt-label">Time (Duration)</label>
+                <select id="time">
+                    <option value="">Select duration...</option>
+                    <option value="10-15">10-15 minutes</option>
+                    <option value="20-30">20-30 minutes</option>
+                    <option value="30-45">30-45 minutes</option>
+                    <option value="45-60">45-60 minutes</option>
+                    <option value="60+">60+ minutes</option>
+                </select>
+            </div>
+
+            <div class="fitt-item">
+                <label class="fitt-label">Type (Mode)</label>
+                <select id="type">
+                    <option value="">Select type...</option>
+                    <option value="walking">Walking</option>
+                    <option value="jogging">Jogging/Running</option>
+                    <option value="cycling">Cycling</option>
+                    <option value="swimming">Swimming</option>
+                    <option value="rowing">Rowing</option>
+                    <option value="weights">Weight Training</option>
+                    <option value="hiit">HIIT</option>
+                    <option value="stretching">Stretching</option>
+                    <option value="yoga">Yoga</option>
+                    <option value="pilates">Pilates</option>
+                </select>
+            </div>
+
+            <div class="fitt-item">
+                <label class="fitt-label">Volume (Sets × Reps)</label>
+                <select id="volume">
+                    <option value="">Select volume...</option>
+                    <option value="1x10">1 set × 10 reps</option>
+                    <option value="2x10">2 sets × 10 reps</option>
+                    <option value="3x8">3 sets × 8 reps</option>
+                    <option value="3x10">3 sets × 10 reps</option>
+                    <option value="3x12">3 sets × 12 reps</option>
+                    <option value="4x8">4 sets × 8 reps</option>
+                    <option value="continuous">Continuous (no sets)</option>
+                </select>
+            </div>
+
+            <div class="fitt-item">
+                <label class="fitt-label">Progression Plan</label>
+                <select id="progression">
+                    <option value="">Select progression...</option>
+                    <option value="increase-freq">Increase frequency</option>
+                    <option value="increase-int">Increase intensity</option>
+                    <option value="increase-time">Increase duration</option>
+                    <option value="vary-type">Vary exercise type</option>
+                    <option value="increase-vol">Increase volume</option>
+                    <option value="decrease-rest">Decrease rest periods</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="check-btn" id="checkBtn" onclick="checkAnswers()" disabled>Check Answers</button>
+            <button class="reset-btn" onclick="resetActivity()">Reset</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <script>
+        let selectedGoal = null;
+
+        const guidelines = {
+            cardio: {
+                frequency: ['3', '4', '5'],
+                intensity: ['moderate', 'vigorous', 'rpe-moderate', 'rpe-hard'],
+                time: ['20-30', '30-45', '45-60'],
+                type: ['walking', 'jogging', 'cycling', 'swimming', 'rowing', 'hiit'],
+                volume: ['continuous'],
+                progression: ['increase-freq', 'increase-int', 'increase-time']
+            },
+            strength: {
+                frequency: ['2', '3'],
+                intensity: ['vigorous', 'very-high', 'rpe-hard'],
+                time: ['20-30', '30-45'],
+                type: ['weights', 'hiit'],
+                volume: ['2x10', '3x8', '3x10', '3x12', '4x8'],
+                progression: ['increase-vol', 'increase-int', 'vary-type']
+            },
+            flexibility: {
+                frequency: ['5', '6', '7'],
+                intensity: ['light', 'rpe-light', 'rpe-moderate'],
+                time: ['10-15', '20-30'],
+                type: ['stretching', 'yoga', 'pilates'],
+                volume: ['continuous'],
+                progression: ['vary-type', 'increase-time']
+            }
+        };
+
+        function selectGoal(goal) {
+            selectedGoal = goal;
+            document.querySelectorAll('.goal-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+            document.getElementById('checkBtn').disabled = false;
+            document.getElementById('feedback').classList.remove('show');
+        }
+
+        function checkAnswers() {
+            if (!selectedGoal) {
+                alert('Please select a training goal first');
+                return;
+            }
+
+            const frequency = document.getElementById('frequency').value;
+            const intensity = document.getElementById('intensity').value;
+            const time = document.getElementById('time').value;
+            const type = document.getElementById('type').value;
+            const volume = document.getElementById('volume').value;
+            const progression = document.getElementById('progression').value;
+
+            if (!frequency || !intensity || !time || !type || !volume || !progression) {
+                alert('Please fill in all FITT-VP fields');
+                return;
+            }
+
+            const guide = guidelines[selectedGoal];
+            let correct = 0;
+            const feedback = document.getElementById('feedback');
+
+            let html = '<strong>';
+            if (selectedGoal === 'cardio') html += 'Cardiovascular Endurance Prescription Review';
+            else if (selectedGoal === 'strength') html += 'Muscular Strength Prescription Review';
+            else html += 'Flexibility Prescription Review';
+            html += '</strong><br><br>';
+
+            const checks = [
+                { label: 'Frequency', value: frequency, correct: guide.frequency.includes(frequency) },
+                { label: 'Intensity', value: intensity, correct: guide.intensity.includes(intensity) },
+                { label: 'Time', value: time, correct: guide.time.includes(time) },
+                { label: 'Type', value: type, correct: guide.type.includes(type) },
+                { label: 'Volume', value: volume, correct: guide.volume.includes(volume) },
+                { label: 'Progression', value: progression, correct: guide.progression.includes(progression) }
+            ];
+
+            checks.forEach(check => {
+                if (check.correct) {
+                    correct++;
+                    html += `<div class="feedback-item correct"><strong>${check.label}:</strong> ${check.value} ✓ Within guidelines</div>`;
+                } else {
+                    html += `<div class="feedback-item incorrect"><strong>${check.label}:</strong> ${check.value} ✗ Outside recommended range</div>`;
+                }
+            });
+
+            const score = Math.round((correct / 6) * 100);
+            html += `<div class="summary">Score: ${score}% (${correct}/6 recommendations met)</div>`;
+
+            feedback.innerHTML = html;
+            if (correct === 6) {
+                feedback.className = 'feedback show success';
+            } else if (correct >= 4) {
+                feedback.className = 'feedback show warning';
+            } else {
+                feedback.className = 'feedback show error';
+            }
+        }
+
+        function resetActivity() {
+            selectedGoal = null;
+            document.querySelectorAll('.goal-btn').forEach(btn => btn.classList.remove('selected'));
+            document.getElementById('frequency').value = '';
+            document.getElementById('intensity').value = '';
+            document.getElementById('time').value = '';
+            document.getElementById('type').value = '';
+            document.getElementById('volume').value = '';
+            document.getElementById('progression').value = '';
+            document.getElementById('feedback').classList.remove('show');
+            document.getElementById('checkBtn').disabled = true;
+        }
+    </script>
+</body>
+</html>

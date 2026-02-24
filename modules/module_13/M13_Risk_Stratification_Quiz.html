@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Stratification Quiz - Module 13</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #065A82;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .instructions {
+            color: #1E293B;
+            font-size: 14px;
+            background: #F0F9FF;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #02C39A;
+        }
+
+        .risk-guide {
+            background: #F0F9FF;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #065A82;
+            font-size: 13px;
+        }
+
+        .risk-guide strong {
+            display: block;
+            color: #065A82;
+            margin-bottom: 8px;
+            margin-top: 8px;
+        }
+
+        .risk-guide strong:first-of-type {
+            margin-top: 0;
+        }
+
+        .progress {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #02C39A;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .client-block {
+            background: #F0F9FF;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #065A82;
+        }
+
+        .client-number {
+            font-weight: 600;
+            color: #065A82;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .health-info {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .info-row {
+            margin-bottom: 8px;
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 10px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #065A82;
+        }
+
+        .question-section {
+            margin-bottom: 12px;
+        }
+
+        .question {
+            font-weight: 600;
+            color: #065A82;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 0.3px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 13px;
+        }
+
+        .option-label:hover {
+            background: #E0F2FE;
+        }
+
+        .option-label input[type="radio"] {
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .check-btn {
+            background: #02C39A;
+            color: white;
+        }
+
+        .check-btn:hover {
+            background: #01a879;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(2, 195, 154, 0.3);
+        }
+
+        .reset-btn {
+            background: #1E293B;
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background: #0f172a;
+            transform: translateY(-2px);
+        }
+
+        .feedback {
+            display: none;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            font-size: 14px;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.success {
+            background: #D4EDDA;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .feedback.error {
+            background: #F8D7DA;
+            color: #721c24;
+            border-left: 4px solid #f5222d;
+        }
+
+        .feedback-item {
+            margin: 12px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 6px;
+            border-left: 3px solid;
+        }
+
+        .feedback-item.correct {
+            border-color: #28a745;
+        }
+
+        .feedback-item.incorrect {
+            border-color: #f5222d;
+        }
+
+        .feedback-detail {
+            font-size: 12px;
+            margin-top: 5px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .score {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .info-row {
+                grid-template-columns: 100px 1fr;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CVD Risk Stratification Quiz</h1>
+            <p style="color: #666; margin-top: 5px;">Module 13: Health Screening & Risk Assessment</p>
+        </div>
+
+        <div class="risk-guide">
+            <strong>CVD Risk Factors (per ACSM):</strong>
+            <div>Age (men ≥45, women ≥55), Family history of MI/stroke/sudden death before age 55/65, Smoking, Sedentary lifestyle, Obesity (BMI ≥30), Hypertension, Dyslipidemia, Prediabetes/Diabetes</div>
+            <strong>Risk Classification:</strong>
+            <div>Low Risk: 0-1 risk factors | Moderate Risk: 2+ risk factors | High Risk: 1+ signs/symptoms of CVD or known disease</div>
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> For each client profile, identify CVD risk factors, count them, and classify risk level. Answer all 4 clients, then click "Check Answers".
+        </div>
+
+        <form id="quizForm">
+            <!-- Client 1: Low Risk -->
+            <div class="client-block">
+                <div class="client-number">Client 1: Sarah</div>
+                <div class="health-info">
+                    <div class="info-row"><div class="info-label">Age:</div> <div>28-year-old female</div></div>
+                    <div class="info-row"><div class="info-label">Lifestyle:</div> <div>Exercises 4x/week, no smoking</div></div>
+                    <div class="info-row"><div class="info-label">Health:</div> <div>Normal BP (120/80), BMI 23, no family history of CVD, no symptoms</div></div>
+                </div>
+                <div class="question-section">
+                    <div class="question">Risk Factors Count:</div>
+                    <div class="options">
+                        <label class="option-label"><input type="radio" name="c1-count" value="0"> 0 risk factors</label>
+                        <label class="option-label"><input type="radio" name="c1-count" value="1"> 1 risk factor</label>
+                        <label class="option-label"><input type="radio" name="c1-count" value="2"> 2 risk factors</label>
+                        <label class="option-label"><input type="radio" name="c1-count" value="3+"> 3+ risk factors</label>
+                    </div>
+                </div>
+                <div class="question-section">
+                    <div class="question">CVD Risk Classification:</div>
+                    <div class="options">
+                        <label class="option-label"><input type="radio" name="c1-risk" value="low"> Low Risk</label>
+                        <label class="option-label"><input type="radio" name="c1-risk" value="moderate"> Moderate Risk</label>
+                        <label class="option-label"><input type="radio" name="c1-risk" value="high"> High Risk</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Client 2: Moderate Risk -->
+            <div class="client-block">
+                <div class="client-number">Client 2: James</div>
+                <div class="health-info">
+                    <div class="info-row"><div class="info-label">Age:</div> <div>52-year-old male</div></div>
+                    <div class="info-row"><div class="info-label">Lifestyle:</div> <div>Sedentary (desk job), former smoker (quit 2 years ago)</div></div>
+                    <div class="info-row"><div class="info-label">Health:</div> <div>BP 138/86 (prehypertension), BMI 28, Total Cholesterol 240, No family history, No symptoms</div></div>
+                </div>
+                <div class="question-section">
+                    <div class="question">Risk Factors Count:</div>
+                    <div class="options">
+                        <label class="option-label"><input type="radio" name="c2-count" value="0"> 0 risk factors</label>
+                        <label class="option-label"><input type="radio" name="c2-count" value="1"> 1 risk factor</label>
+                        <label class="option-label"><input type="radio" name="c2-count" value="2"> 2 risk factors</label>
+                        <label class="option-label"><input type="radio" name="c2-count" value="3+"> 3+ risk factors</label>
+                    </div>
+                </div>
+                <div class="question-section">
+                    <div class="question">CVD Risk Classification:</div>
+                    <div class="options">
+                        <label class="option-label"><input type="radio" name="c2-risk" value="low"> Low Risk</label>
+                        <label class="option-label"><input type="radio" name="c2-risk" value="moderate"> Moderate Risk</label>
+                        <label class="option-label"><input type="radio" name="c2-risk" value="high"> High Risk</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Client 3: High Risk (Multiple Factors) -->
+            <div class="client-block">
+                <div class="client-number">Client 3: Robert</div>
+                <div class="health-info">
+                    <div class="info-row"><div class="info-label">Age:</div> <div>58-year-old male</div></div>
+                    <div class="info-row"><div class="info-label">Lifestyle:</div> <div>Current smoker, sedentary, very high stress job</div></div>
+                    <div class="info-row"><div class="info-label">Health:</div> <div>BP 148/92 (hypertension), BMI 32 (obese), Total Cholesterol 280, Family history of MI in father at age 56, No current symptoms</div></div>
+                </div>
+                <div class="question-section">
+                    <div class="question">Risk Factors Count:</div>
+                    <div class="options">
+                        <label class="option-label"><input type="radio" name="c3-count" value="0"> 0 risk factors</label>
+                        <label class="option-label"><input type="radio" name="c3-count" value="1"> 1 risk factor</label>
+                        <label class="option-label"><input type="radio" name="c3-count" value="2"> 2 risk factors</label>
+                        <label class="option-label"><input type="radio" name="c3-count" value="3+"> 3+ risk factors</label>
+                    </div>
+                </div>
+                <div class="question-section">
+                    <div class="question">CVD Risk Classification:</div>
+                    <div class="options">
+                        <label class="option-label"><input type="radio" name="c3-risk" value="low"> Low Risk</label>
+                        <label class="option-label"><input type="radio" name="c3-risk" value="moderate"> Moderate Risk</label>
+                        <label class="option-label"><input type="radio" name="c3-risk" value="high"> High Risk</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Client 4: High Risk (Known Disease) -->
+            <div class="client-block">
+                <div class="client-number">Client 4: Patricia</div>
+                <div class="health-info">
+                    <div class="info-row"><div class="info-label">Age:</div> <div>64-year-old female</div></div>
+                    <div class="info-row"><div class="info-label">Lifestyle:</div> <div>Walks regularly, non-smoker</div></div>
+                    <div class="info-row"><div class="info-label">Health:</div> <div>Known Type 2 Diabetes (controlled), history of stroke 5 years ago, BP 132/84, No current chest pain</div></div>
+                </div>
+                <div class="question-section">
+                    <div class="question">Risk Factors Count:</div>
+                    <div class="options">
+                        <label class="option-label"><input type="radio" name="c4-count" value="0"> 0 risk factors</label>
+                        <label class="option-label"><input type="radio" name="c4-count" value="1"> 1 risk factor</label>
+                        <label class="option-label"><input type="radio" name="c4-count" value="2"> 2 risk factors</label>
+                        <label class="option-label"><input type="radio" name="c4-count" value="3+"> 3+ risk factors</label>
+                    </div>
+                </div>
+                <div class="question-section">
+                    <div class="question">CVD Risk Classification:</div>
+                    <div class="options">
+                        <label class="option-label"><input type="radio" name="c4-risk" value="low"> Low Risk</label>
+                        <label class="option-label"><input type="radio" name="c4-risk" value="moderate"> Moderate Risk</label>
+                        <label class="option-label"><input type="radio" name="c4-risk" value="high"> High Risk (Known Disease/Symptoms)</label>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="buttons">
+            <button class="check-btn" onclick="checkAnswers()">Check Answers</button>
+            <button class="reset-btn" onclick="resetActivity()">Reset</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <script>
+        const answers = {
+            c1: { count: '0', risk: 'low' },
+            c2: { count: '3+', risk: 'moderate' },
+            c3: { count: '3+', risk: 'high' },
+            c4: { count: '3+', risk: 'high' }
+        };
+
+        const explanations = {
+            c1: 'Sarah has no CVD risk factors. She is young, active, healthy weight, normal BP, and no family history. Classification: Low Risk.',
+            c2: 'James has multiple risk factors: Age ≥45, sedentary lifestyle, prehypertension, elevated cholesterol, and former smoking status. That\'s 3+ factors. Classification: Moderate Risk (2+ factors, no known disease).',
+            c3: 'Robert has 5+ risk factors: Age ≥45, current smoking, sedentary, hypertension, obesity, hyperlipidemia, and family history of MI. Classification: High Risk (multiple risk factors and family history of early CVD).',
+            c4: 'Patricia has known disease (stroke history, diabetes). Per ACSM guidelines, any known cardiovascular disease or disease symptom automatically classifies as High Risk, regardless of other risk factor count.'
+        };
+
+        function checkAnswers() {
+            const form = document.getElementById('quizForm');
+            let correct = 0;
+            let details = '';
+
+            for (let i = 1; i <= 4; i++) {
+                const countInput = form.querySelector(`input[name="c${i}-count"]:checked`);
+                const riskInput = form.querySelector(`input[name="c${i}-risk"]:checked`);
+
+                if (!countInput || !riskInput) {
+                    alert(`Please answer both questions for Client ${i}`);
+                    return;
+                }
+
+                const countCorrect = countInput.value === answers[`c${i}`].count;
+                const riskCorrect = riskInput.value === answers[`c${i}`].risk;
+                const clientCorrect = countCorrect && riskCorrect;
+
+                if (clientCorrect) correct++;
+
+                details += `<div class="feedback-item ${clientCorrect ? 'correct' : 'incorrect'}">
+                    <strong>Client ${i}: ${clientCorrect ? '✓ Correct' : '✗ Incorrect'}</strong>
+                    <div class="feedback-detail">
+                        ${!countCorrect ? `<div>Risk Factor Count: You said "${countInput.value}" but correct answer is "${answers[`c${i}`].count}"</div>` : ''}
+                        ${!riskCorrect ? `<div>Classification: You said "${riskInput.value}" but correct answer is "${answers[`c${i}`].risk}"</div>` : ''}
+                        <div>${explanations[`c${i}`]}</div>
+                    </div>
+                </div>`;
+            }
+
+            const score = Math.round((correct / 4) * 100);
+            const feedback = document.getElementById('feedback');
+
+            feedback.innerHTML = details + `<div class="score">Score: ${score}% (${correct}/4 clients correctly assessed)</div>`;
+
+            if (correct === 4) {
+                feedback.className = 'feedback show success';
+            } else {
+                feedback.className = 'feedback show error';
+            }
+
+            document.getElementById('progressBar').style.width = '100%';
+        }
+
+        function resetActivity() {
+            document.getElementById('quizForm').reset();
+            document.getElementById('feedback').classList.remove('show');
+            document.getElementById('progressBar').style.width = '0%';
+        }
+    </script>
+</body>
+</html>

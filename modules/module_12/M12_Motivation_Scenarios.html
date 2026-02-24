@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motivation Scenarios - Module 12</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #065A82;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .instructions {
+            color: #1E293B;
+            font-size: 14px;
+            background: #F0F9FF;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #02C39A;
+        }
+
+        .progress {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #02C39A;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .scenario-block {
+            background: #F0F9FF;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #065A82;
+        }
+
+        .scenario-number {
+            font-weight: 600;
+            color: #065A82;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .client-profile {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 3px solid #02C39A;
+            margin-bottom: 15px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .question-section {
+            margin-bottom: 12px;
+        }
+
+        .question {
+            font-weight: 600;
+            color: #065A82;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 0.3px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 13px;
+        }
+
+        .option-label:hover {
+            background: #E0F2FE;
+        }
+
+        .option-label input[type="radio"],
+        .option-label input[type="select"] {
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            font-size: 13px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .check-btn {
+            background: #02C39A;
+            color: white;
+        }
+
+        .check-btn:hover {
+            background: #01a879;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(2, 195, 154, 0.3);
+        }
+
+        .reset-btn {
+            background: #1E293B;
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background: #0f172a;
+            transform: translateY(-2px);
+        }
+
+        .feedback {
+            display: none;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            font-size: 14px;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.success {
+            background: #D4EDDA;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .feedback.error {
+            background: #F8D7DA;
+            color: #721c24;
+            border-left: 4px solid #f5222d;
+        }
+
+        .feedback-item {
+            margin: 12px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 6px;
+            border-left: 3px solid;
+        }
+
+        .feedback-item.correct {
+            border-color: #28a745;
+        }
+
+        .feedback-item.incorrect {
+            border-color: #f5222d;
+        }
+
+        .feedback-detail {
+            font-size: 12px;
+            margin-top: 5px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .score {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Motivation Scenarios Analysis</h1>
+            <p style="color: #666; margin-top: 5px;">Module 12: Identifying Barriers & Designing Interventions</p>
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> Read each client profile. For each, identify the primary motivational barrier, select the best theoretical explanation, and choose an appropriate intervention. Answer all 6 scenarios, then click "Check Answers".
+        </div>
+
+        <form id="scenarioForm">
+            <!-- Scenario 1 -->
+            <div class="scenario-block">
+                <div class="scenario-number">Scenario 1: Marcus</div>
+                <div class="client-profile">Marcus is a 42-year-old who was exercising 4x/week for 6 months. He recently experienced a major work promotion with very long hours. He says "I just can't find the time anymore. I feel like I'm failing at fitness."</div>
+
+                <div class="question-section">
+                    <div class="question">Primary Barrier:</div>
+                    <div class="options">
+                        <label class="option-label"><input type="radio" name="s1-barrier" value="time"> Time constraints / Schedule conflict</label>
+                        <label class="option-label"><input type="radio" name="s1-barrier" value="ability"> Lack of ability or skill</label>
+                        <label class="option-label"><input type="radio" name="s1-barrier" value="motivation"> Lack of interest/motivation</label>
+                        <label class="option-label"><input type="radio" name="s1-barrier" value="access"> Access to facilities</label>
+                    </div>
+                </div>
+
+                <div class="question-section">
+                    <div class="question">Best Theory:</div>
+                    <select name="s1-theory">
+                        <option value="">Select theory...</option>
+                        <option value="sdt">Self-Determination Theory (autonomy/competence support)</option>
+                        <option value="ttm">Transtheoretical Model (stage of change)</option>
+                        <option value="tpb">Theory of Planned Behavior (intention/control)</option>
+                        <option value="sco">Social Cognitive Theory (self-efficacy)</option>
+                    </select>
+                </div>
+
+                <div class="question-section">
+                    <div class="question">Best Intervention:</div>
+                    <div class="options">
+                        <label class="option-label"><input type="radio" name="s1-intervention" value="flexibility"> Redesign program with flexible, shorter sessions (15-20 min)</label>
+                        <label class="option-label"><input type="radio" name="s1-intervention" value="increase"> Increase workout intensity and duration</label>
+                        <label class="option-label"><input type="radio" name="s1-intervention" value="group"> Enroll in structured group classes</label>
+                        <label class="option-label"><input type="radio" name="s1-intervention" value="break"> Recommend taking a full break from exercise</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scenario 2 -->
+            <div class="scenario-block">
+                <div class="scenario-number">Scenario 2: Jasmine</div>
+                <div class="client-profile">Jasmine is a 28-year-old who recently started exercising 2 weeks ago. She says "I'm probably not fit enough to be here. Everyone else looks so much stronger." She avoids group classes despite interest.</div>
+
+                <div class="question-section">
+                    <div class="question">Primary Barrier:</div>
+                    <div class="options">
+                        <label class="option-label"><input type="radio" name="s2-barrier" value="efficacy"> Low self-efficacy / Confidence</label>
+                        <label class="option-label"><input type="radio" name="s2-barrier" value="social"> Social anxiety / Embarrassment</label>
+                        <label class="option-label"><input type="radio" name="s2-barrier" value="knowledge"> Lack of exercise knowledge</label>
+                        <label class="option-label"><input type="radio" name="s2-barrier" value="time"> Time availability</label>
+                    </div>
+                </div>
+
+                <div class="question-section">
+                    <div class="question">Best Theory:</div>
+                    <select name="s2-theory">
+                        <option value="">Select theory...</option>
+                        <option value="sco">Social Cognitive Theory (self-efficacy beliefs)</option>
+                        <option value="sdt">Self-Determination Theory (competence need)</option>
+                        <option value="ttm">Transtheoretical Model (readiness)</option>
+                        <option value="health-belief">Health Belief Model (susceptibility)</option>
+                    </select>
+                </div>
+
+                <div class="question-section">
+                    <div class="question">Best Intervention:</div>
+                    <div class="options">
+                        <label class="option-label"><input type="radio" name="s2-intervention" value="private"> Offer private training sessions initially; build confidence; then group</label>
+                        <label class="option-label"><input type="radio" name="s2-intervention" value="beginner"> Beginner-specific group classes with supportive community</label>
+                        <label class="option-label"><input type="radio" name="s2-intervention" value="online"> Recommend solo online workouts to build skills privately</label>
+                        <label class="option-label"><input type="radio" name="s2-intervention" value="challenge"> Challenge her with advanced programming to build strength</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scenario 3 -->
+            <div class="scenario-block">
+                <div class="scenario-number">Scenario 3: David</div>
+                <div class="client-profile">David is a 55-year-old who has maintained exercise 5x/week for 3 years. However, recently he's lost motivation. He says "I've hit a plateau. My body isn't changing anymore. What's the point?"</div>
+
+                <div class="question-section">
+                    <div class="question">Primary Barrier:</div>
+                    <div class="options">
+                        <label class="option-label"><input type="radio" name="s3-barrier" value="plateau"> Plateaued results / Lack of visible progress</label>
+                        <label class="option-label"><input type="radio" name="s3-barrier" value="burnout"> Burnout / Boredom with current program</label>
+                        <label class="option-label"><input type="radio" name="s3-barrier" value="goals"> Unclear or achieved goals</label>
+                        <label class="option-label"><input type="radio" name="s3-barrier" value="all"> All of the above</label>
+                    </div>
+                </div>
+
+                <div class="question-section">
+                    <div class="question">Best Theory:</div>
+                    <select name="s3-theory">
+                        <option value="">Select theory...</option>
+                        <option value="goal">Goal Setting Theory (need for meaningful goals)</option>
+                        <option value="sdt">Self-Determination Theory (autonomy/variety)</option>
+                        <option value="sco">Social Cognitive Theory (outcome expectations)</option>
+                        <option value="ttm">Transtheoretical Model (maintenance challenges)</option>
+                    </select>
+                </div>
+
+                <div class="question-section">
+                    <div class="question">Best Intervention:</div>
+                    <div class="options">
+                        <label class="option-label"><input type="radio" name="s3-intervention" value="goal-reset"> Set new, meaningful goals (performance not just appearance)</label>
+                        <label class="option-label"><input type="radio" name="s3-intervention" value="variety"> Introduce new exercises, training methods, or classes</label>
+                        <label class="option-label"><input type="radio" name="s3-intervention" value="both"> Both new goals AND program variety</label>
+                        <label class="option-label"><input type="radio" name="s3-intervention" value="rest"> Recommend a deload week and then return</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scenario 4 -->
+            <div class="scenario-block">
+                <div class="scenario-number">Scenario 4: Elena</div>
+                <div class="client-profile">Elena is a 35-year-old who says "I want to be healthier for my kids, but my family doesn't support it. They make fun of me at the gym. I feel alone in this." She attended 1 session then quit.</div>
+
+                <div class="question-section">
+                    <div class="question">Primary Barrier:</div>
+                    <div class="options">
+                        <label class="option-label"><input type="radio" name="s4-barrier" value="social"> Lack of social support / Family negativity</label>
+                        <label class="option-label"><input type="radio" name="s4-barrier" value="relatedness"> Unmet need for belonging and community</label>
+                        <label class="option-label"><input type="radio" name="s4-barrier" value="intrinsic"> External motivation only (should be intrinsic)</label>
+                        <label class="option-label"><input type="radio" name="s4-barrier" value="all"> All of the above</label>
+                    </div>
+                </div>
+
+                <div class="question-section">
+                    <div class="question">Best Theory:</div>
+                    <select name="s4-theory">
+                        <option value="">Select theory...</option>
+                        <option value="sdt">Self-Determination Theory (relatedness need)</option>
+                        <option value="sco">Social Cognitive Theory (social modeling/support)</option>
+                        <option value="tpb">Theory of Planned Behavior (social norms)</option>
+                        <option value="health">Health Belief Model (susceptibility/benefits)</option>
+                    </select>
+                </div>
+
+                <div class="question-section">
+                    <div class="question">Best Intervention:</div>
+                    <div class="options">
+                        <label class="option-label"><input type="radio" name="s4-intervention" value="community"> Connect her to supportive fitness community/group classes</label>
+                        <label class="option-label"><input type="radio" name="s4-intervention" value="friend"> Encourage bringing a supportive friend to sessions</label>
+                        <label class="option-label"><input type="radio" name="s4-intervention" value="both"> Both community support AND friend/accountability partner</label>
+                        <label class="option-label"><input type="radio" name="s4-intervention" value="solo"> Design solo home workouts to avoid judgment</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scenario 5 -->
+            <div class="scenario-block">
+                <div class="scenario-number">Scenario 5: James</div>
+                <div class="client-profile">James is a 50-year-old recovering from a heart attack 3 months ago. Doctor cleared him for exercise. He says "I know exercise is important, but I'm terrified of pushing too hard and having another attack. I'm afraid."</div>
+
+                <div class="question-section">
+                    <div class="question">Primary Barrier:</div>
+                    <div class="options">
+                        <label class="option-label"><input type="radio" name="s5-barrier" value="fear"> Fear / Health anxiety about exercise</label>
+                        <label class="option-label"><input type="radio" name="s5-barrier" value="efficacy"> Low self-efficacy for safe exercise</label>
+                        <label class="option-label"><input type="radio" name="s5-barrier" value="knowledge"> Lack of understanding of safe exercise</label>
+                        <label class="option-label"><input type="radio" name="s5-barrier" value="medical"> Medical limitations / Physical restrictions</label>
+                    </div>
+                </div>
+
+                <div class="question-section">
+                    <div class="question">Best Theory:</div>
+                    <select name="s5-theory">
+                        <option value="">Select theory...</option>
+                        <option value="health-belief">Health Belief Model (perceived susceptibility/severity)</option>
+                        <option value="sco">Social Cognitive Theory (self-efficacy/outcome expectations)</option>
+                        <option value="sdt">Self-Determination Theory (competence need)</option>
+                        <option value="ttm">Transtheoretical Model (readiness)</option>
+                    </select>
+                </div>
+
+                <div class="question-section">
+                    <div class="question">Best Intervention:</div>
+                    <div class="options">
+                        <label class="option-label"><input type="radio" name="s5-intervention" value="education"> Education about cardiac rehab protocols and safety limits</label>
+                        <label class="option-label"><input type="radio" name="s5-intervention" value="supervised"> Supervised cardiac rehab program with heart rate monitoring</label>
+                        <label class="option-label"><input type="radio" name="s5-intervention" value="both"> Both education AND supervised rehab program</label>
+                        <label class="option-label"><input type="radio" name="s5-intervention" value="light"> Light walking only, nothing structured</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scenario 6 -->
+            <div class="scenario-block">
+                <div class="scenario-number">Scenario 6: Sofia</div>
+                <div class="client-profile">Sofia is a 22-year-old college student. She exercises sporadically. She says "Fitness isn't really important to me right now. I'm focused on school and dating. Maybe later when I'm older." She's in precontemplation.</div>
+
+                <div class="question-section">
+                    <div class="question">Primary Barrier:</div>
+                    <div class="options">
+                        <label class="option-label"><input type="radio" name="s6-barrier" value="priority"> Low priority relative to other life demands</label>
+                        <label class="option-label"><input type="radio" name="s6-barrier" value="readiness"> Not ready for behavior change (precontemplation)</label>
+                        <label class="option-label"><input type="radio" name="s6-barrier" value="awareness"> Lacks awareness of health benefits</label>
+                        <label class="option-label"><input type="radio" name="s6-barrier" value="all"> All of the above</label>
+                    </div>
+                </div>
+
+                <div class="question-section">
+                    <div class="question">Best Theory:</div>
+                    <select name="s6-theory">
+                        <option value="">Select theory...</option>
+                        <option value="ttm">Transtheoretical Model (stage-matched interventions)</option>
+                        <option value="health-belief">Health Belief Model (perceived benefits)</option>
+                        <option value="sco">Social Cognitive Theory (outcome expectations)</option>
+                        <option value="goal">Goal Setting Theory (personal relevance)</option>
+                    </select>
+                </div>
+
+                <div class="question-section">
+                    <div class="question">Best Intervention:</div>
+                    <div class="options">
+                        <label class="option-label"><input type="radio" name="s6-intervention" value="awareness"> Increase awareness of health, stress relief, confidence benefits for her age</label>
+                        <label class="option-label"><input type="radio" name="s6-intervention" value="social"> Frame fitness as social activity with friends (social connection)</label>
+                        <label class="option-label"><input type="radio" name="s6-intervention" value="both"> Both awareness building AND social fitness options</label>
+                        <label class="option-label"><input type="radio" name="s6-intervention" value="waiting"> Wait until she expresses interest; precontemplators not ready</label>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="buttons">
+            <button class="check-btn" onclick="checkAnswers()">Check Answers</button>
+            <button class="reset-btn" onclick="resetActivity()">Reset</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <script>
+        const answers = {
+            s1: { barrier: 'time', theory: 'tpb', intervention: 'flexibility' },
+            s2: { barrier: 'efficacy', theory: 'sco', intervention: 'private' },
+            s3: { barrier: 'all', theory: 'goal', intervention: 'both' },
+            s4: { barrier: 'all', theory: 'sdt', intervention: 'both' },
+            s5: { barrier: 'fear', theory: 'health-belief', intervention: 'both' },
+            s6: { barrier: 'all', theory: 'ttm', intervention: 'both' }
+        };
+
+        function checkAnswers() {
+            const form = document.getElementById('scenarioForm');
+            let correct = 0;
+            let details = '';
+
+            for (let i = 1; i <= 6; i++) {
+                const barrierInput = form.querySelector(`input[name="s${i}-barrier"]:checked`);
+                const theorySelect = form.querySelector(`select[name="s${i}-theory"]`);
+                const interventionInput = form.querySelector(`input[name="s${i}-intervention"]:checked`);
+
+                if (!barrierInput || !theorySelect.value || !interventionInput) {
+                    alert(`Please answer all parts of Scenario ${i}`);
+                    return;
+                }
+
+                const barrierCorrect = barrierInput.value === answers[`s${i}`].barrier;
+                const theoryCorrect = theorySelect.value === answers[`s${i}`].theory;
+                const interventionCorrect = interventionInput.value === answers[`s${i}`].intervention;
+
+                const scenarioCorrect = barrierCorrect && theoryCorrect && interventionCorrect;
+                if (scenarioCorrect) correct++;
+
+                details += `<div class="feedback-item ${scenarioCorrect ? 'correct' : 'incorrect'}">
+                    <strong>Scenario ${i}: ${scenarioCorrect ? '✓ Correct' : '✗ Incorrect'}</strong>`;
+
+                if (!scenarioCorrect) {
+                    let incorrectParts = [];
+                    if (!barrierCorrect) incorrectParts.push(`Barrier (you: ${barrierInput.value})`);
+                    if (!theoryCorrect) incorrectParts.push(`Theory (you: ${theorySelect.value})`);
+                    if (!interventionCorrect) incorrectParts.push(`Intervention (you: ${interventionInput.value})`);
+
+                    details += `<div class="feedback-detail">Incorrect: ${incorrectParts.join(', ')}</div>`;
+                }
+                details += `</div>`;
+            }
+
+            const score = Math.round((correct / 6) * 100);
+            const feedback = document.getElementById('feedback');
+
+            feedback.innerHTML = details + `<div class="score">Score: ${score}% (${correct}/6 scenarios correct)</div>`;
+
+            if (correct === 6) {
+                feedback.className = 'feedback show success';
+            } else {
+                feedback.className = 'feedback show error';
+            }
+
+            document.getElementById('progressBar').style.width = '100%';
+        }
+
+        function resetActivity() {
+            document.getElementById('scenarioForm').reset();
+            document.getElementById('feedback').classList.remove('show');
+            document.getElementById('progressBar').style.width = '0%';
+        }
+    </script>
+</body>
+</html>

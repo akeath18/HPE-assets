@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PETE 346 Module 16 - GACE Cumulative Review</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            padding: 40px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #1E293B;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 1.1em;
+        }
+
+        .instructions-box {
+            background: #F0F9FF;
+            border-left: 4px solid #02C39A;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: #1E293B;
+        }
+
+        .instructions-box strong {
+            color: #065A82;
+        }
+
+        .progress-section {
+            margin-bottom: 30px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            color: #1E293B;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: #02C39A;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .quiz-section {
+            display: none;
+        }
+
+        .quiz-section.active {
+            display: block;
+        }
+
+        .question-container {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+            gap: 15px;
+        }
+
+        .question-number {
+            color: #065A82;
+            font-weight: 700;
+            min-width: 40px;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .category-badge.applied-sciences {
+            background: #dbeafe;
+            color: #0369a1;
+        }
+
+        .category-badge.motor-learning {
+            background: #fce7f3;
+            color: #9f1239;
+        }
+
+        .category-badge.motor-development {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .category-badge.fitness-training {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .question-text {
+            color: #1E293B;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            border-color: #065A82;
+            background: #f0f9ff;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 12px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            color: #1E293B;
+        }
+
+        .option.correct {
+            border-color: #059669;
+            background: #ecfdf5;
+        }
+
+        .option.incorrect {
+            border-color: #dc2626;
+            background: #fef2f2;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: #ecfdf5;
+            border-left: 4px solid #059669;
+            color: #065f46;
+        }
+
+        .feedback.incorrect {
+            background: #fef2f2;
+            border-left: 4px solid #dc2626;
+            color: #7f1d1d;
+        }
+
+        .feedback-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: #065A82;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #043f56;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(6, 90, 130, 0.3);
+        }
+
+        .btn-accent {
+            background: #02C39A;
+            color: white;
+        }
+
+        .btn-accent:hover {
+            background: #01a876;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(2, 195, 154, 0.3);
+        }
+
+        .btn-secondary {
+            background: #64748b;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        .results-section {
+            display: none;
+            text-align: center;
+        }
+
+        .results-section.show {
+            display: block;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .score-display .score-number {
+            font-size: 3.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .score-display .score-text {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .performance-message {
+            font-size: 1.3em;
+            color: #1E293B;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .category-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .category-card {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .category-card-title {
+            font-weight: 600;
+            color: #1E293B;
+            margin-bottom: 10px;
+            font-size: 1.05em;
+        }
+
+        .category-card-score {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #065A82;
+            margin-bottom: 12px;
+        }
+
+        .category-card-bar {
+            background: #e0e0e0;
+            height: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .category-card-fill {
+            height: 100%;
+            background: #02C39A;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .category-card.applied-sciences .category-card-fill {
+            background: #0369a1;
+        }
+
+        .category-card.motor-learning .category-card-fill {
+            background: #9f1239;
+        }
+
+        .category-card.motor-development .category-card-fill {
+            background: #065f46;
+        }
+
+        .category-card.fitness-training .category-card-fill {
+            background: #92400e;
+        }
+
+        .feedback-summary {
+            background: #F0F9FF;
+            border-left: 4px solid #02C39A;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: left;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 30px;
+        }
+
+        .feedback-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #d0f0e8;
+        }
+
+        .feedback-item:last-child {
+            border-bottom: none;
+        }
+
+        .feedback-item-question {
+            font-weight: 600;
+            color: #065A82;
+            margin-bottom: 5px;
+            font-size: 0.95em;
+        }
+
+        .feedback-item-answer {
+            color: #475569;
+            font-size: 0.9em;
+        }
+
+        .feedback-item-answer.correct {
+            color: #059669;
+        }
+
+        .feedback-item-answer.incorrect {
+            color: #dc2626;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .question-header {
+                flex-direction: column;
+            }
+
+            .category-results {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .score-display .score-number {
+                font-size: 2.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>GACE Cumulative Review</h1>
+            <p>PETE 346 Module 16 - 20 Question Comprehensive Quiz</p>
+        </div>
+
+        <div class="instructions-box">
+            <strong>Instructions:</strong> Answer all 20 questions covering four GACE content areas. Each question covers a specific competency. Select your answer for each question and click "Submit Answer" to receive immediate feedback. Review your results at the end to identify areas for further study.
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-label">
+                <span>Overall Progress</span>
+                <span id="progress-text">0/20</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+
+        <div class="quiz-section active" id="quiz-section">
+            <!-- Questions will be inserted here by JavaScript -->
+        </div>
+
+        <div class="results-section" id="results-section">
+            <div class="score-display">
+                <div class="score-number" id="final-score">0/20</div>
+                <div class="score-text">Overall Score</div>
+            </div>
+
+            <div class="performance-message" id="performance-message"></div>
+
+            <div class="category-results" id="category-results">
+                <!-- Category cards will be inserted here -->
+            </div>
+
+            <div class="feedback-summary" id="feedback-summary">
+                <!-- Detailed feedback will be inserted here -->
+            </div>
+
+            <div class="button-group">
+                <button class="btn-primary" onclick="location.reload()">Start Over</button>
+            </div>
+        </div>
+
+        <div class="button-group" id="button-group">
+            <button class="btn-primary" onclick="previousQuestion()">Previous</button>
+            <button class="btn-accent" onclick="submitAnswer()">Submit Answer</button>
+            <button class="btn-primary" onclick="nextQuestion()">Next</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                id: 1,
+                category: 'Applied Sciences',
+                categoryClass: 'applied-sciences',
+                question: 'Which muscle acts as the primary agonist during a bicep curl?',
+                options: [
+                    { text: 'Triceps brachii', correct: false },
+                    { text: 'Biceps brachii', correct: true },
+                    { text: 'Brachioradialis', correct: false },
+                    { text: 'Deltoid', correct: false }
+                ],
+                feedback: 'The biceps brachii is the primary agonist (working muscle) during a bicep curl. The triceps brachii would be the antagonist, opposing the movement.'
+            },
+            {
+                id: 2,
+                category: 'Applied Sciences',
+                categoryClass: 'applied-sciences',
+                question: 'During a squat, movement occurs primarily in which anatomical plane?',
+                options: [
+                    { text: 'Frontal', correct: false },
+                    { text: 'Transverse', correct: false },
+                    { text: 'Sagittal', correct: true },
+                    { text: 'Oblique', correct: false }
+                ],
+                feedback: 'The sagittal plane divides the body into left and right halves. Squats primarily involve flexion and extension movements that occur in the sagittal plane.'
+            },
+            {
+                id: 3,
+                category: 'Applied Sciences',
+                categoryClass: 'applied-sciences',
+                question: 'Which energy system is the primary source of ATP during a 400-meter sprint?',
+                options: [
+                    { text: 'ATP-PC system', correct: false },
+                    { text: 'Glycolytic/anaerobic system', correct: true },
+                    { text: 'Oxidative/aerobic system', correct: false },
+                    { text: 'All systems equally', correct: false }
+                ],
+                feedback: 'A 400-meter sprint lasts approximately 45-60 seconds, placing it primarily in the anaerobic glycolytic system energy zone. The ATP-PC system is exhausted within 10 seconds, while aerobic metabolism becomes significant only in longer durations.'
+            },
+            {
+                id: 4,
+                category: 'Applied Sciences',
+                categoryClass: 'applied-sciences',
+                question: 'What is the recommended flexibility training frequency according to ACSM?',
+                options: [
+                    { text: '1 day/week', correct: false },
+                    { text: '2-3 days/week', correct: true },
+                    { text: '5-7 days/week', correct: false },
+                    { text: 'Only before exercise', correct: false }
+                ],
+                feedback: 'ACSM recommends 2-3 days per week of flexibility training targeting major muscle groups. This frequency allows for adequate flexibility development and maintenance.'
+            },
+            {
+                id: 5,
+                category: 'Applied Sciences',
+                categoryClass: 'applied-sciences',
+                question: 'Which type of muscle contraction occurs when lowering a weight slowly against gravity?',
+                options: [
+                    { text: 'Concentric', correct: false },
+                    { text: 'Isometric', correct: false },
+                    { text: 'Eccentric', correct: true },
+                    { text: 'Isokinetic', correct: false }
+                ],
+                feedback: 'Eccentric contractions occur when a muscle lengthens while under tension. Lowering a weight (the eccentric phase) is the classic example of an eccentric contraction.'
+            },
+            {
+                id: 6,
+                category: 'Motor Learning',
+                categoryClass: 'motor-learning',
+                question: 'A student who can perform a skill without thinking about the mechanics is in which stage of learning?',
+                options: [
+                    { text: 'Cognitive', correct: false },
+                    { text: 'Associative', correct: false },
+                    { text: 'Autonomous', correct: true },
+                    { text: 'Preparatory', correct: false }
+                ],
+                feedback: 'The autonomous stage (Fitts & Posner) represents mastery where performance becomes automatic and requires minimal conscious attention. This is the final stage of motor learning.'
+            },
+            {
+                id: 7,
+                category: 'Motor Learning',
+                categoryClass: 'motor-learning',
+                question: 'Which type of feedback tells the learner about the quality of their movement pattern?',
+                options: [
+                    { text: 'Knowledge of results', correct: false },
+                    { text: 'Knowledge of performance', correct: true },
+                    { text: 'Motivational feedback', correct: false },
+                    { text: 'Prescriptive feedback', correct: false }
+                ],
+                feedback: 'Knowledge of performance (KP) provides information about the actual movement pattern and technique (e.g., "Your elbow needs to stay closer to your body"). Knowledge of results focuses on the outcome.'
+            },
+            {
+                id: 8,
+                category: 'Motor Learning',
+                categoryClass: 'motor-learning',
+                question: 'Practicing basketball dribbling, passing, and shooting in random order is an example of:',
+                options: [
+                    { text: 'Blocked practice', correct: false },
+                    { text: 'Massed practice', correct: false },
+                    { text: 'Random/variable practice', correct: true },
+                    { text: 'Whole practice', correct: false }
+                ],
+                feedback: 'Random practice involves varying the task order and conditions during practice. While more challenging, research shows it promotes better retention and transfer compared to blocked practice.'
+            },
+            {
+                id: 9,
+                category: 'Motor Learning',
+                categoryClass: 'motor-learning',
+                question: 'For a beginner learning to serve in tennis, which practice schedule is most appropriate?',
+                options: [
+                    { text: 'Random practice', correct: false },
+                    { text: 'Blocked practice', correct: true },
+                    { text: 'Variable practice', correct: false },
+                    { text: 'Distributed game play', correct: false }
+                ],
+                feedback: 'For beginners, blocked practice (repeating the same task multiple times) is most effective for initial skill acquisition. Random practice is better for advanced learners.'
+            },
+            {
+                id: 10,
+                category: 'Motor Learning',
+                categoryClass: 'motor-learning',
+                question: 'A teacher demonstrating a cartwheel before students attempt it is providing:',
+                options: [
+                    { text: 'Verbal cue', correct: false },
+                    { text: 'Augmented feedback', correct: false },
+                    { text: 'A model/demonstration', correct: true },
+                    { text: 'Tactile guidance', correct: false }
+                ],
+                feedback: 'A demonstration provides a visual model of the skill. This helps learners understand the movement pattern before attempting it, particularly valuable in the cognitive stage.'
+            },
+            {
+                id: 11,
+                category: 'Motor Development',
+                categoryClass: 'motor-development',
+                question: 'According to fundamental movement skill development, which pattern typically emerges first?',
+                options: [
+                    { text: 'Striking', correct: false },
+                    { text: 'Galloping', correct: false },
+                    { text: 'Walking/running', correct: true },
+                    { text: 'Skipping', correct: false }
+                ],
+                feedback: 'Walking and running are basic locomotor skills that emerge first in motor development (typically 12-24 months for walking, 18-24 months for running). More complex skills develop later.'
+            },
+            {
+                id: 12,
+                category: 'Motor Development',
+                categoryClass: 'motor-development',
+                question: 'Which movement concept describes WHERE the body moves?',
+                options: [
+                    { text: 'Body awareness', correct: false },
+                    { text: 'Space awareness', correct: true },
+                    { text: 'Effort', correct: false },
+                    { text: 'Relationships', correct: false }
+                ],
+                feedback: 'Space awareness involves understanding where movement occurs (personal space vs. general space, levels, directions). Body awareness refers to which body parts are moving.'
+            },
+            {
+                id: 13,
+                category: 'Motor Development',
+                categoryClass: 'motor-development',
+                question: 'Combining a skip with a ball toss involves which skill categories?',
+                options: [
+                    { text: 'Two locomotor skills', correct: false },
+                    { text: 'A locomotor and a manipulative skill', correct: true },
+                    { text: 'Two manipulative skills', correct: false },
+                    { text: 'A nonlocomotor and locomotor skill', correct: false }
+                ],
+                feedback: 'Skipping is a locomotor skill (traveling through space). Tossing a ball is a manipulative skill (handling an object). Combined, this integrates both skill categories.'
+            },
+            {
+                id: 14,
+                category: 'Motor Development',
+                categoryClass: 'motor-development',
+                question: 'At what stage should activities emphasize exploration over correct technique?',
+                options: [
+                    { text: 'Initial/emerging stage', correct: true },
+                    { text: 'Elementary stage', correct: false },
+                    { text: 'Mature stage', correct: false },
+                    { text: 'Sport-specific stage', correct: false }
+                ],
+                feedback: 'The initial/emerging stage prioritizes exploration and discovery. Technique refinement becomes more important in elementary and mature stages of development.'
+            },
+            {
+                id: 15,
+                category: 'Motor Development',
+                categoryClass: 'motor-development',
+                question: 'Teaching a 5-year-old complex team strategy with set plays is an example of:',
+                options: [
+                    { text: 'Developmentally appropriate practice', correct: false },
+                    { text: 'Differentiated instruction', correct: false },
+                    { text: 'Developmentally inappropriate practice', correct: true },
+                    { text: 'Advanced enrichment', correct: false }
+                ],
+                feedback: 'Five-year-olds are in early childhood with limited cognitive and social abilities. Complex team strategies are developmentally inappropriate. Focus should be on basic skills and unstructured play.'
+            },
+            {
+                id: 16,
+                category: 'Fitness & Training',
+                categoryClass: 'fitness-training',
+                question: 'The FITT-VP principle that refers to how hard you exercise is:',
+                options: [
+                    { text: 'Frequency', correct: false },
+                    { text: 'Intensity', correct: true },
+                    { text: 'Time', correct: false },
+                    { text: 'Volume', correct: false }
+                ],
+                feedback: 'Intensity refers to the effort level or difficulty (e.g., heart rate zones, percentage of 1RM). FITT-VP stands for Frequency, Intensity, Time, Type, Volume, and Progression.'
+            },
+            {
+                id: 17,
+                category: 'Fitness & Training',
+                categoryClass: 'fitness-training',
+                question: 'A client who exercised regularly for 2 years but stopped for 6 months is experiencing:',
+                options: [
+                    { text: 'Overtraining', correct: false },
+                    { text: 'Specificity', correct: false },
+                    { text: 'Reversibility/detraining', correct: true },
+                    { text: 'Diminishing returns', correct: false }
+                ],
+                feedback: 'Reversibility (or detraining) is the principle that fitness gains are lost without continued training. Even short breaks can result in decreased cardiovascular fitness and strength.'
+            },
+            {
+                id: 18,
+                category: 'Fitness & Training',
+                categoryClass: 'fitness-training',
+                question: 'When designing a resistance training session, which exercises should be performed first?',
+                options: [
+                    { text: 'Single-joint isolation exercises', correct: false },
+                    { text: 'Multi-joint compound exercises', correct: true },
+                    { text: 'Core exercises', correct: false },
+                    { text: 'Flexibility exercises', correct: false }
+                ],
+                feedback: 'Compound exercises (deadlifts, squats, bench press) should be performed first when energy and neural drive are highest. Isolation exercises follow compound movements.'
+            },
+            {
+                id: 19,
+                category: 'Fitness & Training',
+                categoryClass: 'fitness-training',
+                question: 'Which stage of the Transtheoretical Model describes someone who exercises regularly but for less than 6 months?',
+                options: [
+                    { text: 'Preparation', correct: false },
+                    { text: 'Action', correct: true },
+                    { text: 'Maintenance', correct: false },
+                    { text: 'Contemplation', correct: false }
+                ],
+                feedback: 'The Action stage involves performing the target behavior regularly but for less than 6 months. Maintenance continues for 6+ months. This model helps tailor interventions to readiness stages.'
+            },
+            {
+                id: 20,
+                category: 'Fitness & Training',
+                categoryClass: 'fitness-training',
+                question: 'To support a student\'s sense of autonomy according to Self-Determination Theory, a teacher should:',
+                options: [
+                    { text: 'Provide constant direct instruction', correct: false },
+                    { text: 'Allow students to choose between activity options', correct: true },
+                    { text: 'Compare students to each other', correct: false },
+                    { text: 'Use extrinsic rewards exclusively', correct: false }
+                ],
+                feedback: 'Self-Determination Theory emphasizes autonomy, competence, and relatedness. Allowing choice supports autonomy. Direct instruction, comparison, and extrinsic rewards undermine intrinsic motivation.'
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let answers = new Array(quizData.length).fill(null);
+        let submitted = new Array(quizData.length).fill(false);
+
+        function initializeQuiz() {
+            const quizSection = document.getElementById('quiz-section');
+            quizSection.innerHTML = '';
+
+            quizData.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = `question-container${index === 0 ? ' active' : ''}`;
+                questionDiv.id = `question-${index}`;
+
+                let optionsHTML = '';
+                q.options.forEach((option, optIndex) => {
+                    optionsHTML += `
+                        <div class="option">
+                            <input type="radio" id="option-${index}-${optIndex}" name="question-${index}" value="${optIndex}" />
+                            <label for="option-${index}-${optIndex}">${String.fromCharCode(65 + optIndex)}) ${option.text}</label>
+                        </div>
+                    `;
+                });
+
+                questionDiv.innerHTML = `
+                    <div class="question-header">
+                        <div class="question-number">Q${q.id}</div>
+                        <span class="category-badge ${q.categoryClass}">${q.category}</span>
+                    </div>
+                    <div class="question-text">${q.question}</div>
+                    <div class="options">${optionsHTML}</div>
+                    <div class="feedback" id="feedback-${index}"></div>
+                `;
+
+                quizSection.appendChild(questionDiv);
+            });
+
+            updateButtonStates();
+        }
+
+        function submitAnswer() {
+            const selectedRadio = document.querySelector(`input[name="question-${currentQuestionIndex}"]:checked`);
+
+            if (!selectedRadio) {
+                alert('Please select an answer before submitting.');
+                return;
+            }
+
+            const answerIndex = parseInt(selectedRadio.value);
+            answers[currentQuestionIndex] = answerIndex;
+            submitted[currentQuestionIndex] = true;
+
+            const correctAnswerIndex = quizData[currentQuestionIndex].options.findIndex(opt => opt.correct);
+            const isCorrect = answerIndex === correctAnswerIndex;
+
+            showFeedback(currentQuestionIndex, isCorrect);
+            updateProgress();
+        }
+
+        function showFeedback(questionIndex, isCorrect) {
+            const feedbackDiv = document.getElementById(`feedback-${questionIndex}`);
+            const question = quizData[questionIndex];
+            const feedbackClass = isCorrect ? 'correct' : 'incorrect';
+            const feedbackTitle = isCorrect ? 'Correct!' : 'Incorrect';
+
+            feedbackDiv.className = `feedback show ${feedbackClass}`;
+            feedbackDiv.innerHTML = `
+                <div class="feedback-title">${feedbackTitle}</div>
+                <div>${question.feedback}</div>
+            `;
+
+            updateOptionStyles(questionIndex, question);
+        }
+
+        function updateOptionStyles(questionIndex, question) {
+            const correctIndex = question.options.findIndex(opt => opt.correct);
+            const selectedRadio = document.querySelector(`input[name="question-${questionIndex}"]:checked`);
+            const selectedIndex = selectedRadio ? parseInt(selectedRadio.value) : -1;
+
+            question.options.forEach((option, index) => {
+                const optionDiv = document.querySelector(`#option-${questionIndex}-${index}`).parentElement;
+                optionDiv.classList.remove('correct', 'incorrect');
+
+                if (index === correctIndex) {
+                    optionDiv.classList.add('correct');
+                } else if (index === selectedIndex && selectedIndex !== correctIndex) {
+                    optionDiv.classList.add('incorrect');
+                }
+            });
+        }
+
+        function updateProgress() {
+            const answeredCount = answers.filter(a => a !== null).length;
+            const progressText = document.getElementById('progress-text');
+            const progressFill = document.getElementById('progress-fill');
+
+            progressText.textContent = `${answeredCount}/${quizData.length}`;
+            progressFill.style.width = `${(answeredCount / quizData.length) * 100}%`;
+
+            if (answeredCount === quizData.length) {
+                setTimeout(showResults, 500);
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < quizData.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion();
+            }
+        }
+
+        function showQuestion() {
+            document.querySelectorAll('.question-container').forEach(q => q.classList.remove('active'));
+            document.getElementById(`question-${currentQuestionIndex}`).classList.add('active');
+
+            const selectedRadio = document.querySelector(`input[name="question-${currentQuestionIndex}"]:checked`);
+            if (selectedRadio) {
+                selectedRadio.checked = true;
+            }
+
+            updateButtonStates();
+        }
+
+        function updateButtonStates() {
+            const prevBtn = document.querySelector('.button-group .btn-primary');
+            const nextBtn = document.querySelectorAll('.button-group .btn-primary')[1];
+
+            if (prevBtn) prevBtn.disabled = currentQuestionIndex === 0;
+            if (nextBtn) nextBtn.disabled = currentQuestionIndex === quizData.length - 1;
+        }
+
+        function showResults() {
+            document.getElementById('quiz-section').style.display = 'none';
+            document.getElementById('button-group').style.display = 'none';
+            document.getElementById('results-section').classList.add('show');
+
+            const categoryScores = {
+                'Applied Sciences': { correct: 0, total: 0 },
+                'Motor Learning': { correct: 0, total: 0 },
+                'Motor Development': { correct: 0, total: 0 },
+                'Fitness & Training': { correct: 0, total: 0 }
+            };
+
+            let totalScore = 0;
+
+            quizData.forEach((question, index) => {
+                const category = question.category;
+                categoryScores[category].total++;
+
+                const correctIndex = question.options.findIndex(opt => opt.correct);
+                if (answers[index] === correctIndex) {
+                    categoryScores[category].correct++;
+                    totalScore++;
+                }
+            });
+
+            displayFinalScore(totalScore);
+            displayCategoryResults(categoryScores);
+            displayFeedbackSummary(categoryScores);
+        }
+
+        function displayFinalScore(totalScore) {
+            document.getElementById('final-score').textContent = `${totalScore}/20`;
+
+            let message = '';
+            const percentage = (totalScore / 20) * 100;
+
+            if (percentage === 100) {
+                message = 'Perfect Score! You have mastered all GACE content areas!';
+            } else if (percentage >= 90) {
+                message = 'Excellent work! You demonstrate strong knowledge across all areas.';
+            } else if (percentage >= 80) {
+                message = 'Good job! You have solid understanding of most concepts. Review any weak areas.';
+            } else if (percentage >= 70) {
+                message = 'Acceptable performance. Focus on areas with lower scores for improvement.';
+            } else if (percentage >= 60) {
+                message = 'You need additional review. Prioritize studying weaker content areas.';
+            } else {
+                message = 'Significant improvement needed. Comprehensive review of all areas recommended.';
+            }
+
+            document.getElementById('performance-message').textContent = message;
+        }
+
+        function displayCategoryResults(categoryScores) {
+            const categoryResults = document.getElementById('category-results');
+            categoryResults.innerHTML = '';
+
+            const categoryOrder = ['Applied Sciences', 'Motor Learning', 'Motor Development', 'Fitness & Training'];
+            const categoryClasses = {
+                'Applied Sciences': 'applied-sciences',
+                'Motor Learning': 'motor-learning',
+                'Motor Development': 'motor-development',
+                'Fitness & Training': 'fitness-training'
+            };
+
+            categoryOrder.forEach(category => {
+                const score = categoryScores[category];
+                const percentage = (score.correct / score.total) * 100;
+
+                const card = document.createElement('div');
+                card.className = `category-card ${categoryClasses[category]}`;
+                card.innerHTML = `
+                    <div class="category-card-title">${category}</div>
+                    <div class="category-card-score">${score.correct}/${score.total}</div>
+                    <div class="category-card-bar">
+                        <div class="category-card-fill" style="width: ${percentage}%"></div>
+                    </div>
+                    <div style="font-size: 0.9em; color: #64748b;">${Math.round(percentage)}%</div>
+                `;
+                categoryResults.appendChild(card);
+            });
+        }
+
+        function displayFeedbackSummary(categoryScores) {
+            const feedbackSummary = document.getElementById('feedback-summary');
+            let html = '<strong>Detailed Review:</strong><br><br>';
+
+            quizData.forEach((question, index) => {
+                const correctIndex = question.options.findIndex(opt => opt.correct);
+                const isCorrect = answers[index] === correctIndex;
+                const selectedOption = answers[index] !== null ? question.options[answers[index]].text : 'Not answered';
+                const correctOption = question.options[correctIndex].text;
+
+                html += `
+                    <div class="feedback-item">
+                        <div class="feedback-item-question">Q${question.id}: ${question.question}</div>
+                        <div class="feedback-item-answer ${isCorrect ? 'correct' : 'incorrect'}">
+                            ${isCorrect ? '✓ Correct' : '✗ Incorrect'} - You selected: "${selectedOption}"
+                            ${!isCorrect ? ` (Correct answer: "${correctOption}")` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            feedbackSummary.innerHTML = html;
+        }
+
+        initializeQuiz();
+    </script>
+</body>
+</html>

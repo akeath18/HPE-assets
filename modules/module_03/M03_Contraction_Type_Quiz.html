@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 3: Muscle Contraction Types Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1E293B;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            background: white;
+            height: 8px;
+            border-radius: 4px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress {
+            background: #02C39A;
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .question-card {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .question-card.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-number {
+            color: #065A82;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .exercise-scenario {
+            background: linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 100%);
+            border-left: 4px solid #065A82;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1E293B;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            border: 2px solid #E2E8F0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option:hover {
+            border-color: #065A82;
+            background: #F8FAFC;
+        }
+
+        .option input[type="radio"] {
+            margin-top: 3px;
+            margin-right: 12px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: #065A82;
+        }
+
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .option.selected {
+            border-color: #065A82;
+            background: #F0F9FF;
+        }
+
+        .feedback-box {
+            background: #F8FAFC;
+            border-left: 4px solid #065A82;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #475569;
+            display: none;
+        }
+
+        .feedback-box.show {
+            display: block;
+        }
+
+        .feedback-box.correct {
+            border-color: #02C39A;
+            background: #F0FDFB;
+        }
+
+        .feedback-box.incorrect {
+            border-color: #EF4444;
+            background: #FEF2F2;
+        }
+
+        .feedback-box strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-next:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(6, 90, 130, 0.3);
+        }
+
+        .btn-next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-prev {
+            background: #E2E8F0;
+            color: #1E293B;
+        }
+
+        .btn-prev:hover:not(:disabled) {
+            background: #CBD5E1;
+        }
+
+        .btn-prev:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .results {
+            display: none;
+            text-align: center;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .results-content {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .score-circle.excellent {
+            background: linear-gradient(135deg, #02C39A 0%, #059669 100%);
+        }
+
+        .score-circle.good {
+            background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
+        }
+
+        .score-circle.needs-work {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        }
+
+        .results h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #1E293B;
+        }
+
+        .results p {
+            font-size: 16px;
+            color: #475569;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            color: white;
+            padding: 12px 32px;
+        }
+
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(6, 90, 130, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .btn-prev, .btn-next {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Module 3: Muscle Contraction Types</h1>
+            <p>Concentric, Eccentric, and Isometric Contractions</p>
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div id="quizContainer"></div>
+        <div id="resultsContainer" class="results"></div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                scenario: 'Bicep Curl - Lifting Phase',
+                question: 'During the lifting phase of a bicep curl, what type of muscle contraction is occurring in the biceps?',
+                options: [
+                    { text: 'Concentric (muscle shortens, joint angle decreases)', correct: true },
+                    { text: 'Eccentric (muscle lengthens, joint angle increases)', correct: false },
+                    { text: 'Isometric (muscle length stays the same)', correct: false }
+                ],
+                feedback: 'During the lifting phase, the biceps contract and shorten, pulling the forearm up and decreasing the elbow angle. This is a concentric contraction.'
+            },
+            {
+                scenario: 'Bicep Curl - Lowering Phase',
+                question: 'During the lowering phase of a bicep curl, what type of contraction occurs in the biceps?',
+                options: [
+                    { text: 'Concentric (muscle shortens)', correct: false },
+                    { text: 'Eccentric (muscle lengthens under tension)', correct: true },
+                    { text: 'Isometric (static hold)', correct: false }
+                ],
+                feedback: 'During lowering, the biceps lengthen while under tension as gravity pulls the weight down. This controlled lengthening is an eccentric contraction. Eccentric contractions are important for muscle development and injury prevention.'
+            },
+            {
+                scenario: 'Wall Push (Planck Position)',
+                question: 'When doing a wall push in a plank position, maintaining a static position against the wall requires which type of contraction?',
+                options: [
+                    { text: 'Concentric (joint movement)', correct: false },
+                    { text: 'Eccentric (resisting lengthening)', correct: false },
+                    { text: 'Isometric (no movement, constant length)', correct: true }
+                ],
+                feedback: 'In a plank or wall push, muscles maintain tension without changing length or moving the joint. This is an isometric contraction, important for stability and core strength.'
+            },
+            {
+                scenario: 'Squat - Descent',
+                question: 'As an athlete descends into a squat (lowering down), what happens in the quadriceps?',
+                options: [
+                    { text: 'Concentric contraction (muscle shortens)', correct: false },
+                    { text: 'Eccentric contraction (muscle lengthens under tension)', correct: true },
+                    { text: 'No muscle contraction occurs', correct: false }
+                ],
+                feedback: 'During the descent, the quadriceps lengthen as the knees bend and hips lower, but they\'re still contracting to control the movement. This is eccentric contraction, which generates the most force and can cause muscle soreness.'
+            },
+            {
+                scenario: 'Squat - Ascent',
+                question: 'As an athlete rises up from a squat, what type of contraction occurs in the quadriceps?',
+                options: [
+                    { text: 'Concentric (muscle shortens, knees extend)', correct: true },
+                    { text: 'Eccentric (muscle lengthens)', correct: false },
+                    { text: 'Isometric (static hold)', correct: false }
+                ],
+                feedback: 'During the ascent, the quadriceps shorten as they extend the knees and drive the body upward. This is a concentric contraction, the most commonly discussed type.'
+            },
+            {
+                scenario: 'Lat Pulldown - Pull Phase',
+                question: 'During the pulling phase of a lat pulldown, which muscles contract concentrically?',
+                options: [
+                    { text: 'The latissimus dorsi shorten to pull the bar down', correct: true },
+                    { text: 'The latissimus dorsi lengthen while pulling', correct: false },
+                    { text: 'The latissimus dorsi maintain constant length', correct: false }
+                ],
+                feedback: 'During the pull, the latissimus dorsi shorten to bring the bar down toward the chest. This is a concentric contraction, the powerful phase of the movement.'
+            },
+            {
+                scenario: 'Bench Press - Eccentric Control',
+                question: 'When slowly lowering the barbell to the chest during a bench press, what happens in the chest muscles (pectoralis)?',
+                options: [
+                    { text: 'Concentric contraction (muscles shorten)', correct: false },
+                    { text: 'Eccentric contraction (muscles lengthen while controlling the weight)', correct: true },
+                    { text: 'Isometric contraction (no change in muscle length)', correct: false }
+                ],
+                feedback: 'During the eccentric (lowering) phase, the pectoral muscles lengthen under tension, controlling the weight as it descends. This phase is crucial for muscle development and strength gains.'
+            },
+            {
+                scenario: 'Holding a Heavy Object',
+                question: 'When holding a heavy object in front of you without moving your arm, what type of contraction are your arm muscles performing?',
+                options: [
+                    { text: 'Concentric (actively shortening)', correct: false },
+                    { text: 'Eccentric (lengthening)', correct: false },
+                    { text: 'Isometric (maintaining position against gravity)', correct: true }
+                ],
+                feedback: 'Holding a static position requires isometric contraction where muscles maintain tension without changing length. This is important for posture, stability, and endurance.'
+            },
+            {
+                scenario: 'Running - Push-Off Phase',
+                question: 'During the push-off phase of running, the calf muscles (gastrocnemius) shorten to push off the ground. What type of contraction is this?',
+                options: [
+                    { text: 'Concentric (muscles shorten to produce movement)', correct: true },
+                    { text: 'Eccentric (muscles lengthen)', correct: false },
+                    { text: 'Isometric (no movement)', correct: false }
+                ],
+                feedback: 'During push-off, the calf muscles contract concentrically to propel the body forward. This is the power phase of running.'
+            },
+            {
+                scenario: 'Running - Landing Phase',
+                question: 'When landing during running, the calf, quadriceps, and glutes lengthen while controlling the impact. What type of contraction is occurring?',
+                options: [
+                    { text: 'Concentric (shortening)', correct: false },
+                    { text: 'Eccentric (lengthening under tension)', correct: true },
+                    { text: 'Isometric (static)', correct: false }
+                ],
+                feedback: 'During landing, muscles lengthen while contracting to absorb shock and control deceleration. This is eccentric contraction, which is critical for injury prevention and why running causes muscle soreness.'
+            }
+        ];
+
+        let currentQuestion = 0;
+        let responses = new Array(questions.length).fill(null);
+
+        function init() {
+            renderQuestions();
+            showQuestion(0);
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = '';
+
+            questions.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `question-${index}`;
+
+                let optionsHTML = '';
+                q.options.forEach((option, optIndex) => {
+                    optionsHTML += `
+                        <div class="option" onclick="selectOption(${index}, ${optIndex})">
+                            <input type="radio" name="question-${index}" id="option-${index}-${optIndex}" value="${optIndex}">
+                            <label for="option-${index}-${optIndex}">${option.text}</label>
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="question-number">Question ${index + 1} of ${questions.length}</div>
+                    <div class="exercise-scenario"><strong>Scenario:</strong> ${q.scenario}</div>
+                    <div class="question-text">${q.question}</div>
+                    <div class="options">${optionsHTML}</div>
+                    <div class="feedback-box" id="feedback-${index}"></div>
+                    <div class="controls">
+                        <button class="btn-prev" onclick="previousQuestion()" ${index === 0 ? 'disabled' : ''}>← Previous</button>
+                        <button class="btn-next" onclick="nextQuestion()" id="btn-next-${index}">Next →</button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function showQuestion(index) {
+            document.querySelectorAll('.question-card').forEach(card => {
+                card.classList.remove('active');
+            });
+
+            document.getElementById(`question-${index}`).classList.add('active');
+
+            if (responses[index] !== null) {
+                const radio = document.querySelector(`input[name="question-${index}"][value="${responses[index]}"]`);
+                if (radio) {
+                    radio.checked = true;
+                    radio.closest('.option').classList.add('selected');
+                }
+                showFeedback(index);
+            }
+
+            updateProgress();
+            currentQuestion = index;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function selectOption(questionIndex, optionIndex) {
+            responses[questionIndex] = optionIndex;
+            showFeedback(questionIndex);
+
+            document.querySelectorAll(`input[name="question-${questionIndex}"]`).forEach(option => {
+                option.closest('.option').classList.remove('selected');
+            });
+            document.getElementById(`option-${questionIndex}-${optionIndex}`).closest('.option').classList.add('selected');
+            document.getElementById(`btn-next-${questionIndex}`).disabled = false;
+        }
+
+        function showFeedback(index) {
+            const response = responses[index];
+            if (response === null) return;
+
+            const question = questions[index];
+            const isCorrect = question.options[response].correct;
+            const feedbackBox = document.getElementById(`feedback-${index}`);
+
+            feedbackBox.classList.add('show');
+            feedbackBox.innerHTML = `
+                <strong>${isCorrect ? '✓ Correct!' : '✗ Incorrect'}</strong>
+                ${question.feedback}
+            `;
+            feedbackBox.classList.toggle('correct', isCorrect);
+            feedbackBox.classList.toggle('incorrect', !isCorrect);
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                showQuestion(currentQuestion + 1);
+            } else {
+                showResults();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                showQuestion(currentQuestion - 1);
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function showResults() {
+            const correct = responses.filter((r, i) => {
+                return r !== null && questions[i].options[r].correct;
+            }).length;
+
+            const percentage = Math.round((correct / questions.length) * 100);
+            let resultClass = 'needs-work';
+            let resultMessage = 'Keep studying! Review the material and try again.';
+
+            if (percentage >= 90) {
+                resultClass = 'excellent';
+                resultMessage = 'Excellent work! You have mastered contraction types.';
+            } else if (percentage >= 80) {
+                resultClass = 'good';
+                resultMessage = 'Good job! You have a solid understanding.';
+            } else if (percentage >= 70) {
+                resultClass = 'good';
+                resultMessage = 'Nice effort! Review the areas where you had difficulty.';
+            }
+
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = '';
+
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.classList.add('show');
+            resultsContainer.innerHTML = `
+                <div class="results-content">
+                    <div class="score-circle ${resultClass}">${percentage}%</div>
+                    <h2>Quiz Complete!</h2>
+                    <p>You answered <strong>${correct} out of ${questions.length}</strong> questions correctly.</p>
+                    <p>${resultMessage}</p>
+                    <button class="btn-restart" onclick="restartQuiz()">Restart Quiz</button>
+                </div>
+            `;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            responses = new Array(questions.length).fill(null);
+            document.getElementById('resultsContainer').classList.remove('show');
+            document.getElementById('resultsContainer').innerHTML = '';
+            init();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

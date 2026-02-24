@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training Principle Matching - Module 9</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 900px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #065A82;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .instructions {
+            color: #1E293B;
+            font-size: 14px;
+            background: #F0F9FF;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #02C39A;
+        }
+
+        .progress {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #02C39A;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .matching-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .column-title {
+            font-weight: 600;
+            color: #065A82;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .principle-item {
+            background: #F0F9FF;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            cursor: grab;
+            user-select: none;
+            transition: all 0.2s ease;
+            font-size: 13px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+        }
+
+        .principle-item:hover {
+            background: #E0F2FE;
+            border-color: #02C39A;
+        }
+
+        .principle-item.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+
+        .principle-item.matched {
+            background: #D4EDDA;
+            border-color: #02C39A;
+            cursor: default;
+        }
+
+        .definition-item {
+            background: #F0F9FF;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #ccc;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            position: relative;
+        }
+
+        .definition-item.drag-over {
+            background: #FFE5B4;
+            border-color: #FF9800;
+        }
+
+        .definition-item.matched {
+            background: #D4EDDA;
+            border-color: #02C39A;
+        }
+
+        .matched-label {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 11px;
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .check-btn {
+            background: #02C39A;
+            color: white;
+        }
+
+        .check-btn:hover {
+            background: #01a879;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(2, 195, 154, 0.3);
+        }
+
+        .reset-btn {
+            background: #1E293B;
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background: #0f172a;
+            transform: translateY(-2px);
+        }
+
+        .feedback {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.success {
+            background: #D4EDDA;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .feedback.error {
+            background: #F8D7DA;
+            color: #721c24;
+            border-left: 4px solid #f5222d;
+        }
+
+        .score {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .matching-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Training Principle Matching</h1>
+            <p style="color: #666; margin-top: 5px;">Module 9: Training Principles</p>
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> Drag each training principle from the left column to match it with its correct definition on the right. When you've made all 8 matches, click "Check Answers" to see your score.
+        </div>
+
+        <div class="matching-container">
+            <div class="column">
+                <div class="column-title">Training Principles</div>
+                <div class="principle-item" draggable="true" data-principle="Specificity">Specificity</div>
+                <div class="principle-item" draggable="true" data-principle="Overload">Overload</div>
+                <div class="principle-item" draggable="true" data-principle="Progression">Progression</div>
+                <div class="principle-item" draggable="true" data-principle="Reversibility">Reversibility</div>
+                <div class="principle-item" draggable="true" data-principle="Individual Differences">Individual Differences</div>
+                <div class="principle-item" draggable="true" data-principle="Diminishing Returns">Diminishing Returns</div>
+                <div class="principle-item" draggable="true" data-principle="Initial Values">Initial Values</div>
+                <div class="principle-item" draggable="true" data-principle="FITT-VP">FITT-VP</div>
+            </div>
+
+            <div class="column">
+                <div class="column-title">Definitions</div>
+                <div class="definition-item" data-answer="Specificity">Training adaptations are specific to the type of stimulus applied; cardiovascular training improves aerobic capacity, not strength</div>
+                <div class="definition-item" data-answer="Overload">The body must experience a demand beyond its current capacity to elicit improvement</div>
+                <div class="definition-item" data-answer="Progression">Systematic increases in exercise demand over time to continue improvements as the body adapts</div>
+                <div class="definition-item" data-answer="Reversibility">Fitness adaptations are reversed when training stimulus is removed or significantly reduced</div>
+                <div class="definition-item" data-answer="Individual Differences">Individuals respond differently to the same training stimulus based on genetics, age, experience, and other factors</div>
+                <div class="definition-item" data-answer="Diminishing Returns">Improvements become progressively smaller with continued training as the body approaches its genetic potential</div>
+                <div class="definition-item" data-answer="Initial Values">Individuals with lower initial fitness levels often show greater absolute and relative improvements than those with high baseline fitness</div>
+                <div class="definition-item" data-answer="FITT-VP">The systematic approach using Frequency, Intensity, Time, Type, Volume, and Progression to design training programs</div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="check-btn" onclick="checkAnswers()">Check Answers</button>
+            <button class="reset-btn" onclick="resetActivity()">Reset</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <script>
+        let draggedElement = null;
+        let matches = {};
+
+        const answers = {
+            'Specificity': 'Specificity',
+            'Overload': 'Overload',
+            'Progression': 'Progression',
+            'Reversibility': 'Reversibility',
+            'Individual Differences': 'Individual Differences',
+            'Diminishing Returns': 'Diminishing Returns',
+            'Initial Values': 'Initial Values',
+            'FITT-VP': 'FITT-VP'
+        };
+
+        const principles = document.querySelectorAll('.principle-item');
+        const definitions = document.querySelectorAll('.definition-item');
+
+        principles.forEach(principle => {
+            principle.addEventListener('dragstart', handleDragStart);
+            principle.addEventListener('dragend', handleDragEnd);
+        });
+
+        definitions.forEach(def => {
+            def.addEventListener('dragover', handleDragOver);
+            def.addEventListener('dragleave', handleDragLeave);
+            def.addEventListener('drop', handleDrop);
+        });
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            this.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+
+            if (draggedElement) {
+                const principle = draggedElement.dataset.principle;
+                const answer = this.dataset.answer;
+
+                matches[answer] = principle;
+                this.classList.add('matched');
+                this.innerHTML = `<span class="matched-label">✓</span>${principle} → ${this.textContent.split('→')[0]}`;
+                draggedElement.classList.add('matched');
+
+                updateProgress();
+            }
+        }
+
+        function updateProgress() {
+            const matched = Object.keys(matches).length;
+            const percentage = (matched / 8) * 100;
+            document.getElementById('progressBar').style.width = percentage + '%';
+        }
+
+        function checkAnswers() {
+            let correct = 0;
+            const feedback = document.getElementById('feedback');
+
+            definitions.forEach(def => {
+                const answer = def.dataset.answer;
+                const selected = matches[answer];
+
+                if (selected === answer) {
+                    correct++;
+                }
+            });
+
+            const score = Math.round((correct / 8) * 100);
+
+            if (correct === 8) {
+                feedback.className = 'feedback show success';
+                feedback.innerHTML = `
+                    <strong>Perfect! 🎉</strong><br>
+                    You correctly matched all 8 training principles to their definitions.
+                    <div class="score">Score: ${score}%</div>
+                `;
+            } else {
+                feedback.className = 'feedback show error';
+                feedback.innerHTML = `
+                    <strong>Review Needed</strong><br>
+                    You matched ${correct} out of 8 correctly. Review the definitions and try again.
+                    <div class="score">Score: ${score}%</div>
+                `;
+            }
+        }
+
+        function resetActivity() {
+            matches = {};
+            document.getElementById('progressBar').style.width = '0%';
+            document.getElementById('feedback').classList.remove('show');
+
+            principles.forEach(p => p.classList.remove('matched'));
+            definitions.forEach(def => {
+                def.classList.remove('matched');
+                def.innerHTML = def.dataset.answer === 'Specificity' ? 'Training adaptations are specific to the type of stimulus applied; cardiovascular training improves aerobic capacity, not strength' :
+                    def.dataset.answer === 'Overload' ? 'The body must experience a demand beyond its current capacity to elicit improvement' :
+                    def.dataset.answer === 'Progression' ? 'Systematic increases in exercise demand over time to continue improvements as the body adapts' :
+                    def.dataset.answer === 'Reversibility' ? 'Fitness adaptations are reversed when training stimulus is removed or significantly reduced' :
+                    def.dataset.answer === 'Individual Differences' ? 'Individuals respond differently to the same training stimulus based on genetics, age, experience, and other factors' :
+                    def.dataset.answer === 'Diminishing Returns' ? 'Improvements become progressively smaller with continued training as the body approaches its genetic potential' :
+                    def.dataset.answer === 'Initial Values' ? 'Individuals with lower initial fitness levels often show greater absolute and relative improvements than those with high baseline fitness' :
+                    'The systematic approach using Frequency, Intensity, Time, Type, Volume, and Progression to design training programs';
+            });
+        }
+    </script>
+</body>
+</html>

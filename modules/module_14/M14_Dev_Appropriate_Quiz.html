@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PETE 346 - Developmentally Appropriate Practice Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 900px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #065A82;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .instructions {
+            background: #F0F9FF;
+            border-left: 4px solid #02C39A;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            color: #1E293B;
+            line-height: 1.6;
+        }
+
+        .progress-section {
+            margin-bottom: 30px;
+        }
+
+        .progress-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #02C39A;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .quiz-container {
+            display: none;
+        }
+
+        .quiz-container.active {
+            display: block;
+        }
+
+        .question-block {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .question-block:last-child {
+            border-bottom: none;
+        }
+
+        .question-number {
+            color: #02C39A;
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .scenario-text {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #1C7293;
+        }
+
+        .scenario-text strong {
+            color: #065A82;
+        }
+
+        .scenario-text p {
+            color: #1E293B;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .options-group {
+            margin-bottom: 20px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 10px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: #065A82;
+        }
+
+        .radio-option label {
+            cursor: pointer;
+            color: #1E293B;
+            font-size: 15px;
+            flex: 1;
+        }
+
+        .modification-options {
+            display: none;
+            background: #f0fdf4;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #02C39A;
+        }
+
+        .modification-options.visible {
+            display: block;
+        }
+
+        .modification-options label {
+            display: block;
+            color: #1E293B;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .modification-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+            color: #1E293B;
+        }
+
+        .feedback {
+            display: none;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .feedback.correct {
+            background: #d1fae5;
+            border-left: 4px solid #059669;
+            color: #065f46;
+            display: block;
+        }
+
+        .feedback.incorrect {
+            background: #fee2e2;
+            border-left: 4px solid #dc2626;
+            color: #7f1d1d;
+            display: block;
+        }
+
+        .feedback strong {
+            font-weight: 700;
+        }
+
+        .buttons-section {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+
+        .btn-primary {
+            background: #065A82;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #043d5c;
+        }
+
+        .btn-accent {
+            background: #02C39A;
+            color: white;
+        }
+
+        .btn-accent:hover {
+            background: #01a876;
+        }
+
+        .results-section {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            background: #f0fdf4;
+            border-radius: 8px;
+            border: 2px solid #02C39A;
+        }
+
+        .results-section.active {
+            display: block;
+        }
+
+        .score-display {
+            font-size: 48px;
+            font-weight: 700;
+            color: #065A82;
+            margin-bottom: 10px;
+        }
+
+        .score-text {
+            font-size: 18px;
+            color: #1E293B;
+            margin-bottom: 20px;
+        }
+
+        .feedback-item {
+            text-align: left;
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+        .feedback-item.correct {
+            background: #d1fae5;
+            border-left: 4px solid #059669;
+        }
+
+        .feedback-item.incorrect {
+            background: #fee2e2;
+            border-left: 4px solid #dc2626;
+        }
+
+        .feedback-item-title {
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #1E293B;
+        }
+
+        .feedback-item-text {
+            font-size: 14px;
+            color: #1E293B;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .btn {
+                display: block;
+                width: 100%;
+                margin: 10px 0;
+            }
+
+            .scenario-text p {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Developmentally Appropriate Practice Quiz</h1>
+            <p>PETE 346 - Module 14</p>
+        </div>
+
+        <div class="instructions">
+            <p><strong>Instructions:</strong> Evaluate each scenario to determine if the described activity is developmentally appropriate for the given grade level. Select "Yes" if appropriate, "Needs Modification" if the activity requires adjustments, or "No" if it's inappropriate. If you select "Needs Modification," choose the best modification option. Review detailed feedback after submitting your answers.</p>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-label">Progress</div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+        <div class="quiz-container active">
+            <!-- Question 1 -->
+            <div class="question-block">
+                <div class="question-number">Question 1 of 8</div>
+                <div class="scenario-text">
+                    <p><strong>Grade K-1:</strong> You plan to use competitive relay races where students are eliminated after losing. The winning team receives a prize.</p>
+                </div>
+                <div class="options-group">
+                    <div class="radio-option">
+                        <input type="radio" id="q1_yes" name="q1" value="yes">
+                        <label for="q1_yes">Yes, this is developmentally appropriate</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q1_mod" name="q1" value="modification">
+                        <label for="q1_mod">Needs Modification</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q1_no" name="q1" value="no">
+                        <label for="q1_no">No, this is not appropriate</label>
+                    </div>
+                </div>
+                <div class="modification-options" id="q1_mods">
+                    <label for="q1_select">Select the best modification:</label>
+                    <select id="q1_select" class="modification-select">
+                        <option value="">Choose a modification...</option>
+                        <option value="opt1">Replace with cooperative tag games and movement activities</option>
+                        <option value="opt2">Add more prize categories so all students win something</option>
+                        <option value="opt3">Keep relays but allow all students to finish the race</option>
+                    </select>
+                </div>
+                <div class="feedback" id="q1_feedback"></div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question-block">
+                <div class="question-number">Question 2 of 8</div>
+                <div class="scenario-text">
+                    <p><strong>Grade 3-4:</strong> You set up four stations with different gymnastics skills (rolls, balances, etc.). Students work in small groups, rotating through stations with peer coaching and self-paced practice.</p>
+                </div>
+                <div class="options-group">
+                    <div class="radio-option">
+                        <input type="radio" id="q2_yes" name="q2" value="yes">
+                        <label for="q2_yes">Yes, this is developmentally appropriate</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q2_mod" name="q2" value="modification">
+                        <label for="q2_mod">Needs Modification</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q2_no" name="q2" value="no">
+                        <label for="q2_no">No, this is not appropriate</label>
+                    </div>
+                </div>
+                <div class="modification-options" id="q2_mods">
+                    <label for="q2_select">Select the best modification:</label>
+                    <select id="q2_select" class="modification-select">
+                        <option value="">Choose a modification...</option>
+                        <option value="opt1">Reduce to two stations; station rotations are too confusing</option>
+                        <option value="opt2">Use teacher-led demonstrations only, no peer coaching</option>
+                        <option value="opt3">This activity is already appropriate; no modification needed</option>
+                    </select>
+                </div>
+                <div class="feedback" id="q2_feedback"></div>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="question-block">
+                <div class="question-number">Question 3 of 8</div>
+                <div class="scenario-text">
+                    <p><strong>Grade 6-8:</strong> You plan a full-court 5v5 basketball game using official rules with no modifications to the game or team structure.</p>
+                </div>
+                <div class="options-group">
+                    <div class="radio-option">
+                        <input type="radio" id="q3_yes" name="q3" value="yes">
+                        <label for="q3_yes">Yes, this is developmentally appropriate</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q3_mod" name="q3" value="modification">
+                        <label for="q3_mod">Needs Modification</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q3_no" name="q3" value="no">
+                        <label for="q3_no">No, this is not appropriate</label>
+                    </div>
+                </div>
+                <div class="modification-options" id="q3_mods">
+                    <label for="q3_select">Select the best modification:</label>
+                    <select id="q3_select" class="modification-select">
+                        <option value="">Choose a modification...</option>
+                        <option value="opt1">Use 3v3 games on half-court and teach rules progressively</option>
+                        <option value="opt2">Keep 5v5 full-court but add a sixth person as referee</option>
+                        <option value="opt3">Play on a basketball court with shorter rims for middle grades</option>
+                    </select>
+                </div>
+                <div class="feedback" id="q3_feedback"></div>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="question-block">
+                <div class="question-number">Question 4 of 8</div>
+                <div class="scenario-text">
+                    <p><strong>Grade K-1:</strong> You use a parachute for cooperative activities involving locomotor skills (skipping under the parachute, imaginary themes like "making waves" or "catching pretend fish").</p>
+                </div>
+                <div class="options-group">
+                    <div class="radio-option">
+                        <input type="radio" id="q4_yes" name="q4" value="yes">
+                        <label for="q4_yes">Yes, this is developmentally appropriate</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q4_mod" name="q4" value="modification">
+                        <label for="q4_mod">Needs Modification</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q4_no" name="q4" value="no">
+                        <label for="q4_no">No, this is not appropriate</label>
+                    </div>
+                </div>
+                <div class="modification-options" id="q4_mods">
+                    <label for="q4_select">Select the best modification:</label>
+                    <select id="q4_select" class="modification-select">
+                        <option value="">Choose a modification...</option>
+                        <option value="opt1">Add competitive elements to keep interest</option>
+                        <option value="opt2">This activity is already appropriate; no modification needed</option>
+                        <option value="opt3">Use parachute only for stretching, not locomotor skills</option>
+                    </select>
+                </div>
+                <div class="feedback" id="q4_feedback"></div>
+            </div>
+
+            <!-- Question 5 -->
+            <div class="question-block">
+                <div class="question-number">Question 5 of 8</div>
+                <div class="scenario-text">
+                    <p><strong>Grade 3-4:</strong> You conduct fitness testing (sit-ups, mile run, etc.) and post all student scores publicly on a bulletin board for comparison.</p>
+                </div>
+                <div class="options-group">
+                    <div class="radio-option">
+                        <input type="radio" id="q5_yes" name="q5" value="yes">
+                        <label for="q5_yes">Yes, this is developmentally appropriate</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q5_mod" name="q5" value="modification">
+                        <label for="q5_mod">Needs Modification</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q5_no" name="q5" value="no">
+                        <label for="q5_no">No, this is not appropriate</label>
+                    </div>
+                </div>
+                <div class="modification-options" id="q5_mods">
+                    <label for="q5_select">Select the best modification:</label>
+                    <select id="q5_select" class="modification-select">
+                        <option value="">Choose a modification...</option>
+                        <option value="opt1">Keep scores public but award prizes to top performers only</option>
+                        <option value="opt2">Use private goal-setting and individual tracking instead of public comparison</option>
+                        <option value="opt3">Post only class averages, not individual scores</option>
+                    </select>
+                </div>
+                <div class="feedback" id="q5_feedback"></div>
+            </div>
+
+            <!-- Question 6 -->
+            <div class="question-block">
+                <div class="question-number">Question 6 of 8</div>
+                <div class="scenario-text">
+                    <p><strong>Grade 6-8:</strong> Students design their own fitness circuits, set personal goals, and monitor their heart rate during activities using technology or manual pulse checks.</p>
+                </div>
+                <div class="options-group">
+                    <div class="radio-option">
+                        <input type="radio" id="q6_yes" name="q6" value="yes">
+                        <label for="q6_yes">Yes, this is developmentally appropriate</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q6_mod" name="q6" value="modification">
+                        <label for="q6_mod">Needs Modification</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q6_no" name="q6" value="no">
+                        <label for="q6_no">No, this is not appropriate</label>
+                    </div>
+                </div>
+                <div class="modification-options" id="q6_mods">
+                    <label for="q6_select">Select the best modification:</label>
+                    <select id="q6_select" class="modification-select">
+                        <option value="">Choose a modification...</option>
+                        <option value="opt1">Assign circuits instead of letting students design them</option>
+                        <option value="opt2">This activity is already appropriate; no modification needed</option>
+                        <option value="opt3">Remove heart rate monitoring; focus only on movement</option>
+                    </select>
+                </div>
+                <div class="feedback" id="q6_feedback"></div>
+            </div>
+
+            <!-- Question 7 -->
+            <div class="question-block">
+                <div class="question-number">Question 7 of 8</div>
+                <div class="scenario-text">
+                    <p><strong>Grade K-1:</strong> You teach overhead throwing at a target that is 30 feet away using a regulation baseball.</p>
+                </div>
+                <div class="options-group">
+                    <div class="radio-option">
+                        <input type="radio" id="q7_yes" name="q7" value="yes">
+                        <label for="q7_yes">Yes, this is developmentally appropriate</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q7_mod" name="q7" value="modification">
+                        <label for="q7_mod">Needs Modification</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q7_no" name="q7" value="no">
+                        <label for="q7_no">No, this is not appropriate</label>
+                    </div>
+                </div>
+                <div class="modification-options" id="q7_mods">
+                    <label for="q7_select">Select the best modification:</label>
+                    <select id="q7_select" class="modification-select">
+                        <option value="">Choose a modification...</option>
+                        <option value="opt1">Reduce distance to 10-15 feet, use larger targets and lighter balls</option>
+                        <option value="opt2">Keep the distance but use a softer ball</option>
+                        <option value="opt3">Practice throwing indoors before outdoor practice</option>
+                    </select>
+                </div>
+                <div class="feedback" id="q7_feedback"></div>
+            </div>
+
+            <!-- Question 8 -->
+            <div class="question-block">
+                <div class="question-number">Question 8 of 8</div>
+                <div class="scenario-text">
+                    <p><strong>Grade 3-4:</strong> You teach simple line dancing with choreography that includes basic steps (grapevines, slides) and incorporates music with clear beats.</p>
+                </div>
+                <div class="options-group">
+                    <div class="radio-option">
+                        <input type="radio" id="q8_yes" name="q8" value="yes">
+                        <label for="q8_yes">Yes, this is developmentally appropriate</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q8_mod" name="q8" value="modification">
+                        <label for="q8_mod">Needs Modification</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="q8_no" name="q8" value="no">
+                        <label for="q8_no">No, this is not appropriate</label>
+                    </div>
+                </div>
+                <div class="modification-options" id="q8_mods">
+                    <label for="q8_select">Select the best modification:</label>
+                    <select id="q8_select" class="modification-select">
+                        <option value="">Choose a modification...</option>
+                        <option value="opt1">Simplify to just walking and clapping along with music</option>
+                        <option value="opt2">This activity is already appropriate; no modification needed</option>
+                        <option value="opt3">Use complex choreography to build skills quickly</option>
+                    </select>
+                </div>
+                <div class="feedback" id="q8_feedback"></div>
+            </div>
+        </div>
+
+        <div class="results-section" id="results">
+            <div class="score-display" id="scoreDisplay"></div>
+            <div class="score-text">Quiz Complete!</div>
+            <div id="feedbackContainer"></div>
+        </div>
+
+        <div class="buttons-section">
+            <button class="btn btn-primary" id="checkBtn">Check Answers</button>
+            <button class="btn btn-accent" id="resetBtn" style="display: none;">Reset Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        // Question data with correct answers and feedback
+        const quizData = {
+            q1: {
+                correct: "no",
+                correctModification: null,
+                feedback: {
+                    correct: "Correct! Elimination-style relay races and competitive games with prizes are not developmentally appropriate for K-1 students. At this age, children have fragile self-esteem and don't understand losing as a learning opportunity. Cooperative activities like tag games and movement exploration are better.",
+                    no: "Correct! Elimination-style relay races and competitive games with prizes are not developmentally appropriate for K-1 students. At this age, children have fragile self-esteem and don't understand losing as a learning opportunity. Cooperative activities like tag games and movement exploration are better.",
+                    modification: "Partial credit: While modification can work, 'No' is the better answer. These games are fundamentally inappropriate for K-1. It's better to replace them entirely with cooperative tag games.",
+                    yes: "Incorrect. Competitive relay races with elimination are not appropriate for K-1 students. Young children have developing social-emotional skills and don't handle losing well. Competitive activities with prizes can damage self-esteem."
+                }
+            },
+            q2: {
+                correct: "yes",
+                correctModification: "opt3",
+                feedback: {
+                    yes: "Correct! Station-based gymnastics with peer coaching and self-paced practice is developmentally appropriate for Grade 3-4. This approach respects individual differences, develops social skills through peer interaction, and allows appropriate cognitive and physical complexity.",
+                    modification: "Partial credit: If you selected modification with 'This activity is already appropriate,' you received credit. The activity is actually appropriate as described. Adding more structure or reducing stations would actually limit learning.",
+                    no: "Incorrect. Station-based activities with peer coaching are developmentally appropriate for Grade 3-4 students. This grade level can handle increased complexity, enjoy social learning, and benefit from self-paced practice.",
+                    correct: "Correct! Station-based gymnastics with peer coaching and self-paced practice is developmentally appropriate for Grade 3-4. This approach respects individual differences, develops social skills through peer interaction, and allows appropriate cognitive and physical complexity."
+                }
+            },
+            q3: {
+                correct: "modification",
+                correctModification: "opt1",
+                feedback: {
+                    modification: "Correct! Full-court 5v5 basketball with no modifications is too complex for middle school beginners. Smaller 3v3 games on half-court with progressive rule teaching are more developmentally appropriate, reducing cognitive overload and keeping more students engaged.",
+                    yes: "Incorrect. While Grade 6-8 students can learn basketball, full-court 5v5 with official rules is too complex without scaffolding. This leads to standing around, limited participation, and confusion. Smaller teams are more appropriate.",
+                    no: "Incorrect. Basketball is appropriate for this age with proper modifications. Eliminating it entirely removes important team sport learning.",
+                    correct: "Correct! Full-court 5v5 basketball with no modifications is too complex for middle school beginners. Smaller 3v3 games on half-court with progressive rule teaching are more developmentally appropriate."
+                }
+            },
+            q4: {
+                correct: "yes",
+                correctModification: "opt2",
+                feedback: {
+                    yes: "Correct! Parachute activities are highly appropriate for K-1. They combine cooperation, imaginative play, and developmentally appropriate locomotor skill practice. Young children love the novelty and can follow simple directions.",
+                    modification: "Partial credit: If you selected 'This activity is already appropriate,' you received credit. Parachute activities are indeed appropriate for K-1 as described.",
+                    no: "Incorrect. Parachute activities are excellent for K-1 students. They're cooperative (not competitive), incorporate imagination, and practice movement skills appropriate to the developmental level.",
+                    correct: "Correct! Parachute activities are highly appropriate for K-1. They combine cooperation, imaginative play, and developmentally appropriate locomotor skill practice."
+                }
+            },
+            q5: {
+                correct: "no",
+                correctModification: null,
+                feedback: {
+                    no: "Correct! Public posting of student fitness test scores is inappropriate for Grade 3-4. At this developmental stage, social comparison can damage self-esteem and create anxiety around physical activity. Private goal-setting and individual progress tracking are much more appropriate.",
+                    modification: "Partial credit: While modification can help, 'No' is the better answer. Public comparison is fundamentally inappropriate. Private goal-setting is the best approach.",
+                    yes: "Incorrect. Public posting of scores is harmful for Grade 3-4 students. This age group is sensitive to peer comparison and can develop negative attitudes toward physical activity. Use private goal-setting instead.",
+                    correct: "Correct! Public posting of student fitness test scores is inappropriate for Grade 3-4. Private goal-setting is much better."
+                }
+            },
+            q6: {
+                correct: "yes",
+                correctModification: "opt2",
+                feedback: {
+                    yes: "Correct! Student-designed fitness circuits with heart rate monitoring are appropriate for Grade 6-8. This activity respects autonomy, provides cognitive engagement through planning, and teaches self-monitoring—all key at this developmental stage.",
+                    modification: "Partial credit: If you selected 'This activity is already appropriate,' you received credit. Grade 6-8 students can absolutely handle design and heart rate monitoring.",
+                    no: "Incorrect. Grade 6-8 students are developmentally ready for autonomy, circuit design, and self-monitoring using heart rate data. This builds responsibility and understanding of fitness principles.",
+                    correct: "Correct! Student-designed fitness circuits with heart rate monitoring are appropriate for Grade 6-8."
+                }
+            },
+            q7: {
+                correct: "modification",
+                correctModification: "opt1",
+                feedback: {
+                    modification: "Correct! K-1 students cannot throw accurately to a distant target. Reducing distance to 10-15 feet, using larger targets and lighter balls makes the task developmentally appropriate and provides success experiences.",
+                    yes: "Incorrect. Throwing 30 feet with accuracy is beyond K-1 developmental level. Young children have limited shoulder strength and accuracy. Start with much closer distances.",
+                    no: "Incorrect. Overhead throwing instruction is appropriate for K-1; only the setup needs modification. Reduce distance, enlarge targets, and use lighter balls.",
+                    correct: "Correct! K-1 students need reduced distance, larger targets, and lighter balls for throwing practice."
+                }
+            },
+            q8: {
+                correct: "yes",
+                correctModification: "opt2",
+                feedback: {
+                    yes: "Correct! Simple line dancing with basic choreography is developmentally appropriate for Grade 3-4. This activity builds rhythm coordination, includes all students (inclusive), and develops social skills through group movement.",
+                    modification: "Partial credit: If you selected 'This activity is already appropriate,' you received credit. Line dancing with simple choreography is indeed appropriate for this grade.",
+                    no: "Incorrect. Line dancing with simple choreography is an excellent activity for Grade 3-4. It's inclusive, developmentally appropriate for rhythm and coordination, and builds social cohesion.",
+                    correct: "Correct! Simple line dancing is developmentally appropriate for Grade 3-4."
+                }
+            }
+        };
+
+        // Event listeners for radio button changes
+        for (let i = 1; i <= 8; i++) {
+            const radios = document.querySelectorAll(`input[name="q${i}"]`);
+            radios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    toggleModificationOptions(i, this.value);
+                    clearFeedback(i);
+                });
+            });
+        }
+
+        function toggleModificationOptions(questionNum, value) {
+            const modsContainer = document.getElementById(`q${questionNum}_mods`);
+            if (value === 'modification') {
+                modsContainer.classList.add('visible');
+            } else {
+                modsContainer.classList.remove('visible');
+                document.getElementById(`q${questionNum}_select`).value = '';
+            }
+        }
+
+        function clearFeedback(questionNum) {
+            const feedback = document.getElementById(`q${questionNum}_feedback`);
+            feedback.innerHTML = '';
+            feedback.className = 'feedback';
+        }
+
+        document.getElementById('checkBtn').addEventListener('click', function() {
+            checkAnswers();
+            updateProgress();
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            resetQuiz();
+        });
+
+        function checkAnswers() {
+            let score = 0;
+            let answers = [];
+
+            for (let i = 1; i <= 8; i++) {
+                const selectedRadio = document.querySelector(`input[name="q${i}"]:checked`);
+
+                if (!selectedRadio) {
+                    alert(`Please answer Question ${i} before checking answers.`);
+                    return;
+                }
+
+                const answer = selectedRadio.value;
+                const questionData = quizData[`q${i}`];
+                const feedbackDiv = document.getElementById(`q${i}_feedback`);
+
+                let isCorrect = false;
+                let feedbackText = '';
+
+                if (answer === questionData.correct) {
+                    isCorrect = true;
+                    feedbackText = questionData.feedback.correct;
+                    score++;
+                } else if (answer === 'modification') {
+                    const selectedMod = document.getElementById(`q${i}_select`).value;
+                    if (selectedMod === questionData.correctModification) {
+                        isCorrect = true;
+                        feedbackText = questionData.feedback.modification;
+                        score++;
+                    } else {
+                        feedbackText = questionData.feedback[answer];
+                    }
+                } else {
+                    feedbackText = questionData.feedback[answer];
+                }
+
+                feedbackDiv.className = isCorrect ? 'feedback correct' : 'feedback incorrect';
+                feedbackDiv.innerHTML = `<strong>${isCorrect ? 'Correct!' : 'Incorrect'}</strong> ${feedbackText}`;
+
+                answers.push({
+                    question: i,
+                    isCorrect: isCorrect,
+                    feedback: feedbackText
+                });
+            }
+
+            // Show results
+            showResults(score, answers);
+        }
+
+        function showResults(score, answers) {
+            const resultsDiv = document.getElementById('results');
+            const scorePercent = Math.round((score / 8) * 100);
+
+            document.getElementById('scoreDisplay').innerHTML = `${score}/8 (${scorePercent}%)`;
+
+            let feedbackHTML = '';
+            answers.forEach(ans => {
+                const className = ans.isCorrect ? 'correct' : 'incorrect';
+                feedbackHTML += `
+                    <div class="feedback-item ${className}">
+                        <div class="feedback-item-title">Question ${ans.question}: ${ans.isCorrect ? '✓ Correct' : '✗ Incorrect'}</div>
+                        <div class="feedback-item-text">${ans.feedback}</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('feedbackContainer').innerHTML = feedbackHTML;
+            resultsDiv.classList.add('active');
+
+            document.getElementById('checkBtn').style.display = 'none';
+            document.getElementById('resetBtn').style.display = 'inline-block';
+        }
+
+        function resetQuiz() {
+            // Clear all selections
+            for (let i = 1; i <= 8; i++) {
+                document.querySelectorAll(`input[name="q${i}"]`).forEach(radio => {
+                    radio.checked = false;
+                });
+                document.getElementById(`q${i}_select`).value = '';
+                document.getElementById(`q${i}_mods`).classList.remove('visible');
+                clearFeedback(i);
+            }
+
+            // Reset results display
+            document.getElementById('results').classList.remove('active');
+            document.getElementById('checkBtn').style.display = 'inline-block';
+            document.getElementById('resetBtn').style.display = 'none';
+
+            updateProgress();
+        }
+
+        function updateProgress() {
+            let answered = 0;
+            for (let i = 1; i <= 8; i++) {
+                const selectedRadio = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selectedRadio) answered++;
+            }
+            const percentage = (answered / 8) * 100;
+            document.querySelector('.progress-fill').style.width = percentage + '%';
+        }
+
+        // Initial progress update
+        updateProgress();
+    </script>
+</body>
+</html>

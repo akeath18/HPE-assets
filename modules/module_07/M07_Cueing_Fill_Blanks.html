@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 7: Instructional Cueing</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%); min-height: 100vh; padding: 20px; color: #1E293B; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .header { background: linear-gradient(135deg, #065A82 0%, #1C7293 100%); color: white; padding: 30px 20px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .header h1 { font-size: 28px; margin-bottom: 5px; }
+        .header p { font-size: 14px; opacity: 0.9; }
+        .instructions { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #02C39A; }
+        .instructions h3 { color: #065A82; margin-bottom: 10px; }
+        .instructions p { font-size: 14px; line-height: 1.6; color: #475569; }
+        .question { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); }
+        .question h3 { color: #065A82; margin-bottom: 12px; font-size: 15px; }
+        .statement { background: #F8FAFC; padding: 15px; border-radius: 6px; margin-bottom: 12px; font-size: 14px; line-height: 1.6; }
+        .fill-blanks { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+        .blank { background: white; padding: 8px 12px; border: 2px solid #E2E8F0; border-radius: 4px; font-size: 13px; flex: 0 1 auto; }
+        input[type="text"] { padding: 8px 12px; border: 2px solid #E2E8F0; border-radius: 4px; font-size: 14px; flex: 1; min-width: 120px; }
+        input[type="text"]:focus { outline: none; border-color: #065A82; background: #F0F9FF; }
+        .feedback { background: #F8FAFC; border-left: 4px solid #065A82; padding: 10px; border-radius: 4px; font-size: 13px; line-height: 1.5; color: #475569; display: none; }
+        .feedback.show { display: block; }
+        .feedback.correct { border-color: #02C39A; background: #F0FDFB; }
+        .feedback.incorrect { border-color: #EF4444; background: #FEF2F2; }
+        .controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 30px; flex-wrap: wrap; }
+        button { padding: 12px 24px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-submit { background: linear-gradient(135deg, #065A82 0%, #1C7293 100%); color: white; min-width: 150px; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(6, 90, 130, 0.3); }
+        .btn-reset { background: #E2E8F0; color: #1E293B; min-width: 120px; }
+        .btn-reset:hover { background: #CBD5E1; }
+        .results { background: white; padding: 30px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); display: none; }
+        .results.show { display: block; }
+        .score-circle { width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: bold; color: white; background: linear-gradient(135deg, #02C39A 0%, #059669 100%); }
+        .results h2 { font-size: 22px; margin-bottom: 10px; }
+        .results p { font-size: 14px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Module 7: Instructional Cueing</h1>
+            <p>Effective Verbal Instructions & Cues</p>
+        </div>
+
+        <div class="instructions">
+            <h3>Instructions</h3>
+            <p>Complete each instructional cue statement by filling in the blanks. These represent effective coaching communication techniques.</p>
+        </div>
+
+        <div id="quizContainer"></div>
+        <div id="resultsContainer" class="results"></div>
+
+        <div class="controls" id="controls">
+            <button class="btn-submit" onclick="submitAnswers()">Submit All Answers</button>
+            <button class="btn-reset" onclick="resetQuiz()">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                statement: 'When teaching a student in the _____ stage, use more _____ feedback because they need help understanding the basic movement.',
+                blanks: ['cognitive', 'descriptive'],
+                hints: ['cognitive, associative, autonomous', 'descriptive, prescriptive'],
+                feedback: 'Cognitive stage learners benefit from descriptive feedback that helps them understand what went wrong.'
+            },
+            {
+                statement: 'For safety, give _____ cues that tell students exactly what to _____ with their bodies.',
+                blanks: ['specific', 'do'],
+                hints: ['specific, general, complex', 'do, think, feel'],
+                feedback: 'Specific "what to do" cues are clear and safe. Avoid vague instructions.'
+            },
+            {
+                statement: 'During the _____ stage of learning, shift from technique cues to _____ or tactical cues.',
+                blanks: ['autonomous', 'strategy'],
+                hints: ['cognitive, autonomous, beginning', 'strategy, strength, skill'],
+                feedback: 'Advanced learners can focus on strategy and game tactics rather than basic movement cues.'
+            },
+            {
+                statement: '_____ cues focus on how the body should move, while _____ cues focus on outcomes.',
+                blanks: ['Internal', 'External'],
+                hints: ['Internal, Kinesthetic, Proprioceptive', 'External, Outcome, Result'],
+                feedback: 'Internal cues (body focus) and external cues (environment/outcome focus) serve different purposes.'
+            },
+            {
+                statement: 'Keep cues _____. Long explanations overload the student\'s _____ capacity.',
+                blanks: ['brief', 'cognitive'],
+                hints: ['brief, short, concise', 'cognitive, learning, attention'],
+                feedback: 'Concise cues don\'t overload working memory. One or two words is often most effective.'
+            },
+            {
+                statement: 'Use _____ feedback after movements to help students understand what they did and _____ feedback to suggest improvements.',
+                blanks: ['descriptive', 'prescriptive'],
+                hints: ['descriptive, evaluative, corrective', 'prescriptive, corrective, suggestive'],
+                feedback: 'Descriptive feedback (what happened) + prescriptive feedback (how to fix it) = complete feedback.'
+            },
+            {
+                statement: 'To prevent injury, give _____ cues that describe proper _____ and alignment.',
+                blanks: ['safety', 'posture'],
+                hints: ['safety, injury-prevention, protection', 'posture, form, alignment'],
+                feedback: 'Clear safety and postural cues prevent injury. These should be emphasized for beginners.'
+            },
+            {
+                statement: '_____ cues use mental imagery: "Imagine pushing the wall away." These help _____ learners visualize the movement.',
+                blanks: ['Metaphorical', 'advanced'],
+                hints: ['Metaphorical, Analogy, Imagery', 'advanced, associative, expert'],
+                feedback: 'Metaphors work best for learners who understand the basic movement and can visualize.'
+            }
+        ];
+
+        let answers = new Array(questions.length).fill('');
+
+        function init() {
+            renderQuestions();
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = '';
+
+            questions.forEach((q, index) => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'question';
+
+                const stmt = document.createElement('div');
+                stmt.className = 'statement';
+
+                let stmtHTML = q.statement;
+                q.blanks.forEach((blank, bIndex) => {
+                    const placeholder = `___${bIndex}_`;
+                    stmtHTML = stmtHTML.replace(`_____`, placeholder);
+                });
+
+                const parts = stmtHTML.split(/_\d_/);
+                let finalHTML = parts[0];
+
+                for (let i = 0; i < q.blanks.length; i++) {
+                    finalHTML += `<input type="text" id="blank-${index}-${i}" placeholder="(e.g. ${q.hints[i].split(',')[0].trim()})" style="width: 120px; margin: 0 5px;">`;
+                    finalHTML += parts[i + 1];
+                }
+
+                stmt.innerHTML = finalHTML;
+
+                qDiv.appendChild(stmt);
+
+                const fb = document.createElement('div');
+                fb.className = 'feedback';
+                fb.id = `feedback-${index}`;
+                fb.textContent = q.feedback;
+
+                qDiv.appendChild(fb);
+                container.appendChild(qDiv);
+            });
+        }
+
+        function submitAnswers() {
+            let correct = 0;
+            const total = questions.length;
+
+            questions.forEach((q, index) => {
+                let qCorrect = true;
+                q.blanks.forEach((blank, bIndex) => {
+                    const input = document.getElementById(`blank-${index}-${bIndex}`);
+                    const userAnswer = input.value.trim().toLowerCase();
+                    const correctAnswer = blank.toLowerCase();
+
+                    if (userAnswer === correctAnswer) {
+                        input.style.borderColor = '#02C39A';
+                        input.style.background = '#F0FDFB';
+                    } else {
+                        input.style.borderColor = '#EF4444';
+                        input.style.background = '#FEF2F2';
+                        qCorrect = false;
+                    }
+                });
+
+                const fb = document.getElementById(`feedback-${index}`);
+                fb.classList.add('show');
+                if (qCorrect) {
+                    correct++;
+                    fb.classList.add('correct');
+                } else {
+                    fb.classList.add('incorrect');
+                }
+            });
+
+            showResults(correct, total);
+        }
+
+        function showResults(correct, total) {
+            const percent = Math.round((correct / total) * 100);
+
+            document.getElementById('quizContainer').style.display = 'none';
+            document.getElementById('controls').style.display = 'none';
+
+            const rc = document.getElementById('resultsContainer');
+            rc.classList.add('show');
+            rc.innerHTML = `
+                <div class="score-circle">${percent}%</div>
+                <h2>Activity Complete!</h2>
+                <p>You correctly completed <strong>${correct} out of ${total}</strong> cue statements.</p>
+                <button class="btn-submit" onclick="restartQuiz()" style="margin-top: 20px;">Try Again</button>
+            `;
+        }
+
+        function resetQuiz() {
+            answers = new Array(questions.length).fill('');
+            document.getElementById('quizContainer').style.display = 'block';
+            document.getElementById('controls').style.display = 'flex';
+            document.getElementById('resultsContainer').classList.remove('show');
+            init();
+        }
+
+        function restartQuiz() {
+            resetQuiz();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

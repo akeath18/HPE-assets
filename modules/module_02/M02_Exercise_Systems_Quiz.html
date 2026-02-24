@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 2: Exercise & Body Systems Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1E293B;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            background: white;
+            height: 8px;
+            border-radius: 4px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress {
+            background: #02C39A;
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .scenario-box {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #065A82;
+        }
+
+        .scenario-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+
+        .question-number {
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .question-label {
+            color: #065A82;
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .scenario-text {
+            background: #F8FAFC;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 15px;
+            line-height: 1.6;
+            border-left: 3px solid #02C39A;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            border: 2px solid #E2E8F0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option:hover {
+            border-color: #065A82;
+            background: #F8FAFC;
+        }
+
+        .option input[type="radio"] {
+            margin-top: 3px;
+            margin-right: 12px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: #065A82;
+        }
+
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .option.selected {
+            border-color: #065A82;
+            background: #F0F9FF;
+        }
+
+        .feedback-box {
+            background: #F8FAFC;
+            border-left: 4px solid #065A82;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #475569;
+            display: none;
+        }
+
+        .feedback-box.show {
+            display: block;
+        }
+
+        .feedback-box.correct {
+            border-color: #02C39A;
+            background: #F0FDFB;
+        }
+
+        .feedback-box.incorrect {
+            border-color: #EF4444;
+            background: #FEF2F2;
+        }
+
+        .feedback-box strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            color: white;
+            min-width: 150px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(6, 90, 130, 0.3);
+        }
+
+        .btn-reset {
+            background: #E2E8F0;
+            color: #1E293B;
+            min-width: 120px;
+        }
+
+        .btn-reset:hover {
+            background: #CBD5E1;
+        }
+
+        .results {
+            display: none;
+            text-align: center;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .results-content {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .score-circle.excellent {
+            background: linear-gradient(135deg, #02C39A 0%, #059669 100%);
+        }
+
+        .score-circle.good {
+            background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
+        }
+
+        .score-circle.needs-work {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        }
+
+        .results h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #1E293B;
+        }
+
+        .results p {
+            font-size: 16px;
+            color: #475569;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            color: white;
+            padding: 12px 32px;
+        }
+
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(6, 90, 130, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .scenario-text {
+                font-size: 14px;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Module 2: Exercise & Body Systems</h1>
+            <p>Scenario-Based Analysis Quiz</p>
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div id="quizContainer"></div>
+        <div id="resultsContainer" class="results"></div>
+    </div>
+
+    <script>
+        const scenarios = [
+            {
+                scenario: 'A client is performing a heavy squat with 300 lbs. Which body systems are most actively engaged?',
+                options: [
+                    { text: 'Muscular and skeletal systems only', correct: false },
+                    { text: 'Muscular, skeletal, nervous, cardiovascular, and respiratory systems', correct: true },
+                    { text: 'Circulatory system only', correct: false },
+                    { text: 'Digestive and endocrine systems only', correct: false }
+                ],
+                feedback: 'A heavy squat requires multiple systems: The muscular system contracts, the skeletal system supports the load, the nervous system coordinates movement, the cardiovascular system increases blood flow, and the respiratory system increases oxygen delivery. This is a true full-body exercise.'
+            },
+            {
+                scenario: 'During a 400m sprint, what energy system is the primary ATP provider during the first 30 seconds?',
+                options: [
+                    { text: 'Oxidative (aerobic) system exclusively', correct: false },
+                    { text: 'Phosphocreatine (ATP-PC) system initially, then transitioning to glycolytic', correct: true },
+                    { text: 'Glycolytic (anaerobic) system exclusively', correct: false },
+                    { text: 'Oxidative system from start to finish', correct: false }
+                ],
+                feedback: 'The ATP-PC system provides immediate energy for the first 10-15 seconds. As phosphocreatine depletes, the glycolytic system takes over, providing anaerobic ATP production. The 400m is too fast and too short for aerobic metabolism to be the primary system.'
+            },
+            {
+                scenario: 'A student complains of cramping during exercise. Which electrolyte imbalance is most likely responsible?',
+                options: [
+                    { text: 'Low oxygen levels', correct: false },
+                    { text: 'Sodium, potassium, and magnesium imbalances', correct: true },
+                    { text: 'High glucose levels', correct: false },
+                    { text: 'Excess hemoglobin in the blood', correct: false }
+                ],
+                feedback: 'Muscle cramps during exercise are often caused by electrolyte (sodium, potassium, magnesium) depletion through sweating and altered muscle cell function. Proper hydration and electrolyte replacement can help prevent cramping.'
+            },
+            {
+                scenario: 'Why does a person\'s heart rate return to resting levels faster after regular aerobic training?',
+                options: [
+                    { text: 'The heart beats slower regardless of training', correct: false },
+                    { text: 'Improved cardiovascular efficiency allows faster recovery of heart rate', correct: true },
+                    { text: 'The lungs become smaller with training', correct: false },
+                    { text: 'Muscle fibers increase in number significantly', correct: false }
+                ],
+                feedback: 'Aerobic training increases stroke volume (amount of blood pumped per beat) and improves cardiac efficiency. This allows the trained heart to work less hard during recovery, returning to resting heart rate faster. This is a key adaptation to endurance training.'
+            },
+            {
+                scenario: 'A client performs 10 sets of 3 heavy bench presses with 2 minutes rest. Which neural adaptation occurs?',
+                options: [
+                    { text: 'Decreased motor unit recruitment', correct: false },
+                    { text: 'Increased neural efficiency and motor unit synchronization', correct: true },
+                    { text: 'Reduced muscle fiber activation', correct: false },
+                    { text: 'Decreased neurotransmitter release', correct: false }
+                ],
+                feedback: 'Heavy resistance training with adequate rest allows the nervous system to recruit motor units more efficiently and synchronize their activation. This neural adaptation can improve strength performance even before muscle hypertrophy occurs.'
+            },
+            {
+                scenario: 'During intense cardio exercise, why does breathing rate increase more than heart rate would suggest?',
+                options: [
+                    { text: 'To reduce body temperature', correct: false },
+                    { text: 'To increase oxygen uptake and CO2 removal from working muscles', correct: true },
+                    { text: 'To prevent muscle soreness', correct: false },
+                    { text: 'Breathing rate does not increase during exercise', correct: false }
+                ],
+                feedback: 'During intense exercise, the respiratory system increases ventilation to meet the oxygen demands of working muscles and remove excess CO2 produced by metabolism. This increase in breathing rate helps maintain blood pH and arterial oxygen content.'
+            },
+            {
+                scenario: 'A sedentary individual begins a walking program. Which physiological adaptation occurs first (within weeks)?',
+                options: [
+                    { text: 'Significant muscle hypertrophy', correct: false },
+                    { text: 'Improved mitochondrial function and capillary density', correct: true },
+                    { text: 'Complete loss of body fat', correct: false },
+                    { text: 'Increased maximum muscle fiber size by 50%', correct: false }
+                ],
+                feedback: 'Early adaptations to aerobic exercise include improved mitochondrial density (increased ability to produce ATP aerobically) and increased capillary density. These adaptations allow better oxygen delivery and utilization within weeks, before significant muscle growth occurs.'
+            },
+            {
+                scenario: 'Which statement best describes the cardiovascular response to a high-intensity interval workout?',
+                options: [
+                    { text: 'Heart rate remains steady throughout', correct: false },
+                    { text: 'Rapid heart rate increase during work intervals, partial recovery during rest intervals', correct: true },
+                    { text: 'Heart rate gradually increases throughout the workout', correct: false },
+                    { text: 'No significant change in heart rate occurs', correct: false }
+                ],
+                feedback: 'HIIT training causes rapid fluctuations in heart rate: high elevation during intense work periods and partial recovery during rest periods. This pattern of stress and recovery provides cardiovascular training benefits and stimulates aerobic and anaerobic adaptations.'
+            }
+        ];
+
+        let currentScenario = 0;
+        let responses = new Array(scenarios.length).fill(null);
+
+        function init() {
+            renderScenarios();
+            showScenario(0);
+        }
+
+        function renderScenarios() {
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = '';
+
+            scenarios.forEach((scenario, index) => {
+                const card = document.createElement('div');
+                card.className = 'scenario-box';
+                card.id = `scenario-${index}`;
+                card.style.display = 'none';
+
+                let optionsHTML = '';
+                scenario.options.forEach((option, optIndex) => {
+                    optionsHTML += `
+                        <div class="option" onclick="selectOption(${index}, ${optIndex})">
+                            <input type="radio" name="scenario-${index}" id="option-${index}-${optIndex}" value="${optIndex}">
+                            <label for="option-${index}-${optIndex}">${option.text}</label>
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="scenario-header">
+                        <div class="question-number">${index + 1}</div>
+                        <div class="question-label">Scenario ${index + 1} of ${scenarios.length}</div>
+                    </div>
+                    <div class="scenario-text">${scenario.scenario}</div>
+                    <div class="options">${optionsHTML}</div>
+                    <div class="feedback-box" id="feedback-${index}"></div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            renderControls();
+        }
+
+        function renderControls() {
+            let controlsHTML = '<div class="controls" id="controls">';
+            controlsHTML += '<button class="btn-reset" onclick="previousScenario()" id="prevBtn">← Previous</button>';
+            controlsHTML += '<button class="btn-submit" onclick="nextScenario()" id="nextBtn">Next →</button>';
+            controlsHTML += '</div>';
+
+            const container = document.getElementById('quizContainer');
+            if (document.getElementById('controls')) {
+                document.getElementById('controls').remove();
+            }
+            container.insertAdjacentHTML('afterend', controlsHTML);
+        }
+
+        function showScenario(index) {
+            document.querySelectorAll('.scenario-box').forEach(card => {
+                card.style.display = 'none';
+            });
+
+            document.getElementById(`scenario-${index}`).style.display = 'block';
+
+            if (responses[index] !== null) {
+                const radio = document.querySelector(`input[name="scenario-${index}"][value="${responses[index]}"]`);
+                if (radio) {
+                    radio.checked = true;
+                    radio.closest('.option').classList.add('selected');
+                }
+                showFeedback(index);
+            }
+
+            updateProgress();
+            currentScenario = index;
+
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('nextBtn').textContent = index === scenarios.length - 1 ? 'Submit →' : 'Next →';
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function selectOption(scenarioIndex, optionIndex) {
+            responses[scenarioIndex] = optionIndex;
+            showFeedback(scenarioIndex);
+
+            document.querySelectorAll(`input[name="scenario-${scenarioIndex}"]`).forEach(option => {
+                option.closest('.option').classList.remove('selected');
+            });
+            document.getElementById(`option-${scenarioIndex}-${optionIndex}`).closest('.option').classList.add('selected');
+        }
+
+        function showFeedback(index) {
+            const response = responses[index];
+            if (response === null) return;
+
+            const scenario = scenarios[index];
+            const isCorrect = scenario.options[response].correct;
+            const feedbackBox = document.getElementById(`feedback-${index}`);
+
+            feedbackBox.classList.add('show');
+            feedbackBox.innerHTML = `
+                <strong>${isCorrect ? '✓ Correct!' : '✗ Incorrect'}</strong>
+                ${scenario.feedback}
+            `;
+            feedbackBox.classList.toggle('correct', isCorrect);
+            feedbackBox.classList.toggle('incorrect', !isCorrect);
+        }
+
+        function nextScenario() {
+            if (responses[currentScenario] === null) {
+                alert('Please select an answer before continuing.');
+                return;
+            }
+
+            if (currentScenario < scenarios.length - 1) {
+                showScenario(currentScenario + 1);
+            } else {
+                showResults();
+            }
+        }
+
+        function previousScenario() {
+            if (currentScenario > 0) {
+                showScenario(currentScenario - 1);
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentScenario + 1) / scenarios.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function showResults() {
+            const correct = responses.filter((r, i) => {
+                return r !== null && scenarios[i].options[r].correct;
+            }).length;
+
+            const percentage = Math.round((correct / scenarios.length) * 100);
+            let resultClass = 'needs-work';
+            let resultMessage = 'Keep studying! Review the material and try again.';
+
+            if (percentage >= 90) {
+                resultClass = 'excellent';
+                resultMessage = 'Excellent work! You have mastered these concepts.';
+            } else if (percentage >= 80) {
+                resultClass = 'good';
+                resultMessage = 'Good job! You have a solid understanding.';
+            } else if (percentage >= 70) {
+                resultClass = 'good';
+                resultMessage = 'Nice effort! Review the areas where you had difficulty.';
+            }
+
+            document.getElementById('quizContainer').style.display = 'none';
+            document.getElementById('controls').style.display = 'none';
+
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.classList.add('show');
+            resultsContainer.innerHTML = `
+                <div class="results-content">
+                    <div class="score-circle ${resultClass}">${percentage}%</div>
+                    <h2>Quiz Complete!</h2>
+                    <p>You answered <strong>${correct} out of ${scenarios.length}</strong> scenarios correctly.</p>
+                    <p>${resultMessage}</p>
+                    <button class="btn-restart" onclick="restartQuiz()">Restart Quiz</button>
+                </div>
+            `;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function restartQuiz() {
+            currentScenario = 0;
+            responses = new Array(scenarios.length).fill(null);
+            document.getElementById('quizContainer').style.display = 'block';
+            document.getElementById('controls').style.display = 'flex';
+            document.getElementById('resultsContainer').classList.remove('show');
+            document.getElementById('resultsContainer').innerHTML = '';
+            init();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

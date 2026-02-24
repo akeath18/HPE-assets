@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PETE 346 - Client Communication Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1E293B;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+        }
+
+        h1 {
+            color: #065A82;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .course-info {
+            text-align: center;
+            color: #1C7293;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .instructions {
+            background: #F0F9FF;
+            border-left: 4px solid #02C39A;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .scenario {
+            margin-bottom: 35px;
+            border: 2px solid #E2E8F0;
+            border-radius: 8px;
+            padding: 25px;
+            background: #FAFBFC;
+        }
+
+        .scenario-number {
+            color: #065A82;
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .scenario-text {
+            background: white;
+            padding: 15px;
+            border-left: 4px solid #1C7293;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-style: italic;
+            color: #374151;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            border: 2px solid #E2E8F0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .option:hover {
+            border-color: #02C39A;
+            background: #F0FFFE;
+        }
+
+        .option input[type="radio"] {
+            margin-top: 4px;
+            cursor: pointer;
+            accent-color: #065A82;
+        }
+
+        .option-label {
+            flex: 1;
+            cursor: pointer;
+            line-height: 1.5;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            display: none;
+            border-left: 4px solid #02C39A;
+            background: #ECFDF5;
+            line-height: 1.5;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: #ECFDF5;
+            border-left-color: #059669;
+            color: #065A82;
+        }
+
+        .feedback.incorrect {
+            background: #FEE2E2;
+            border-left-color: #dc2626;
+            color: #991B1B;
+        }
+
+        .feedback-label {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #065A82;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1C7293;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(6, 90, 130, 0.3);
+        }
+
+        .btn-secondary {
+            background: #E2E8F0;
+            color: #1E293B;
+        }
+
+        .btn-secondary:hover {
+            background: #CBD5E1;
+            transform: translateY(-2px);
+        }
+
+        .btn-accent {
+            background: #02C39A;
+            color: white;
+        }
+
+        .btn-accent:hover {
+            background: #01B383;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(2, 195, 154, 0.3);
+        }
+
+        .score-display {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #F0F9FF 0%, #ECFDF5 100%);
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+            border: 2px solid #02C39A;
+        }
+
+        .score-display.show {
+            display: block;
+        }
+
+        .score-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: #065A82;
+            margin: 10px 0;
+        }
+
+        .score-message {
+            font-size: 18px;
+            color: #1C7293;
+            margin-top: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .scenario {
+                padding: 15px;
+            }
+
+            .button-group {
+                gap: 10px;
+            }
+
+            button {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+
+            .score-number {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Client Communication Quiz</h1>
+        <div class="course-info">PETE 346 - Professional Communication in Exercise Science</div>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> Read each client scenario and select the most appropriate professional communication response. Focus on responses that demonstrate empathy, encouragement, and evidence-based practice. Click "Check Answers" when complete to see your score and detailed feedback.
+        </div>
+
+        <form id="quizForm">
+            <!-- Scenario 1 -->
+            <div class="scenario">
+                <div class="scenario-number">Scenario 1</div>
+                <div class="scenario-text">Maria has missed 3 of her last 5 sessions without explanation.</div>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q1" value="A">
+                        <span class="option-label"><strong>A)</strong> "You're clearly not committed to your goals. We need to discuss your priorities."</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q1" value="B">
+                        <span class="option-label"><strong>B)</strong> "I've noticed you've missed a few sessions recently. Is everything okay? I'd like to help find a schedule that works better for you."</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q1" value="C">
+                        <span class="option-label"><strong>C)</strong> "If you keep missing sessions, you won't see results and we'll have to reconsider your membership."</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q1" value="D">
+                        <span class="option-label"><strong>D)</strong> "Don't worry about it, just come when you can."</span>
+                    </label>
+                </div>
+                <div class="feedback" id="feedback1">
+                    <div class="feedback-label">Correct!</div>
+                    Approach with empathy and curiosity, not judgment. Offer solutions rather than ultimatums. This response validates the observation, opens dialogue, and demonstrates support.
+                </div>
+            </div>
+
+            <!-- Scenario 2 -->
+            <div class="scenario">
+                <div class="scenario-number">Scenario 2</div>
+                <div class="scenario-text">Jake has been training consistently for 8 weeks but hasn't seen the weight loss he expected.</div>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q2" value="A">
+                        <span class="option-label"><strong>A)</strong> "You need to try harder and eat less."</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q2" value="B">
+                        <span class="option-label"><strong>B)</strong> "Maybe this program isn't right for you."</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q2" value="C">
+                        <span class="option-label"><strong>C)</strong> "I understand your frustration. Let's look at what IS improving—your strength is up 15% and your endurance has doubled. Let's review your full picture including nutrition and sleep."</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q2" value="D">
+                        <span class="option-label"><strong>D)</strong> "Weight loss takes time. Just keep doing what you're doing."</span>
+                    </label>
+                </div>
+                <div class="feedback" id="feedback2">
+                    <div class="feedback-label">Correct!</div>
+                    Acknowledge feelings, redirect to measurable progress, and collaboratively explore other factors. This holistic approach maintains motivation while addressing the broader picture.
+                </div>
+            </div>
+
+            <!-- Scenario 3 -->
+            <div class="scenario">
+                <div class="scenario-number">Scenario 3</div>
+                <div class="scenario-text">A student tells you they hate running and don't want to participate in the cardio unit.</div>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q3" value="A">
+                        <span class="option-label"><strong>A)</strong> "Running is required. You don't have a choice."</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q3" value="B">
+                        <span class="option-label"><strong>B)</strong> "I hear that you don't enjoy running. Let's find a cardio activity you do enjoy—would you prefer cycling, jump rope, or dance fitness?"</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q3" value="C">
+                        <span class="option-label"><strong>C)</strong> "Fine, you can sit out."</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q3" value="D">
+                        <span class="option-label"><strong>D)</strong> "Everyone hates running, but it's good for you."</span>
+                    </label>
+                </div>
+                <div class="feedback" id="feedback3">
+                    <div class="feedback-label">Correct!</div>
+                    Validate feelings and offer autonomy through choice to maintain engagement. This approach respects the student's preferences while keeping them active.
+                </div>
+            </div>
+
+            <!-- Scenario 4 -->
+            <div class="scenario">
+                <div class="scenario-number">Scenario 4</div>
+                <div class="scenario-text">Devon has been crushing his goals and just hit a new PR on deadlift.</div>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q4" value="A">
+                        <span class="option-label"><strong>A)</strong> "Good job."</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q4" value="B">
+                        <span class="option-label"><strong>B)</strong> "That's awesome, Devon! Your consistency with the progressive overload plan is paying off. That's a 25-pound increase since you started. What do you want to target next?"</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q4" value="C">
+                        <span class="option-label"><strong>C)</strong> "Nice, but don't get cocky. There's still a lot of work to do."</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q4" value="D">
+                        <span class="option-label"><strong>D)</strong> "See, I told you my program would work."</span>
+                    </label>
+                </div>
+                <div class="feedback" id="feedback4">
+                    <div class="feedback-label">Correct!</div>
+                    Provide specific, process-focused praise that attributes success to the client's effort and connects it to the training plan. This reinforces positive behavior and maintains momentum.
+                </div>
+            </div>
+
+            <!-- Scenario 5 -->
+            <div class="scenario">
+                <div class="scenario-number">Scenario 5</div>
+                <div class="scenario-text">Sarah seems frustrated during a difficult exercise and says "I can't do this."</div>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q5" value="A">
+                        <span class="option-label"><strong>A)</strong> "Yes you can, stop being negative."</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q5" value="B">
+                        <span class="option-label"><strong>B)</strong> "You're right, let's skip it."</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q5" value="C">
+                        <span class="option-label"><strong>C)</strong> "I can see this is challenging. Let's try a modification—you did a similar movement last week really well. We'll build up to this one."</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q5" value="D">
+                        <span class="option-label"><strong>D)</strong> "Everyone struggles with this one."</span>
+                    </label>
+                </div>
+                <div class="feedback" id="feedback5">
+                    <div class="feedback-label">Correct!</div>
+                    Validate the difficulty, offer a scaffold, and reference past success to build competence. This approach maintains engagement while supporting growth.
+                </div>
+            </div>
+
+            <!-- Scenario 6 -->
+            <div class="scenario">
+                <div class="scenario-number">Scenario 6</div>
+                <div class="scenario-text">A parent emails complaining that the fitness assessments are too hard for their child.</div>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q6" value="A">
+                        <span class="option-label"><strong>A)</strong> "The assessments are standardized and cannot be changed."</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q6" value="B">
+                        <span class="option-label"><strong>B)</strong> "Your child needs to practice more at home."</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q6" value="C">
+                        <span class="option-label"><strong>C)</strong> "Thank you for reaching out. Our fitness assessments are designed to measure individual progress, not compare students. I'd be happy to meet with you to discuss how we can support your child's confidence and set personal improvement goals."</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q6" value="D">
+                        <span class="option-label"><strong>D)</strong> "I'll make the test easier for your child."</span>
+                    </label>
+                </div>
+                <div class="feedback" id="feedback6">
+                    <div class="feedback-label">Correct!</div>
+                    Professional response that educates about assessment purpose and offers collaboration. This demonstrates respect and willingness to partner with families.
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="btn-primary" onclick="checkAnswers()">Check Answers</button>
+                <button type="button" class="btn-secondary" onclick="resetQuiz()">Reset</button>
+            </div>
+        </form>
+
+        <div class="score-display" id="scoreDisplay">
+            <strong>Quiz Score</strong>
+            <div class="score-number" id="scoreNumber">0/6</div>
+            <div class="score-message" id="scoreMessage"></div>
+        </div>
+    </div>
+
+    <script>
+        const correctAnswers = {
+            q1: 'B',
+            q2: 'C',
+            q3: 'B',
+            q4: 'B',
+            q5: 'C',
+            q6: 'C'
+        };
+
+        function checkAnswers() {
+            const form = document.getElementById('quizForm');
+            let score = 0;
+            let allAnswered = true;
+
+            for (let i = 1; i <= 6; i++) {
+                const question = `q${i}`;
+                const selected = document.querySelector(`input[name="${question}"]:checked`);
+
+                if (!selected) {
+                    allAnswered = false;
+                    alert('Please answer all questions before checking.');
+                    return;
+                }
+
+                const feedbackDiv = document.getElementById(`feedback${i}`);
+                const isCorrect = selected.value === correctAnswers[question];
+
+                if (isCorrect) {
+                    score++;
+                    feedbackDiv.classList.add('show', 'correct');
+                } else {
+                    feedbackDiv.classList.add('show', 'incorrect');
+                    feedbackDiv.querySelector('.feedback-label').textContent = 'Incorrect. The correct answer is ' + correctAnswers[question] + '.';
+                }
+            }
+
+            displayScore(score);
+        }
+
+        function displayScore(score) {
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const scoreNumber = document.getElementById('scoreNumber');
+            const scoreMessage = document.getElementById('scoreMessage');
+
+            scoreNumber.textContent = `${score}/6`;
+
+            let message = '';
+            if (score === 6) {
+                message = 'Excellent! You demonstrate strong client communication skills.';
+            } else if (score >= 5) {
+                message = 'Great job! You understand most key communication principles.';
+            } else if (score >= 4) {
+                message = 'Good effort! Review the feedback to strengthen your communication approach.';
+            } else if (score >= 3) {
+                message = 'Keep practicing! Focus on empathetic and collaborative communication strategies.';
+            } else {
+                message = 'Review the feedback and course material to improve your communication skills.';
+            }
+
+            scoreMessage.textContent = message;
+            scoreDisplay.classList.add('show');
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        function resetQuiz() {
+            document.getElementById('quizForm').reset();
+            document.getElementById('scoreDisplay').classList.remove('show');
+
+            for (let i = 1; i <= 6; i++) {
+                const feedbackDiv = document.getElementById(`feedback${i}`);
+                feedbackDiv.classList.remove('show', 'correct', 'incorrect');
+                feedbackDiv.querySelector('.feedback-label').textContent = 'Correct!';
+            }
+
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>

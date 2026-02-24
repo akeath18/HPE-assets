@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 2: Joint Actions Matching</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1E293B;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .instructions {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #02C39A;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .instructions h3 {
+            color: #065A82;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .matching-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .column {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .column h3 {
+            color: #065A82;
+            font-size: 16px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #E2E8F0;
+            padding-bottom: 10px;
+        }
+
+        .item {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            color: white;
+            border-radius: 6px;
+            cursor: grab;
+            user-select: none;
+            text-align: center;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .item:active {
+            cursor: grabbing;
+            opacity: 0.8;
+        }
+
+        .paired-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #02C39A 0%, #059669 100%);
+            color: white;
+            border-radius: 6px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .remove-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .remove-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .drop-zone {
+            min-height: 150px;
+            padding: 15px;
+            background: #F8FAFC;
+            border: 2px dashed #CBD5E1;
+            border-radius: 6px;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .drop-zone.dragover {
+            border-color: #02C39A;
+            background: #F0FDFB;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            color: white;
+            min-width: 150px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(6, 90, 130, 0.3);
+        }
+
+        .btn-reset {
+            background: #E2E8F0;
+            color: #1E293B;
+            min-width: 120px;
+        }
+
+        .btn-reset:hover {
+            background: #CBD5E1;
+        }
+
+        .feedback {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            border-left: 4px solid #02C39A;
+        }
+
+        .feedback.incorrect {
+            border-left: 4px solid #EF4444;
+        }
+
+        .feedback h3 {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .feedback.correct h3 {
+            color: #059669;
+        }
+
+        .feedback.incorrect h3 {
+            color: #DC2626;
+        }
+
+        .score-box {
+            background: linear-gradient(135deg, #02C39A 0%, #059669 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .score-box h3 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .matching-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Module 2: Joint Actions Matching</h1>
+            <p>Anatomy & Physiology Fundamentals</p>
+        </div>
+
+        <div class="instructions">
+            <h3>Instructions</h3>
+            <p>Drag joint actions from the left column to match them with their correct definitions on the right. Each action should be paired with exactly one definition.</p>
+        </div>
+
+        <div class="matching-container">
+            <div class="column">
+                <h3>Joint Actions</h3>
+                <div id="leftItems"></div>
+            </div>
+            <div class="column">
+                <h3>Definitions & Examples</h3>
+                <div id="rightItems"></div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn-submit" onclick="checkAnswers()">Check Answers</button>
+            <button class="btn-reset" onclick="resetActivity()">Reset</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <script>
+        const pairs = [
+            {
+                action: 'Flexion',
+                definition: 'Decreasing the angle at a joint (e.g., bending your elbow)',
+                id: 'flexion'
+            },
+            {
+                action: 'Extension',
+                definition: 'Increasing the angle at a joint (e.g., straightening your arm)',
+                id: 'extension'
+            },
+            {
+                action: 'Abduction',
+                definition: 'Moving a limb away from the midline of the body (e.g., raising arm to side)',
+                id: 'abduction'
+            },
+            {
+                action: 'Adduction',
+                definition: 'Moving a limb toward the midline of the body (e.g., bringing arm down)',
+                id: 'adduction'
+            },
+            {
+                action: 'Rotation',
+                definition: 'Turning a bone around its axis (e.g., rotating head side-to-side)',
+                id: 'rotation'
+            },
+            {
+                action: 'Circumduction',
+                definition: 'Moving in a circular pattern at a joint (e.g., shoulder windmill motion)',
+                id: 'circumduction'
+            },
+            {
+                action: 'Dorsiflexion',
+                definition: 'Pulling the foot upward at the ankle (e.g., toes pointing toward shin)',
+                id: 'dorsiflexion'
+            },
+            {
+                action: 'Plantarflexion',
+                definition: 'Pointing the foot downward at the ankle (e.g., pointing toes down)',
+                id: 'plantarflexion'
+            },
+            {
+                action: 'Pronation',
+                definition: 'Rotating the forearm to palm-down position',
+                id: 'pronation'
+            },
+            {
+                action: 'Supination',
+                definition: 'Rotating the forearm to palm-up position',
+                id: 'supination'
+            },
+            {
+                action: 'Inversion',
+                definition: 'Turning the sole of the foot inward (medial)',
+                id: 'inversion'
+            },
+            {
+                action: 'Eversion',
+                definition: 'Turning the sole of the foot outward (lateral)',
+                id: 'eversion'
+            }
+        ];
+
+        let currentMatches = {};
+        let draggedItem = null;
+
+        function init() {
+            renderLeftItems();
+            renderRightItems();
+        }
+
+        function renderLeftItems() {
+            const container = document.getElementById('leftItems');
+            container.innerHTML = '';
+
+            pairs.forEach(pair => {
+                const div = document.createElement('div');
+                div.className = 'item';
+                div.id = `action-${pair.id}`;
+                div.draggable = true;
+                div.textContent = pair.action;
+                div.dataset.id = pair.id;
+
+                div.addEventListener('dragstart', handleDragStart);
+                div.addEventListener('dragend', handleDragEnd);
+
+                container.appendChild(div);
+            });
+        }
+
+        function renderRightItems() {
+            const container = document.getElementById('rightItems');
+            container.innerHTML = '';
+
+            pairs.forEach(pair => {
+                const dropZone = document.createElement('div');
+                dropZone.id = `drop-${pair.id}`;
+                dropZone.dataset.id = pair.id;
+
+                const defDiv = document.createElement('div');
+                defDiv.style.marginBottom = '10px';
+                defDiv.innerHTML = `<strong>${pair.definition}</strong>`;
+
+                const zone = document.createElement('div');
+                zone.className = 'drop-zone';
+                zone.id = `zone-${pair.id}`;
+                zone.dataset.definition = pair.id;
+
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('dragleave', handleDragLeave);
+                zone.addEventListener('drop', (e) => handleDrop(e, pair.id));
+
+                dropZone.appendChild(defDiv);
+                dropZone.appendChild(zone);
+                container.appendChild(dropZone);
+
+                if (currentMatches[pair.id]) {
+                    renderMatchedItem(pair.id);
+                }
+            });
+        }
+
+        function renderMatchedItem(definitionId) {
+            const zone = document.getElementById(`zone-${definitionId}`);
+            zone.innerHTML = '';
+
+            const matchedActionId = currentMatches[definitionId];
+            const action = pairs.find(p => p.id === matchedActionId);
+
+            if (action) {
+                const paired = document.createElement('div');
+                paired.className = 'paired-item';
+                paired.innerHTML = `
+                    <span>${action.action}</span>
+                    <button class="remove-btn" onclick="removeMatch('${definitionId}')">✕</button>
+                `;
+                zone.appendChild(paired);
+
+                const actionEl = document.getElementById(`action-${matchedActionId}`);
+                if (actionEl) actionEl.style.opacity = '0.3';
+            }
+        }
+
+        function handleDragStart(e) {
+            draggedItem = e.target.dataset.id;
+            e.target.style.opacity = '0.5';
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            e.target.style.opacity = '';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(e, definitionId) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+
+            if (draggedItem) {
+                currentMatches[definitionId] = draggedItem;
+                renderRightItems();
+            }
+        }
+
+        function removeMatch(definitionId) {
+            delete currentMatches[definitionId];
+            renderRightItems();
+        }
+
+        function checkAnswers() {
+            let correct = 0;
+            const total = pairs.length;
+
+            pairs.forEach(pair => {
+                if (currentMatches[pair.id] === pair.id) {
+                    correct++;
+                }
+            });
+
+            const allCorrect = correct === total;
+
+            const feedback = document.getElementById('feedback');
+            feedback.classList.add('show');
+
+            if (allCorrect) {
+                feedback.classList.remove('incorrect');
+                feedback.classList.add('correct');
+                feedback.innerHTML = `
+                    <h3>🎉 Perfect! All matches are correct!</h3>
+                    <p>Excellent understanding of joint actions and their definitions.</p>
+                    <div class="score-box">
+                        <h3>${correct}/${total}</h3>
+                        <p>Score: 100%</p>
+                    </div>
+                `;
+            } else {
+                feedback.classList.remove('correct');
+                feedback.classList.add('incorrect');
+                feedback.innerHTML = `
+                    <h3>✓ Review your answers</h3>
+                    <p>You correctly matched <strong>${correct} out of ${total}</strong> pairs. Review the incorrect matches and try again!</p>
+                    <div class="score-box" style="background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);">
+                        <h3>${correct}/${total}</h3>
+                        <p>Score: ${Math.round((correct/total)*100)}%</p>
+                    </div>
+                `;
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetActivity() {
+            currentMatches = {};
+            document.getElementById('feedback').classList.remove('show');
+            renderLeftItems();
+            renderRightItems();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

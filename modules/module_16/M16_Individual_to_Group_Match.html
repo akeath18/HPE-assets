@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Individual to Group PE Matching Activity</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 900px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #065A82;
+            margin-bottom: 10px;
+            font-size: 28px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #1C7293;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .instructions {
+            background: #F0F9FF;
+            border-left: 4px solid #02C39A;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            color: #1E293B;
+            line-height: 1.6;
+        }
+
+        .matching-grid {
+            display: grid;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .match-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            align-items: center;
+            padding: 15px;
+            background: #F8FAFC;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .match-row:hover {
+            background: #EEF2F7;
+        }
+
+        .match-row.correct {
+            background: #ECFDF5;
+            border-left: 4px solid #059669;
+        }
+
+        .match-row.incorrect {
+            background: #FEF2F2;
+            border-left: 4px solid #dc2626;
+        }
+
+        .left-concept {
+            color: #1E293B;
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 1.4;
+            padding-right: 10px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #CBD5E1;
+            border-radius: 8px;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 14px;
+            color: #1E293B;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        select:hover {
+            border-color: #065A82;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #02C39A;
+            box-shadow: 0 0 0 3px rgba(2, 195, 154, 0.1);
+        }
+
+        select:disabled {
+            background: #F0F9FF;
+            color: #059669;
+            cursor: default;
+        }
+
+        .feedback {
+            font-size: 12px;
+            margin-top: 5px;
+            padding: 8px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: #D1FAE5;
+            color: #047857;
+        }
+
+        .feedback.incorrect {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-check {
+            background: #065A82;
+            color: white;
+        }
+
+        .btn-check:hover {
+            background: #1C7293;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(6, 90, 130, 0.3);
+        }
+
+        .btn-check:disabled {
+            background: #94A3B8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-reset {
+            background: #02C39A;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(2, 195, 154, 0.3);
+        }
+
+        .score-display {
+            text-align: center;
+            padding: 20px;
+            background: #F0F9FF;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .score-display.show {
+            display: block;
+        }
+
+        .score-display h3 {
+            color: #065A82;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .score-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #02C39A;
+        }
+
+        .score-text {
+            color: #1C7293;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .match-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .left-concept {
+                padding-right: 0;
+                border-bottom: 2px solid #02C39A;
+                padding-bottom: 10px;
+            }
+
+            .button-group {
+                gap: 10px;
+            }
+
+            button {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            select {
+                font-size: 13px;
+                padding: 8px 10px;
+            }
+
+            button {
+                padding: 10px 15px;
+                font-size: 13px;
+            }
+
+            .score-number {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Individual Training to Group PE Matching</h1>
+        <p class="subtitle">PETE 346 - Module 16</p>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> Match each individual training concept on the left with its group physical education equivalent on the right. Select the correct group PE strategy from the dropdown menu for each item. When finished, click "Check Answers" to see your results.
+        </div>
+
+        <div class="matching-grid" id="matchingGrid"></div>
+
+        <div class="button-group">
+            <button class="btn-check" id="checkBtn">Check Answers</button>
+            <button class="btn-reset" id="resetBtn">Reset Activity</button>
+        </div>
+
+        <div class="score-display" id="scoreDisplay">
+            <h3>Your Score</h3>
+            <div class="score-number" id="scoreNumber">0/10</div>
+            <div class="score-text" id="scoreMessage">Perfect! All matches are correct!</div>
+        </div>
+    </div>
+
+    <script>
+        const concepts = [
+            "Progressive overload",
+            "1RM testing",
+            "Client intake interview",
+            "Periodization",
+            "Personal training session",
+            "Heart rate monitoring",
+            "Exercise modification for injury",
+            "Motivational interviewing",
+            "Training log / workout journal",
+            "Individualized meal plan guidance"
+        ];
+
+        const options = [
+            "Differentiated stations at increasing difficulty levels",
+            "Modified fitness assessment battery for classes (e.g., FITNESSGRAM)",
+            "Student interest and fitness surveys at semester start",
+            "Unit planning with progressive skill complexity across the year",
+            "Small-group stations with teacher circulating for feedback",
+            "RPE scales and talk test for self-monitoring intensity",
+            "Adaptive PE modifications and IEP accommodations",
+            "Building autonomy through student choice and goal-setting conferences",
+            "Student fitness portfolios and reflection journals",
+            "Nutrition education integrated into health curriculum"
+        ];
+
+        // Correct answers: index of the concept maps to index of the correct option
+        const correctAnswers = {
+            0: 0, // Progressive overload -> Differentiated stations at increasing difficulty levels
+            1: 1, // 1RM testing -> Modified fitness assessment battery
+            2: 2, // Client intake interview -> Student interest and fitness surveys
+            3: 3, // Periodization -> Unit planning with progressive skill complexity
+            4: 4, // Personal training session -> Small-group stations with teacher circulating
+            5: 5, // Heart rate monitoring -> RPE scales and talk test
+            6: 6, // Exercise modification for injury -> Adaptive PE modifications
+            7: 7, // Motivational interviewing -> Building autonomy through student choice
+            8: 8, // Training log -> Student fitness portfolios and reflection journals
+            9: 9  // Individualized meal plan -> Nutrition education integrated into health curriculum
+        };
+
+        let userAnswers = {};
+
+        // Initialize the activity
+        function initializeActivity() {
+            const grid = document.getElementById('matchingGrid');
+            grid.innerHTML = '';
+            userAnswers = {};
+
+            concepts.forEach((concept, index) => {
+                const row = document.createElement('div');
+                row.className = 'match-row';
+                row.id = `row-${index}`;
+
+                const conceptDiv = document.createElement('div');
+                conceptDiv.className = 'left-concept';
+                conceptDiv.textContent = `${index + 1}. ${concept}`;
+
+                const selectDiv = document.createElement('div');
+                const select = document.createElement('select');
+                select.id = `select-${index}`;
+                select.innerHTML = '<option value="">-- Select a match --</option>';
+
+                // Shuffle options for display
+                const shuffledOptions = [...options].sort(() => Math.random() - 0.5);
+                shuffledOptions.forEach((option, idx) => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = options.indexOf(option); // Store actual index
+                    optionElement.textContent = option;
+                    select.appendChild(optionElement);
+                });
+
+                select.addEventListener('change', (e) => {
+                    userAnswers[index] = parseInt(e.target.value) || null;
+                });
+
+                selectDiv.appendChild(select);
+
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.className = 'feedback';
+                feedbackDiv.id = `feedback-${index}`;
+
+                row.appendChild(conceptDiv);
+                row.appendChild(selectDiv);
+                row.appendChild(feedbackDiv);
+
+                grid.appendChild(row);
+            });
+        }
+
+        // Check answers
+        function checkAnswers() {
+            let correctCount = 0;
+            let allAnswered = true;
+
+            concepts.forEach((concept, index) => {
+                const selected = document.getElementById(`select-${index}`).value;
+                const feedback = document.getElementById(`feedback-${index}`);
+                const row = document.getElementById(`row-${index}`);
+
+                if (selected === '') {
+                    allAnswered = false;
+                    feedback.classList.remove('show', 'correct', 'incorrect');
+                    row.classList.remove('correct', 'incorrect');
+                    return;
+                }
+
+                const selectedIndex = parseInt(selected);
+                const isCorrect = selectedIndex === correctAnswers[index];
+
+                if (isCorrect) {
+                    correctCount++;
+                    feedback.className = 'feedback show correct';
+                    row.className = 'match-row correct';
+                    feedback.textContent = `✓ Correct! "${options[selectedIndex]}" is the group PE equivalent of "${concept}".`;
+                } else {
+                    feedback.className = 'feedback show incorrect';
+                    row.className = 'match-row incorrect';
+                    feedback.textContent = `✗ Incorrect. The correct answer is: "${options[correctAnswers[index]]}"`;
+                }
+            });
+
+            if (!allAnswered) {
+                alert('Please select a match for all items before checking your answers.');
+                return;
+            }
+
+            displayScore(correctCount);
+        }
+
+        // Display score
+        function displayScore(correctCount) {
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const scoreNumber = document.getElementById('scoreNumber');
+            const scoreMessage = document.getElementById('scoreMessage');
+
+            scoreNumber.textContent = `${correctCount}/10`;
+
+            if (correctCount === 10) {
+                scoreMessage.textContent = 'Perfect! All matches are correct!';
+            } else if (correctCount >= 8) {
+                scoreMessage.textContent = 'Excellent work! Just a couple more to review.';
+            } else if (correctCount >= 6) {
+                scoreMessage.textContent = 'Good effort! Review the incorrect matches and try again.';
+            } else if (correctCount >= 4) {
+                scoreMessage.textContent = 'You are on the right track! Keep studying the concepts.';
+            } else {
+                scoreMessage.textContent = 'Keep practicing! Review the material and try again.';
+            }
+
+            scoreDisplay.classList.add('show');
+        }
+
+        // Reset activity
+        function resetActivity() {
+            userAnswers = {};
+            document.getElementById('scoreDisplay').classList.remove('show');
+            concepts.forEach((concept, index) => {
+                document.getElementById(`select-${index}`).value = '';
+                document.getElementById(`feedback-${index}`).classList.remove('show', 'correct', 'incorrect');
+                document.getElementById(`row-${index}`).classList.remove('correct', 'incorrect');
+            });
+        }
+
+        // Event listeners
+        document.getElementById('checkBtn').addEventListener('click', checkAnswers);
+        document.getElementById('resetBtn').addEventListener('click', resetActivity);
+
+        // Initialize on page load
+        initializeActivity();
+    </script>
+</body>
+</html>

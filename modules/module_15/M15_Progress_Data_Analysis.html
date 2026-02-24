@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PETE 346 - Module 15: Progress Data Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            padding: 40px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #065A82;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .client-info {
+            color: #1E293B;
+            font-size: 14px;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .instructions {
+            background: #F0F9FF;
+            border-left: 4px solid #02C39A;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            color: #1E293B;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin-bottom: 40px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table thead {
+            background: #065A82;
+            color: white;
+        }
+
+        table th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 13px;
+        }
+
+        table tbody tr:hover {
+            background: #f5f5f5;
+        }
+
+        table tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .questions-section {
+            margin-top: 40px;
+        }
+
+        .questions-title {
+            color: #065A82;
+            font-size: 20px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .question-block {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 8px;
+            border-left: 4px solid #1C7293;
+        }
+
+        .question-text {
+            color: #1E293B;
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 12px;
+            cursor: pointer;
+            accent-color: #065A82;
+            width: 18px;
+            height: 18px;
+        }
+
+        .option label {
+            cursor: pointer;
+            color: #1E293B;
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: #d1fae5;
+            border-left: 4px solid #059669;
+            color: #059669;
+        }
+
+        .feedback.incorrect {
+            background: #fee2e2;
+            border-left: 4px solid #dc2626;
+            color: #dc2626;
+        }
+
+        .feedback-icon {
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #065A82;
+            color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-primary:hover {
+            background: #044659;
+            box-shadow: 0 4px 12px rgba(6, 90, 130, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: #02C39A;
+            color: #1E293B;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-secondary:hover {
+            background: #01a578;
+            box-shadow: 0 4px 12px rgba(2, 195, 154, 0.3);
+        }
+
+        .btn-secondary:active {
+            transform: scale(0.98);
+        }
+
+        .score-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #F0F9FF;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+            border: 2px solid #02C39A;
+        }
+
+        .score-section.show {
+            display: block;
+        }
+
+        .score-text {
+            color: #065A82;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .score-value {
+            font-size: 36px;
+            color: #02C39A;
+            font-weight: bold;
+        }
+
+        .score-percentage {
+            color: #1E293B;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            table th,
+            table td {
+                padding: 8px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                min-width: 100%;
+            }
+
+            .question-block {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 18px;
+            }
+
+            .table-wrapper {
+                font-size: 11px;
+            }
+
+            table th,
+            table td {
+                padding: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Module 15: Progress Data Analysis</h1>
+        <div class="client-info">Client: Alex, Age 28 | Goal: General Fitness</div>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> Analyze the 6-week training progress data below, then answer the multiple-choice questions. Review the strength metrics, attendance, and wellness variables to identify training trends and appropriate programming adjustments.
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Week</th>
+                        <th>Squat (lbs)</th>
+                        <th>Bench (lbs)</th>
+                        <th>Deadlift (lbs)</th>
+                        <th>Avg RPE</th>
+                        <th>Sessions Attended</th>
+                        <th>Sleep Quality (1-10)</th>
+                        <th>Stress Level (1-10)</th>
+                        <th>Body Weight</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>135</td>
+                        <td>95</td>
+                        <td>185</td>
+                        <td>6</td>
+                        <td>3/3</td>
+                        <td>7</td>
+                        <td>4</td>
+                        <td>175 lbs</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>145</td>
+                        <td>100</td>
+                        <td>195</td>
+                        <td>7</td>
+                        <td>3/3</td>
+                        <td>7</td>
+                        <td>4</td>
+                        <td>174 lbs</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>155</td>
+                        <td>105</td>
+                        <td>205</td>
+                        <td>7</td>
+                        <td>3/3</td>
+                        <td>6</td>
+                        <td>5</td>
+                        <td>174 lbs</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>155</td>
+                        <td>105</td>
+                        <td>210</td>
+                        <td>8</td>
+                        <td>2/3</td>
+                        <td>5</td>
+                        <td>7</td>
+                        <td>175 lbs</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>150</td>
+                        <td>100</td>
+                        <td>205</td>
+                        <td>9</td>
+                        <td>2/3</td>
+                        <td>4</td>
+                        <td>8</td>
+                        <td>176 lbs</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>145</td>
+                        <td>95</td>
+                        <td>200</td>
+                        <td>9</td>
+                        <td>1/3</td>
+                        <td>4</td>
+                        <td>9</td>
+                        <td>177 lbs</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="questions-section">
+            <div class="questions-title">Assessment Questions</div>
+
+            <div class="question-block">
+                <div class="question-text">1. What is the overall training trend for Alex?</div>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q1a" name="question1" value="a">
+                        <label for="q1a">A) Consistent progression</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q1b" name="question1" value="b">
+                        <label for="q1b">B) Initial progression followed by plateau and regression</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q1c" name="question1" value="c">
+                        <label for="q1c">C) Steady regression</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q1d" name="question1" value="d">
+                        <label for="q1d">D) No clear pattern</label>
+                    </div>
+                </div>
+                <div class="feedback" id="feedback1"></div>
+            </div>
+
+            <div class="question-block">
+                <div class="question-text">2. Which wellness variable shows the most concerning trend?</div>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q2a" name="question2" value="a">
+                        <label for="q2a">A) Sleep quality</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q2b" name="question2" value="b">
+                        <label for="q2b">B) Stress level (from 4 to 9)</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q2c" name="question2" value="c">
+                        <label for="q2c">C) Body weight</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q2d" name="question2" value="d">
+                        <label for="q2d">D) RPE</label>
+                    </div>
+                </div>
+                <div class="feedback" id="feedback2"></div>
+            </div>
+
+            <div class="question-block">
+                <div class="question-text">3. At which week should the trainer have first considered modifying the program?</div>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q3a" name="question3" value="a">
+                        <label for="q3a">A) Week 2</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q3b" name="question3" value="b">
+                        <label for="q3b">B) Week 3</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q3c" name="question3" value="c">
+                        <label for="q3c">C) Week 4 (RPE jumped, missed session, sleep/stress worsening)</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q3d" name="question3" value="d">
+                        <label for="q3d">D) Week 5</label>
+                    </div>
+                </div>
+                <div class="feedback" id="feedback3"></div>
+            </div>
+
+            <div class="question-block">
+                <div class="question-text">4. What is the most likely cause of Alex's performance decline?</div>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q4a" name="question4" value="a">
+                        <label for="q4a">A) Insufficient training volume</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q4b" name="question4" value="b">
+                        <label for="q4b">B) Accumulated fatigue and life stress</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q4c" name="question4" value="c">
+                        <label for="q4c">C) Poor nutrition</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q4d" name="question4" value="d">
+                        <label for="q4d">D) Program too easy</label>
+                    </div>
+                </div>
+                <div class="feedback" id="feedback4"></div>
+            </div>
+
+            <div class="question-block">
+                <div class="question-text">5. What is the most appropriate immediate adjustment?</div>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q5a" name="question5" value="a">
+                        <label for="q5a">A) Increase training volume</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q5b" name="question5" value="b">
+                        <label for="q5b">B) Add a deload week and address recovery</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q5c" name="question5" value="c">
+                        <label for="q5c">C) Switch to a completely new program</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q5d" name="question5" value="d">
+                        <label for="q5d">D) Increase training frequency to 4x/week</label>
+                    </div>
+                </div>
+                <div class="feedback" id="feedback5"></div>
+            </div>
+
+            <div class="question-block">
+                <div class="question-text">6. Which metric best indicates Alex's readiness to train on a given day?</div>
+                <div class="options">
+                    <div class="option">
+                        <input type="radio" id="q6a" name="question6" value="a">
+                        <label for="q6a">A) Body weight</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q6b" name="question6" value="b">
+                        <label for="q6b">B) Previous workout performance</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q6c" name="question6" value="c">
+                        <label for="q6c">C) RPE combined with sleep and stress scores</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q6d" name="question6" value="d">
+                        <label for="q6d">D) Sessions attended</label>
+                    </div>
+                </div>
+                <div class="feedback" id="feedback6"></div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn-primary" onclick="checkAnswers()">Check Answers</button>
+            <button class="btn-secondary" onclick="resetForm()">Reset</button>
+        </div>
+
+        <div class="score-section" id="scoreSection">
+            <div class="score-text">Your Score</div>
+            <div class="score-value" id="scoreValue">0/6</div>
+            <div class="score-percentage" id="scorePercentage">0%</div>
+        </div>
+    </div>
+
+    <script>
+        const correctAnswers = {
+            question1: 'b',
+            question2: 'b',
+            question3: 'c',
+            question4: 'b',
+            question5: 'b',
+            question6: 'c'
+        };
+
+        const feedbackMessages = {
+            question1: {
+                correct: 'Correct! Alex showed consistent strength gains through Week 3, then plateaued in Week 4, and regressed in Weeks 5-6.',
+                incorrect: 'Incorrect. Alex showed initial progression (Weeks 1-3), then plateau and regression (Weeks 4-6).'
+            },
+            question2: {
+                correct: 'Correct! Stress level increased dramatically from 4 to 9, a 125% increase. This is a critical warning sign for overtraining.',
+                incorrect: 'Incorrect. While sleep quality declined, stress level went from 4 to 9, showing the most concerning trend.'
+            },
+            question3: {
+                correct: 'Correct! Week 4 showed multiple warning signs: RPE jumped to 8, attendance dropped to 2/3, sleep quality fell to 5, and stress increased to 7.',
+                incorrect: 'Incorrect. Week 4 is when multiple warning signs converged (RPE spike, missed session, declining recovery metrics).'
+            },
+            question4: {
+                correct: 'Correct! The data clearly shows accumulated fatigue (rising RPE from 6 to 9), declining sleep (7 to 4), and rising stress (4 to 9).',
+                incorrect: 'Incorrect. The pattern indicates accumulated fatigue and life stress, not insufficient volume or nutrition issues.'
+            },
+            question5: {
+                correct: 'Correct! A deload week would reduce fatigue accumulation and provide recovery. Addressing sleep and stress is also critical.',
+                incorrect: 'Incorrect. A deload week with recovery focus is the appropriate response to accumulated fatigue and stress.'
+            },
+            question6: {
+                correct: 'Correct! RPE combined with sleep and stress provides a comprehensive readiness assessment (Readiness-to-Train Index).',
+                incorrect: 'Incorrect. While individual metrics matter, RPE combined with sleep and stress scores provides the best readiness indicator.'
+            }
+        };
+
+        function checkAnswers() {
+            let score = 0;
+            let allAnswered = true;
+
+            for (let i = 1; i <= 6; i++) {
+                const questionName = `question${i}`;
+                const selected = document.querySelector(`input[name="${questionName}"]:checked`);
+
+                if (!selected) {
+                    allAnswered = false;
+                    continue;
+                }
+
+                const feedbackElement = document.getElementById(`feedback${i}`);
+                const isCorrect = selected.value === correctAnswers[questionName];
+
+                if (isCorrect) {
+                    score++;
+                    feedbackElement.className = 'feedback show correct';
+                    feedbackElement.innerHTML = `<span class="feedback-icon">✓</span>${feedbackMessages[questionName].correct}`;
+                } else {
+                    feedbackElement.className = 'feedback show incorrect';
+                    feedbackElement.innerHTML = `<span class="feedback-icon">✗</span>${feedbackMessages[questionName].incorrect}`;
+                }
+            }
+
+            if (!allAnswered) {
+                alert('Please answer all questions before checking.');
+                return;
+            }
+
+            const percentage = Math.round((score / 6) * 100);
+            document.getElementById('scoreValue').textContent = `${score}/6`;
+            document.getElementById('scorePercentage').textContent = `${percentage}%`;
+            document.getElementById('scoreSection').classList.add('show');
+
+            window.scrollTo({ top: document.querySelector('.score-section').offsetTop - 100, behavior: 'smooth' });
+        }
+
+        function resetForm() {
+            for (let i = 1; i <= 6; i++) {
+                const inputs = document.querySelectorAll(`input[name="question${i}"]`);
+                inputs.forEach(input => input.checked = false);
+                document.getElementById(`feedback${i}`).classList.remove('show');
+            }
+            document.getElementById('scoreSection').classList.remove('show');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

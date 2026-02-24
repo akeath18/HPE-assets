@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 3: Muscle Groups Sorting</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1E293B;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .instructions {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #02C39A;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .instructions h3 {
+            color: #065A82;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .instructions p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #475569;
+        }
+
+        .activity-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .muscle-category {
+            background: white;
+            border: 2px solid #E2E8F0;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 350px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .muscle-category.dragover {
+            border-color: #02C39A;
+            background: #F0FDFB;
+            transform: scale(1.02);
+        }
+
+        .muscle-category h3 {
+            color: white;
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .muscle-category:nth-child(1) h3 {
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+        }
+
+        .muscle-category:nth-child(2) h3 {
+            background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
+        }
+
+        .muscle-category:nth-child(3) h3 {
+            background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+        }
+
+        .items-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-height: 250px;
+        }
+
+        .drag-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .item {
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: grab;
+            user-select: none;
+            font-size: 12px;
+            text-align: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .item:active {
+            cursor: grabbing;
+            opacity: 0.8;
+        }
+
+        .item.placed {
+            background: linear-gradient(135deg, #02C39A 0%, #059669 100%);
+        }
+
+        .item-in-box {
+            background: linear-gradient(135deg, #02C39A 0%, #059669 100%);
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .remove-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            transition: all 0.2s ease;
+        }
+
+        .remove-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            color: white;
+            min-width: 150px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(6, 90, 130, 0.3);
+        }
+
+        .btn-reset {
+            background: #E2E8F0;
+            color: #1E293B;
+            min-width: 120px;
+        }
+
+        .btn-reset:hover {
+            background: #CBD5E1;
+        }
+
+        .feedback {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            border-left: 4px solid #02C39A;
+        }
+
+        .feedback.incorrect {
+            border-left: 4px solid #EF4444;
+        }
+
+        .feedback h3 {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .feedback.correct h3 {
+            color: #059669;
+        }
+
+        .feedback.incorrect h3 {
+            color: #DC2626;
+        }
+
+        .score-box {
+            background: linear-gradient(135deg, #02C39A 0%, #059669 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .score-box h3 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .activity-container {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .drag-items {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Module 3: Muscle Groups Classification</h1>
+            <p>Anatomy & Muscle Function</p>
+        </div>
+
+        <div class="instructions">
+            <h3>Instructions</h3>
+            <p>Drag each muscle name to the correct body region category. Each muscle should be sorted into Upper Body, Core, or Lower Body based on its anatomical location.</p>
+        </div>
+
+        <div class="drag-items" id="dragItems"></div>
+
+        <div class="activity-container" id="activityContainer"></div>
+
+        <div class="controls">
+            <button class="btn-submit" onclick="checkAnswers()">Check Answers</button>
+            <button class="btn-reset" onclick="resetActivity()">Reset</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <script>
+        const categories = [
+            { id: 'upper', name: 'Upper Body', color: '#065A82' },
+            { id: 'core', name: 'Core', color: '#F59E0B' },
+            { id: 'lower', name: 'Lower Body', color: '#8B5CF6' }
+        ];
+
+        const muscles = [
+            { text: 'Pectoralis Major', correct: 'upper' },
+            { text: 'Deltoid', correct: 'upper' },
+            { text: 'Trapezius', correct: 'upper' },
+            { text: 'Latissimus Dorsi', correct: 'upper' },
+            { text: 'Biceps Brachii', correct: 'upper' },
+            { text: 'Triceps Brachii', correct: 'upper' },
+            { text: 'Rhomboids', correct: 'upper' },
+            { text: 'Rectus Abdominis', correct: 'core' },
+            { text: 'Obliques (External & Internal)', correct: 'core' },
+            { text: 'Transverse Abdominis', correct: 'core' },
+            { text: 'Erector Spinae', correct: 'core' },
+            { text: 'Quadriceps', correct: 'lower' },
+            { text: 'Hamstrings', correct: 'lower' },
+            { text: 'Gluteus Maximus', correct: 'lower' },
+            { text: 'Gluteus Medius', correct: 'lower' },
+            { text: 'Hip Flexors', correct: 'lower' },
+            { text: 'Gastrocnemius', correct: 'lower' },
+            { text: 'Soleus', correct: 'lower' },
+            { text: 'Tibialis Anterior', correct: 'lower' },
+            { text: 'Rotator Cuff (Supraspinatus, Infraspinatus, Teres Minor, Subscapularis)', correct: 'upper' }
+        ];
+
+        let currentPlacements = {};
+        let draggedItem = null;
+
+        function initActivity() {
+            renderDragItems();
+            renderCategoryBoxes();
+        }
+
+        function renderDragItems() {
+            const container = document.getElementById('dragItems');
+            container.innerHTML = '<h3 style="grid-column: 1/-1; color: #065A82; margin-bottom: 10px; font-size: 14px;">Drag muscles to sort them:</h3>';
+            muscles.forEach((muscle, index) => {
+                const item = document.createElement('div');
+                item.className = 'item';
+                item.draggable = true;
+                item.id = `item-${index}`;
+                item.textContent = muscle.text;
+                item.dataset.correct = muscle.correct;
+
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragend', handleDragEnd);
+
+                container.appendChild(item);
+            });
+        }
+
+        function renderCategoryBoxes() {
+            const container = document.getElementById('activityContainer');
+            container.innerHTML = '';
+
+            categories.forEach(category => {
+                const box = document.createElement('div');
+                box.className = 'muscle-category';
+                box.id = `category-${category.id}`;
+                box.dataset.category = category.id;
+
+                box.innerHTML = `<h3>${category.name}</h3><div class="items-container" id="container-${category.id}"></div>`;
+
+                box.addEventListener('dragover', handleDragOver);
+                box.addEventListener('dragleave', handleDragLeave);
+                box.addEventListener('drop', (e) => handleDrop(e, category.id));
+
+                container.appendChild(box);
+                renderItemsInBox(category.id);
+            });
+        }
+
+        function renderItemsInBox(categoryId) {
+            const container = document.getElementById(`container-${categoryId}`);
+            container.innerHTML = '';
+
+            Object.entries(currentPlacements).forEach(([itemId, placement]) => {
+                if (placement === categoryId) {
+                    const itemElement = document.getElementById(itemId);
+                    if (itemElement) {
+                        const item = document.createElement('div');
+                        item.className = 'item-in-box';
+                        item.textContent = itemElement.textContent;
+
+                        const removeBtn = document.createElement('button');
+                        removeBtn.className = 'remove-btn';
+                        removeBtn.textContent = '✕';
+                        removeBtn.onclick = (e) => {
+                            e.preventDefault();
+                            removeFromCategory(itemId);
+                        };
+
+                        item.appendChild(removeBtn);
+                        container.appendChild(item);
+                    }
+                }
+            });
+        }
+
+        let draggedItemId = null;
+
+        function handleDragStart(e) {
+            draggedItemId = e.target.id;
+            e.target.style.opacity = '0.5';
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            e.target.style.opacity = '1';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(e, categoryId) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+
+            if (draggedItemId) {
+                currentPlacements[draggedItemId] = categoryId;
+                renderCategoryBoxes();
+            }
+        }
+
+        function removeFromCategory(itemId) {
+            delete currentPlacements[itemId];
+            renderCategoryBoxes();
+        }
+
+        function checkAnswers() {
+            let correct = 0;
+            const total = muscles.length;
+            const placed = Object.keys(currentPlacements).length;
+
+            Object.entries(currentPlacements).forEach(([itemId, placement]) => {
+                const itemElement = document.getElementById(itemId);
+                if (itemElement && itemElement.dataset.correct === placement) {
+                    correct++;
+                }
+            });
+
+            const percentage = placed === 0 ? 0 : Math.round((correct / placed) * 100);
+            const allCorrect = correct === placed && placed === total;
+
+            const feedback = document.getElementById('feedback');
+            feedback.classList.add('show');
+
+            if (allCorrect) {
+                feedback.classList.remove('incorrect');
+                feedback.classList.add('correct');
+                feedback.innerHTML = `
+                    <h3>🎉 Perfect! All muscles sorted correctly!</h3>
+                    <p>Excellent understanding of muscle groups and body regions.</p>
+                    <div class="score-box">
+                        <h3>${correct}/${total}</h3>
+                        <p>Score: 100%</p>
+                    </div>
+                `;
+            } else {
+                feedback.classList.remove('correct');
+                feedback.classList.add('incorrect');
+                feedback.innerHTML = `
+                    <h3>✓ Review your answers</h3>
+                    <p>You correctly sorted <strong>${correct} out of ${placed}</strong> muscles. Review the incorrect placements and try again!</p>
+                    <div class="score-box" style="background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);">
+                        <h3>${correct}/${placed}</h3>
+                        <p>Score: ${percentage}%</p>
+                    </div>
+                `;
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetActivity() {
+            currentPlacements = {};
+            document.getElementById('feedback').classList.remove('show');
+            renderDragItems();
+            renderCategoryBoxes();
+        }
+
+        document.addEventListener('DOMContentLoaded', initActivity);
+    </script>
+</body>
+</html>

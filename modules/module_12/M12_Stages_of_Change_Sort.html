@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stages of Change Sorter - Module 12</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #065A82;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .instructions {
+            color: #1E293B;
+            font-size: 14px;
+            background: #F0F9FF;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #02C39A;
+        }
+
+        .progress {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #02C39A;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .sorting-area {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stage-column {
+            background: #F0F9FF;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stage-header {
+            font-weight: 600;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stage-0 { background: #EF4444; }
+        .stage-1 { background: #F97316; }
+        .stage-2 { background: #EAB308; }
+        .stage-3 { background: #22C55E; }
+        .stage-4 { background: #3B82F6; }
+
+        .statements-pool {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 2px solid #ddd;
+            display: grid;
+            gap: 10px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .statement {
+            background: white;
+            border: 2px solid #ccc;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: grab;
+            user-select: none;
+            transition: all 0.2s ease;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .statement:hover {
+            border-color: #02C39A;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .statement.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+
+        .statement.sorted {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .drop-zone {
+            flex: 1;
+            border: 2px dashed #999;
+            border-radius: 6px;
+            padding: 10px;
+            min-height: 50px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .drop-zone.drag-over {
+            background: #FFE5B4;
+            border-color: #FF9800;
+        }
+
+        .sorted-statement {
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid;
+            font-size: 12px;
+            line-height: 1.3;
+        }
+
+        .sorted-statement.precontemplation { border-color: #EF4444; }
+        .sorted-statement.contemplation { border-color: #F97316; }
+        .sorted-statement.preparation { border-color: #EAB308; }
+        .sorted-statement.action { border-color: #22C55E; }
+        .sorted-statement.maintenance { border-color: #3B82F6; }
+
+        .unsorted-label {
+            color: #666;
+            font-size: 12px;
+            text-align: center;
+            padding: 10px;
+            font-style: italic;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .check-btn {
+            background: #02C39A;
+            color: white;
+        }
+
+        .check-btn:hover {
+            background: #01a879;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(2, 195, 154, 0.3);
+        }
+
+        .reset-btn {
+            background: #1E293B;
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background: #0f172a;
+            transform: translateY(-2px);
+        }
+
+        .feedback {
+            display: none;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            font-size: 14px;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.success {
+            background: #D4EDDA;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .feedback.error {
+            background: #F8D7DA;
+            color: #721c24;
+            border-left: 4px solid #f5222d;
+        }
+
+        .score {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 1200px) {
+            .sorting-area {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .sorting-area {
+                grid-template-columns: 1fr;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Stages of Change Sorter</h1>
+            <p style="color: #666; margin-top: 5px;">Module 12: Behavior Change Theory</p>
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> Drag each client statement from the pool below into the correct Stage of Change column. There are 15 statements to sort. Click "Check Answers" when complete.
+        </div>
+
+        <div class="sorting-area" id="sortingArea"></div>
+
+        <div style="margin-bottom: 30px;">
+            <div style="font-weight: 600; color: #065A82; margin-bottom: 10px;">Statements to Sort:</div>
+            <div class="statements-pool" id="statementsPool"></div>
+        </div>
+
+        <div class="buttons">
+            <button class="check-btn" onclick="checkAnswers()">Check Answers</button>
+            <button class="reset-btn" onclick="resetActivity()">Reset</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <script>
+        const statements = [
+            { id: 's1', text: "I don't really see why I need to exercise.", stage: 'precontemplation' },
+            { id: 's2', text: "I've been working out 3x per week for 8 months now.", stage: 'maintenance' },
+            { id: 's3', text: "Exercise is boring and I'm not interested.", stage: 'precontemplation' },
+            { id: 's4', text: "I'm thinking about starting a workout routine but haven't done it yet.", stage: 'contemplation' },
+            { id: 's5', text: "I've bought gym clothes and scheduled my first class for next week.", stage: 'preparation' },
+            { id: 's6', text: "I've been exercising for 3 weeks and plan to continue.", stage: 'action' },
+            { id: 's7', text: "Exercise is just not for me; I've never liked it.", stage: 'precontemplation' },
+            { id: 's8', text: "I'm thinking I should probably start exercising, but I'm not sure.", stage: 'contemplation' },
+            { id: 's9', text: "I've been consistent for 2 years and it's part of my lifestyle.", stage: 'maintenance' },
+            { id: 's10', text: "I've made an action plan and started this week.", stage: 'action' },
+            { id: 's11', text: "I see the benefits but I haven't made any concrete changes yet.", stage: 'contemplation' },
+            { id: 's12', text: "I'm doing 5 workouts this week and tracking my progress.", stage: 'action' },
+            { id: 's13', text: "I'm preparing to start; I've done research and found a trainer.", stage: 'preparation' },
+            { id: 's14', text: "I don't think fitness applies to my lifestyle or goals.", stage: 'precontemplation' },
+            { id: 's15', text: "I've maintained my routine for 18 months without relapse.", stage: 'maintenance' }
+        ];
+
+        const stages = [
+            { id: 'precontemplation', name: 'Precontemplation', color: 'stage-0', desc: 'Not ready/thinking about change' },
+            { id: 'contemplation', name: 'Contemplation', color: 'stage-1', desc: 'Thinking about change' },
+            { id: 'preparation', name: 'Preparation', color: 'stage-2', desc: 'Getting ready for change' },
+            { id: 'action', name: 'Action', color: 'stage-3', desc: 'Making the change' },
+            { id: 'maintenance', name: 'Maintenance', color: 'stage-4', desc: 'Sustaining the change' }
+        ];
+
+        let draggedElement = null;
+
+        function initializeUI() {
+            const sortingArea = document.getElementById('sortingArea');
+            stages.forEach(stage => {
+                const column = document.createElement('div');
+                column.className = 'stage-column';
+                column.innerHTML = `
+                    <div class="stage-header ${stage.color}">${stage.name}<br><small>${stage.desc}</small></div>
+                    <div class="drop-zone" id="zone-${stage.id}"></div>
+                `;
+                sortingArea.appendChild(column);
+            });
+
+            const pool = document.getElementById('statementsPool');
+            statements.forEach(stmt => {
+                const div = document.createElement('div');
+                div.className = 'statement';
+                div.draggable = true;
+                div.id = stmt.id;
+                div.dataset.stage = stmt.stage;
+                div.textContent = stmt.text;
+                div.addEventListener('dragstart', handleDragStart);
+                div.addEventListener('dragend', handleDragEnd);
+                pool.appendChild(div);
+            });
+
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('dragleave', handleDragLeave);
+                zone.addEventListener('drop', handleDrop);
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            this.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+
+            if (draggedElement) {
+                const stage = this.id.replace('zone-', '');
+                draggedElement.classList.add('sorted');
+
+                const sortedDiv = document.createElement('div');
+                sortedDiv.className = `sorted-statement ${draggedElement.dataset.stage}`;
+                sortedDiv.textContent = draggedElement.textContent;
+
+                this.appendChild(sortedDiv);
+                draggedElement.dataset.sorted = stage;
+
+                updateProgress();
+            }
+        }
+
+        function updateProgress() {
+            const sorted = document.querySelectorAll('.statement.sorted').length;
+            const percentage = (sorted / statements.length) * 100;
+            document.getElementById('progressBar').style.width = percentage + '%';
+        }
+
+        function checkAnswers() {
+            let correct = 0;
+            let feedback = '<strong>Results:</strong><br>';
+
+            stages.forEach(stage => {
+                const zone = document.getElementById(`zone-${stage.id}`);
+                const items = zone.querySelectorAll('.sorted-statement');
+
+                items.forEach(item => {
+                    const color = item.className.split(' ')[1];
+                    if (color === stage.id) {
+                        correct++;
+                    }
+                });
+            });
+
+            const score = Math.round((correct / statements.length) * 100);
+
+            if (correct === statements.length) {
+                feedback += `Perfect! You correctly sorted all 15 statements into the correct stages of change.`;
+                document.getElementById('feedback').className = 'feedback show success';
+            } else {
+                feedback += `You correctly sorted ${correct} out of 15 statements. Review the stages of change model and try again.`;
+                document.getElementById('feedback').className = 'feedback show error';
+            }
+
+            feedback += `<div class="score">Score: ${score}%</div>`;
+            document.getElementById('feedback').innerHTML = feedback;
+        }
+
+        function resetActivity() {
+            document.querySelectorAll('.statement').forEach(stmt => {
+                stmt.classList.remove('sorted');
+                stmt.dataset.sorted = '';
+            });
+
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.innerHTML = '';
+            });
+
+            document.getElementById('progressBar').style.width = '0%';
+            document.getElementById('feedback').classList.remove('show');
+
+            const pool = document.getElementById('statementsPool');
+            pool.innerHTML = '';
+            statements.forEach(stmt => {
+                const div = document.createElement('div');
+                div.className = 'statement';
+                div.draggable = true;
+                div.id = stmt.id;
+                div.dataset.stage = stmt.stage;
+                div.textContent = stmt.text;
+                div.addEventListener('dragstart', handleDragStart);
+                div.addEventListener('dragend', handleDragEnd);
+                pool.appendChild(div);
+            });
+        }
+
+        initializeUI();
+    </script>
+</body>
+</html>

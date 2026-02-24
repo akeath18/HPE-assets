@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 7: Feedback Types Sorting</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%); min-height: 100vh; padding: 20px; color: #1E293B; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .header { background: linear-gradient(135deg, #065A82 0%, #1C7293 100%); color: white; padding: 30px 20px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .header h1 { font-size: 28px; margin-bottom: 5px; }
+        .header p { font-size: 14px; opacity: 0.9; }
+        .instructions { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #02C39A; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); }
+        .instructions h3 { color: #065A82; margin-bottom: 10px; font-size: 16px; }
+        .instructions p { font-size: 14px; line-height: 1.6; color: #475569; }
+        .matching-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
+        .column { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); }
+        .column h3 { color: #065A82; font-size: 16px; margin-bottom: 15px; border-bottom: 2px solid #E2E8F0; padding-bottom: 10px; }
+        .feedback-statement { padding: 12px; margin-bottom: 10px; background: linear-gradient(135deg, #065A82 0%, #1C7293 100%); color: white; border-radius: 6px; cursor: grab; user-select: none; text-align: center; font-size: 12px; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        .feedback-statement:active { cursor: grabbing; opacity: 0.8; }
+        .drop-zone { min-height: 50px; padding: 10px; background: #F0FDFB; border: 2px dashed #CBD5E1; border-radius: 6px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+        .drop-zone.dragover { border-color: #02C39A; background: #ECFDF5; }
+        .paired-feedback { padding: 10px; background: linear-gradient(135deg, #02C39A 0%, #059669 100%); color: white; border-radius: 6px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        .remove-btn { background: rgba(255, 255, 255, 0.2); border: none; color: white; cursor: pointer; padding: 2px 8px; border-radius: 3px; font-size: 11px; }
+        .remove-btn:hover { background: rgba(255, 255, 255, 0.4); }
+        .controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 30px; flex-wrap: wrap; }
+        button { padding: 12px 24px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-submit { background: linear-gradient(135deg, #065A82 0%, #1C7293 100%); color: white; min-width: 150px; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(6, 90, 130, 0.3); }
+        .btn-reset { background: #E2E8F0; color: #1E293B; min-width: 120px; }
+        .btn-reset:hover { background: #CBD5E1; }
+        .feedback { background: white; padding: 20px; border-radius: 8px; display: none; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); }
+        .feedback.show { display: block; }
+        .feedback.correct { border-left: 4px solid #02C39A; }
+        .feedback.incorrect { border-left: 4px solid #EF4444; }
+        .feedback h3 { margin-bottom: 10px; font-size: 18px; color: #059669; }
+        .feedback.incorrect h3 { color: #DC2626; }
+        .score-box { background: linear-gradient(135deg, #02C39A 0%, #059669 100%); color: white; padding: 20px; border-radius: 8px; text-align: center; margin-top: 20px; }
+        .score-box h3 { font-size: 24px; margin-bottom: 5px; }
+        @media (max-width: 768px) {
+            .matching-container { grid-template-columns: 1fr; gap: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Module 7: Feedback Types Classification</h1>
+            <p>Knowledge of Results (KR) vs Knowledge of Performance (KP)</p>
+        </div>
+
+        <div class="instructions">
+            <h3>Instructions</h3>
+            <p>Drag instructor feedback statements to categorize them correctly. Identify whether each statement is KR (result-focused), KP (performance-focused), Descriptive (what happened), or Prescriptive (how to fix it).</p>
+        </div>
+
+        <div class="matching-container" id="matchingContainer"></div>
+
+        <div class="controls">
+            <button class="btn-submit" onclick="checkAnswers()">Check Answers</button>
+            <button class="btn-reset" onclick="resetActivity()">Reset</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <script>
+        const categories = [
+            { id: 'kr', name: 'Knowledge of Results (KR)', desc: 'Outcome/result focused' },
+            { id: 'kp', name: 'Knowledge of Performance (KP)', desc: 'Movement technique focused' },
+            { id: 'descriptive', name: 'Descriptive Feedback', desc: 'What happened' },
+            { id: 'prescriptive', name: 'Prescriptive Feedback', desc: 'How to fix it' }
+        ];
+
+        const feedbackStatements = [
+            { text: 'You made 8 out of 10 free throws.', correct: 'kr' },
+            { text: 'Your elbow was dropping during that shot.', correct: 'kp' },
+            { text: 'Good, you followed through on that pass.', correct: 'descriptive' },
+            { text: 'Bend your knees more on the next rep.', correct: 'prescriptive' },
+            { text: 'Your sprint time was 6.2 seconds, 0.3 seconds faster than last week.', correct: 'kr' },
+            { text: 'Your arm motion was too fast; slow it down to maintain control.', correct: 'prescriptive' },
+            { text: 'I noticed your weight shifted to your heels on that attempt.', correct: 'kp' },
+            { text: 'You scored 25 points in this game.', correct: 'kr' },
+            { text: 'Keep your core engaged like you did on that last rep.', correct: 'descriptive' },
+            { text: 'Tighten your grip to improve ball control.', correct: 'prescriptive' },
+            { text: 'Your heart rate during the interval was 165 bpm.', correct: 'kr' },
+            { text: 'Your form was perfect on that squat.', correct: 'kp' }
+        ];
+
+        let currentMatches = {};
+
+        function init() {
+            renderMatchingPairs();
+        }
+
+        function renderMatchingPairs() {
+            const container = document.getElementById('matchingContainer');
+            container.innerHTML = '';
+
+            const left = document.createElement('div');
+            left.className = 'column';
+            left.innerHTML = '<h3>Feedback Statements (Drag from here)</h3>';
+
+            const right = document.createElement('div');
+            right.className = 'column';
+            right.innerHTML = '<h3>Categories (Drop here)</h3>';
+
+            const statementsContainer = document.createElement('div');
+            feedbackStatements.forEach((statement, index) => {
+                const div = document.createElement('div');
+                div.className = 'feedback-statement';
+                div.id = `statement-${index}`;
+                div.draggable = true;
+                div.textContent = statement.text;
+                div.dataset.id = statement.correct;
+
+                div.addEventListener('dragstart', handleDragStart);
+                div.addEventListener('dragend', handleDragEnd);
+                statementsContainer.appendChild(div);
+            });
+            left.appendChild(statementsContainer);
+
+            categories.forEach(cat => {
+                const catDiv = document.createElement('div');
+                catDiv.style.marginBottom = '15px';
+
+                const label = document.createElement('div');
+                label.style.marginBottom = '8px';
+                label.innerHTML = `<strong>${cat.name}</strong><div style="font-size: 12px; color: #65748B;">${cat.desc}</div>`;
+
+                const zone = document.createElement('div');
+                zone.className = 'drop-zone';
+                zone.id = `drop-${cat.id}`;
+                zone.dataset.category = cat.id;
+
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('dragleave', handleDragLeave);
+                zone.addEventListener('drop', (e) => handleDrop(e, cat.id));
+
+                catDiv.appendChild(label);
+                catDiv.appendChild(zone);
+                right.appendChild(catDiv);
+
+                if (currentMatches[cat.id]) {
+                    renderMatched(cat.id);
+                }
+            });
+
+            container.appendChild(left);
+            container.appendChild(right);
+        }
+
+        function renderMatched(categoryId) {
+            const zone = document.getElementById(`drop-${categoryId}`);
+            zone.innerHTML = '';
+
+            Object.entries(currentMatches).forEach(([stmtId, catId]) => {
+                if (catId === categoryId) {
+                    const stmt = document.querySelector(`#${stmtId}`);
+                    if (stmt) {
+                        const paired = document.createElement('div');
+                        paired.className = 'paired-feedback';
+                        paired.textContent = stmt.textContent;
+
+                        const btn = document.createElement('button');
+                        btn.className = 'remove-btn';
+                        btn.textContent = '✕';
+                        btn.onclick = (e) => {
+                            e.preventDefault();
+                            delete currentMatches[stmtId];
+                            renderMatchingPairs();
+                        };
+
+                        paired.appendChild(btn);
+                        zone.appendChild(paired);
+                    }
+                }
+            });
+        }
+
+        let draggedId = null;
+
+        function handleDragStart(e) {
+            draggedId = e.target.id;
+            e.target.style.opacity = '0.5';
+        }
+
+        function handleDragEnd(e) {
+            e.target.style.opacity = '1';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(e, categoryId) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+
+            if (draggedId) {
+                currentMatches[draggedId] = categoryId;
+                renderMatchingPairs();
+            }
+        }
+
+        function checkAnswers() {
+            let correct = 0;
+            const total = feedbackStatements.length;
+
+            Object.entries(currentMatches).forEach(([stmtId, catId]) => {
+                const index = parseInt(stmtId.split('-')[1]);
+                if (feedbackStatements[index].correct === catId) {
+                    correct++;
+                }
+            });
+
+            const placed = Object.keys(currentMatches).length;
+            const percent = placed === 0 ? 0 : Math.round((correct / placed) * 100);
+            const allCorrect = correct === placed && placed === total;
+
+            const feedback = document.getElementById('feedback');
+            feedback.classList.add('show');
+
+            if (allCorrect) {
+                feedback.classList.remove('incorrect');
+                feedback.classList.add('correct');
+                feedback.innerHTML = `
+                    <h3>🎉 Perfect! All feedback categorized correctly!</h3>
+                    <p>Excellent understanding of feedback types.</p>
+                    <div class="score-box">
+                        <h3>${correct}/${total}</h3>
+                        <p>Score: 100%</p>
+                    </div>
+                `;
+            } else {
+                feedback.classList.remove('correct');
+                feedback.classList.add('incorrect');
+                feedback.innerHTML = `
+                    <h3>✓ Review your answers</h3>
+                    <p>You correctly categorized <strong>${correct} out of ${placed}</strong> statements. Try again!</p>
+                    <div class="score-box" style="background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);">
+                        <h3>${correct}/${placed}</h3>
+                        <p>Score: ${percent}%</p>
+                    </div>
+                `;
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetActivity() {
+            currentMatches = {};
+            document.getElementById('feedback').classList.remove('show');
+            renderMatchingPairs();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

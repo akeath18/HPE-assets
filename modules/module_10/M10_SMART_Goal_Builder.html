@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMART Goal Evaluator - Module 10</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #065A82;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .instructions {
+            color: #1E293B;
+            font-size: 14px;
+            background: #F0F9FF;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #02C39A;
+        }
+
+        .progress {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #02C39A;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .goal-item {
+            background: #F0F9FF;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #065A82;
+        }
+
+        .goal-number {
+            font-weight: 600;
+            color: #065A82;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .goal-statement {
+            color: #1E293B;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: 14px;
+            font-style: italic;
+        }
+
+        .question-section {
+            margin-bottom: 15px;
+        }
+
+        .question {
+            font-weight: 600;
+            color: #065A82;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .option-btn {
+            padding: 8px 16px;
+            border: 2px solid #ccc;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover {
+            border-color: #02C39A;
+            background: #F0F9FF;
+        }
+
+        .option-btn.selected {
+            background: #02C39A;
+            color: white;
+            border-color: #02C39A;
+        }
+
+        .components {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #ddd;
+        }
+
+        .components.show {
+            display: block;
+        }
+
+        .component-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #065A82;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            cursor: pointer;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .check-btn {
+            background: #02C39A;
+            color: white;
+        }
+
+        .check-btn:hover {
+            background: #01a879;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(2, 195, 154, 0.3);
+        }
+
+        .reset-btn {
+            background: #1E293B;
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background: #0f172a;
+            transform: translateY(-2px);
+        }
+
+        .feedback {
+            display: none;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            font-size: 14px;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.success {
+            background: #D4EDDA;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .feedback.error {
+            background: #F8D7DA;
+            color: #721c24;
+            border-left: 4px solid #f5222d;
+        }
+
+        .feedback-item {
+            margin: 12px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 6px;
+            border-left: 3px solid;
+        }
+
+        .feedback-item.correct {
+            border-color: #28a745;
+        }
+
+        .feedback-item.incorrect {
+            border-color: #f5222d;
+        }
+
+        .score {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .options {
+                flex-direction: column;
+            }
+
+            .option-btn {
+                width: 100%;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>SMART Goal Evaluator</h1>
+            <p style="color: #666; margin-top: 5px;">Module 10: Program Design & Goal Setting</p>
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> For each goal statement, determine if it is SMART (Specific, Measurable, Achievable, Relevant, Time-bound) or not. If not SMART, select which component(s) are missing.
+        </div>
+
+        <form id="goalsForm">
+            <!-- Goal 1: SMART -->
+            <div class="goal-item">
+                <div class="goal-number">Goal 1</div>
+                <div class="goal-statement">"I will run a 5K in under 25 minutes by June 30th through consistent training 4 days per week."</div>
+                <div class="question-section">
+                    <div class="question">Is this a SMART goal?</div>
+                    <div class="options">
+                        <button type="button" class="option-btn" onclick="toggleGoal(this, 'g1-smart', 'yes')">Yes, SMART</button>
+                        <button type="button" class="option-btn" onclick="toggleGoal(this, 'g1-smart', 'no')">No, Not SMART</button>
+                    </div>
+                    <input type="hidden" id="g1-smart" value="">
+                </div>
+            </div>
+
+            <!-- Goal 2: Not SMART - Missing Time -->
+            <div class="goal-item">
+                <div class="goal-number">Goal 2</div>
+                <div class="goal-statement">"I want to increase my bench press strength."</div>
+                <div class="question-section">
+                    <div class="question">Is this a SMART goal?</div>
+                    <div class="options">
+                        <button type="button" class="option-btn" onclick="toggleGoal(this, 'g2-smart', 'yes')">Yes, SMART</button>
+                        <button type="button" class="option-btn" onclick="toggleGoal(this, 'g2-smart', 'no')">No, Not SMART</button>
+                    </div>
+                    <input type="hidden" id="g2-smart" value="">
+                </div>
+                <div class="components" id="g2-components">
+                    <div class="component-label">Which components are missing?</div>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label"><input type="checkbox" name="g2-comp" value="specific"> Specific (clear details about what)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="g2-comp" value="measurable"> Measurable (quantifiable results)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="g2-comp" value="achievable"> Achievable (realistic)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="g2-comp" value="relevant"> Relevant (appropriate for client)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="g2-comp" value="time"> Time-bound (deadline)</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Goal 3: Not SMART - Missing Measurable & Time -->
+            <div class="goal-item">
+                <div class="goal-number">Goal 3</div>
+                <div class="goal-statement">"I will get healthier by exercising regularly."</div>
+                <div class="question-section">
+                    <div class="question">Is this a SMART goal?</div>
+                    <div class="options">
+                        <button type="button" class="option-btn" onclick="toggleGoal(this, 'g3-smart', 'yes')">Yes, SMART</button>
+                        <button type="button" class="option-btn" onclick="toggleGoal(this, 'g3-smart', 'no')">No, Not SMART</button>
+                    </div>
+                    <input type="hidden" id="g3-smart" value="">
+                </div>
+                <div class="components" id="g3-components">
+                    <div class="component-label">Which components are missing?</div>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label"><input type="checkbox" name="g3-comp" value="specific"> Specific (clear details about what)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="g3-comp" value="measurable"> Measurable (quantifiable results)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="g3-comp" value="achievable"> Achievable (realistic)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="g3-comp" value="relevant"> Relevant (appropriate for client)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="g3-comp" value="time"> Time-bound (deadline)</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Goal 4: SMART -->
+            <div class="goal-item">
+                <div class="goal-number">Goal 4</div>
+                <div class="goal-statement">"I will perform 20 consecutive push-ups by March 15th through progressive strength training 3 days per week."</div>
+                <div class="question-section">
+                    <div class="question">Is this a SMART goal?</div>
+                    <div class="options">
+                        <button type="button" class="option-btn" onclick="toggleGoal(this, 'g4-smart', 'yes')">Yes, SMART</button>
+                        <button type="button" class="option-btn" onclick="toggleGoal(this, 'g4-smart', 'no')">No, Not SMART</button>
+                    </div>
+                    <input type="hidden" id="g4-smart" value="">
+                </div>
+            </div>
+
+            <!-- Goal 5: Not SMART - Missing Achievable -->
+            <div class="goal-item">
+                <div class="goal-number">Goal 5</div>
+                <div class="goal-statement">"I will lose 50 pounds in 2 months through diet and exercise."</div>
+                <div class="question-section">
+                    <div class="question">Is this a SMART goal?</div>
+                    <div class="options">
+                        <button type="button" class="option-btn" onclick="toggleGoal(this, 'g5-smart', 'yes')">Yes, SMART</button>
+                        <button type="button" class="option-btn" onclick="toggleGoal(this, 'g5-smart', 'no')">No, Not SMART</button>
+                    </div>
+                    <input type="hidden" id="g5-smart" value="">
+                </div>
+                <div class="components" id="g5-components">
+                    <div class="component-label">Which components are missing?</div>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label"><input type="checkbox" name="g5-comp" value="specific"> Specific (clear details about what)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="g5-comp" value="measurable"> Measurable (quantifiable results)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="g5-comp" value="achievable"> Achievable (realistic)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="g5-comp" value="relevant"> Relevant (appropriate for client)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="g5-comp" value="time"> Time-bound (deadline)</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Goal 6: Not SMART - Missing Specific -->
+            <div class="goal-item">
+                <div class="goal-number">Goal 6</div>
+                <div class="goal-statement">"I will complete a fitness program by December 31st."</div>
+                <div class="question-section">
+                    <div class="question">Is this a SMART goal?</div>
+                    <div class="options">
+                        <button type="button" class="option-btn" onclick="toggleGoal(this, 'g6-smart', 'yes')">Yes, SMART</button>
+                        <button type="button" class="option-btn" onclick="toggleGoal(this, 'g6-smart', 'no')">No, Not SMART</button>
+                    </div>
+                    <input type="hidden" id="g6-smart" value="">
+                </div>
+                <div class="components" id="g6-components">
+                    <div class="component-label">Which components are missing?</div>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label"><input type="checkbox" name="g6-comp" value="specific"> Specific (clear details about what)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="g6-comp" value="measurable"> Measurable (quantifiable results)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="g6-comp" value="achievable"> Achievable (realistic)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="g6-comp" value="relevant"> Relevant (appropriate for client)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="g6-comp" value="time"> Time-bound (deadline)</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Goal 7: SMART -->
+            <div class="goal-item">
+                <div class="goal-number">Goal 7</div>
+                <div class="goal-statement">"I will improve my flexibility to touch my toes by April 30th through daily stretching and 2 yoga sessions per week."</div>
+                <div class="question-section">
+                    <div class="question">Is this a SMART goal?</div>
+                    <div class="options">
+                        <button type="button" class="option-btn" onclick="toggleGoal(this, 'g7-smart', 'yes')">Yes, SMART</button>
+                        <button type="button" class="option-btn" onclick="toggleGoal(this, 'g7-smart', 'no')">No, Not SMART</button>
+                    </div>
+                    <input type="hidden" id="g7-smart" value="">
+                </div>
+            </div>
+
+            <!-- Goal 8: Not SMART - Missing Specific & Measurable -->
+            <div class="goal-item">
+                <div class="goal-number">Goal 8</div>
+                <div class="goal-statement">"I want to be more fit this year."</div>
+                <div class="question-section">
+                    <div class="question">Is this a SMART goal?</div>
+                    <div class="options">
+                        <button type="button" class="option-btn" onclick="toggleGoal(this, 'g8-smart', 'yes')">Yes, SMART</button>
+                        <button type="button" class="option-btn" onclick="toggleGoal(this, 'g8-smart', 'no')">No, Not SMART</button>
+                    </div>
+                    <input type="hidden" id="g8-smart" value="">
+                </div>
+                <div class="components" id="g8-components">
+                    <div class="component-label">Which components are missing?</div>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label"><input type="checkbox" name="g8-comp" value="specific"> Specific (clear details about what)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="g8-comp" value="measurable"> Measurable (quantifiable results)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="g8-comp" value="achievable"> Achievable (realistic)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="g8-comp" value="relevant"> Relevant (appropriate for client)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="g8-comp" value="time"> Time-bound (deadline)</label>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="buttons">
+            <button class="check-btn" onclick="checkAnswers()">Check Answers</button>
+            <button class="reset-btn" onclick="resetActivity()">Reset</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <script>
+        const answers = {
+            g1: { smart: 'yes', components: [] },
+            g2: { smart: 'no', components: ['measurable', 'specific', 'time'] },
+            g3: { smart: 'no', components: ['specific', 'measurable', 'time'] },
+            g4: { smart: 'yes', components: [] },
+            g5: { smart: 'no', components: ['achievable'] },
+            g6: { smart: 'no', components: ['specific', 'measurable'] },
+            g7: { smart: 'yes', components: [] },
+            g8: { smart: 'no', components: ['specific', 'measurable'] }
+        };
+
+        function toggleGoal(btn, inputId, value) {
+            const siblings = btn.parentElement.querySelectorAll('.option-btn');
+            siblings.forEach(s => s.classList.remove('selected'));
+            btn.classList.add('selected');
+            document.getElementById(inputId).value = value;
+
+            const goalNum = inputId.match(/g(\d+)/)[1];
+            const componentDiv = document.getElementById(`g${goalNum}-components`);
+            if (componentDiv) {
+                if (value === 'no') {
+                    componentDiv.classList.add('show');
+                } else {
+                    componentDiv.classList.remove('show');
+                    const checkboxes = componentDiv.querySelectorAll('input[type="checkbox"]');
+                    checkboxes.forEach(cb => cb.checked = false);
+                }
+            }
+        }
+
+        function checkAnswers() {
+            const form = document.getElementById('goalsForm');
+            let correct = 0;
+            let details = '';
+
+            for (let i = 1; i <= 8; i++) {
+                const smartInput = document.getElementById(`g${i}-smart`);
+                const smartCorrect = smartInput.value === answers[`g${i}`].smart;
+
+                let componentCorrect = true;
+                if (smartInput.value === 'no') {
+                    const componentDiv = document.getElementById(`g${i}-components`);
+                    const checked = Array.from(componentDiv.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
+                    const expected = answers[`g${i}`].components;
+                    componentCorrect = JSON.stringify(checked.sort()) === JSON.stringify(expected.sort());
+                }
+
+                if (smartCorrect && componentCorrect) correct++;
+
+                const itemCorrect = smartCorrect && componentCorrect;
+                details += `<div class="feedback-item ${itemCorrect ? 'correct' : 'incorrect'}">`;
+                details += `<strong>Goal ${i}: ${itemCorrect ? '✓ Correct' : '✗ Incorrect'}</strong>`;
+
+                if (!smartCorrect) {
+                    details += `<div>SMART Assessment: You said "${smartInput.value}" but correct answer is "${answers[`g${i}`].smart}"</div>`;
+                }
+                if (!componentCorrect && smartInput.value === 'no') {
+                    const componentDiv = document.getElementById(`g${i}-components`);
+                    const checked = Array.from(componentDiv.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
+                    details += `<div>Missing Components: You selected "${checked.join(', ')}" but correct answer is "${answers[`g${i}`].components.join(', ')}"</div>`;
+                }
+                details += `</div>`;
+            }
+
+            const score = Math.round((correct / 8) * 100);
+            const feedback = document.getElementById('feedback');
+
+            feedback.innerHTML = details + `<div class="score">Score: ${score}% (${correct}/8 goals correct)</div>`;
+
+            if (correct === 8) {
+                feedback.className = 'feedback show success';
+            } else {
+                feedback.className = 'feedback show error';
+            }
+
+            document.getElementById('progressBar').style.width = '100%';
+        }
+
+        function resetActivity() {
+            document.getElementById('goalsForm').reset();
+            document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+            document.querySelectorAll('.components').forEach(comp => comp.classList.remove('show'));
+            document.getElementById('feedback').classList.remove('show');
+            document.getElementById('progressBar').style.width = '0%';
+        }
+    </script>
+</body>
+</html>

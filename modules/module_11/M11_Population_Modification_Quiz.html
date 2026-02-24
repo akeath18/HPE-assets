@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Population Modification Quiz - Module 11</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #065A82;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .instructions {
+            color: #1E293B;
+            font-size: 14px;
+            background: #F0F9FF;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #02C39A;
+        }
+
+        .progress {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #02C39A;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-block {
+            background: #F0F9FF;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #065A82;
+        }
+
+        .question-number {
+            font-weight: 600;
+            color: #065A82;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .scenario {
+            color: #1E293B;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: 14px;
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #02C39A;
+        }
+
+        .question-text {
+            font-weight: 600;
+            color: #065A82;
+            font-size: 13px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 13px;
+        }
+
+        .option-label:hover {
+            background: #E0F2FE;
+        }
+
+        .option-label input[type="radio"] {
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .check-btn {
+            background: #02C39A;
+            color: white;
+        }
+
+        .check-btn:hover {
+            background: #01a879;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(2, 195, 154, 0.3);
+        }
+
+        .reset-btn {
+            background: #1E293B;
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background: #0f172a;
+            transform: translateY(-2px);
+        }
+
+        .feedback {
+            display: none;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            font-size: 14px;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.success {
+            background: #D4EDDA;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .feedback.error {
+            background: #F8D7DA;
+            color: #721c24;
+            border-left: 4px solid #f5222d;
+        }
+
+        .feedback-item {
+            margin: 12px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 6px;
+            border-left: 3px solid;
+        }
+
+        .feedback-item.correct {
+            border-color: #28a745;
+        }
+
+        .feedback-item.incorrect {
+            border-color: #f5222d;
+        }
+
+        .feedback-detail {
+            font-size: 12px;
+            margin-top: 5px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .score {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Exercise Modification for Special Populations</h1>
+            <p style="color: #666; margin-top: 5px;">Module 11: Resistance Training Modifications</p>
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="instructions">
+            <strong>Instructions:</strong> For each scenario describing a client from a special population and an exercise, select the most appropriate modification. Answer all 8 questions, then click "Check Answers" to see your score.
+        </div>
+
+        <form id="quizForm">
+            <!-- Question 1: Youth -->
+            <div class="question-block">
+                <div class="question-number">Question 1</div>
+                <div class="scenario"><strong>Population:</strong> 10-year-old child | <strong>Exercise:</strong> Barbell Back Squat</div>
+                <div class="question-text">What is the most appropriate modification?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q1" value="a"> Reduce load significantly; use bodyweight squats or light dumbbells; emphasize form and control</label>
+                    <label class="option-label"><input type="radio" name="q1" value="b"> Skip this exercise entirely; children shouldn't do compound lifts</label>
+                    <label class="option-label"><input type="radio" name="q1" value="c"> Perform as normal with lighter load; children adapt quickly</label>
+                    <label class="option-label"><input type="radio" name="q1" value="d"> Add higher volume to build strength early</label>
+                </div>
+            </div>
+
+            <!-- Question 2: Older Adult -->
+            <div class="question-block">
+                <div class="question-number">Question 2</div>
+                <div class="scenario"><strong>Population:</strong> 72-year-old with arthritis | <strong>Exercise:</strong> Barbell Bench Press</div>
+                <div class="question-text">What is the most appropriate modification?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q2" value="a"> Use machine press or light dumbbells; reduce range of motion; consider joint discomfort</label>
+                    <label class="option-label"><input type="radio" name="q2" value="b"> Perform standard barbell press to improve functional capacity</label>
+                    <label class="option-label"><input type="radio" name="q2" value="c"> Replace with chest stretches only; avoid loaded pressing</label>
+                    <label class="option-label"><input type="radio" name="q2" value="d"> Increase weight to maximum safe levels for strength gains</label>
+                </div>
+            </div>
+
+            <!-- Question 3: Post-Injury (ACL Tear) -->
+            <div class="question-block">
+                <div class="question-number">Question 3</div>
+                <div class="scenario"><strong>Population:</strong> 6 weeks post ACL reconstruction | <strong>Exercise:</strong> Barbell Back Squat</div>
+                <div class="question-text">What is the most appropriate modification?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q3" value="a"> Avoid barbell; use single-leg limited ROM; leg press; high knee stability emphasis</label>
+                    <label class="option-label"><input type="radio" name="q3" value="b"> Return to normal squats immediately with medical clearance</label>
+                    <label class="option-label"><input type="radio" name="q3" value="c"> Limit to upper body only until full recovery</label>
+                    <label class="option-label"><input type="radio" name="q3" value="d"> Perform bilateral squats with very heavy load to rebuild strength</label>
+                </div>
+            </div>
+
+            <!-- Question 4: Beginner -->
+            <div class="question-block">
+                <div class="question-number">Question 4</div>
+                <div class="scenario"><strong>Population:</strong> Complete beginner (never lifted) | <strong>Exercise:</strong> Deadlift</div>
+                <div class="question-text">What is the most appropriate modification?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q4" value="a"> Start with no weight or light dumbbells; teach form with boxes; progress slowly</label>
+                    <label class="option-label"><input type="radio" name="q4" value="b"> Skip deadlifts; too risky for beginners</label>
+                    <label class="option-label"><input type="radio" name="q4" value="c"> Use standard barbell with light load; perform many reps</label>
+                    <label class="option-label"><input type="radio" name="q4" value="d"> Load heavily to see if they can handle it</label>
+                </div>
+            </div>
+
+            <!-- Question 5: Older Adult (Osteoporosis) -->
+            <div class="question-block">
+                <div class="question-number">Question 5</div>
+                <div class="scenario"><strong>Population:</strong> 68-year-old with osteoporosis | <strong>Exercise:</strong> Overhead Press</div>
+                <div class="question-text">What is the most appropriate modification?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q5" value="a"> Light load; machine press; careful form; consider bone health; avoid excessive impact</label>
+                    <label class="option-label"><input type="radio" name="q5" value="b"> Avoid overhead movements entirely; avoid impact on spine</label>
+                    <label class="option-label"><input type="radio" name="q5" value="c"> Perform half-range motions with heavier load</label>
+                    <label class="option-label"><input type="radio" name="q5" value="d"> Barbell press with normal progression; bone will adapt</label>
+                </div>
+            </div>
+
+            <!-- Question 6: Youth (Early Teens) -->
+            <div class="question-block">
+                <div class="question-number">Question 6</div>
+                <div class="scenario"><strong>Population:</strong> 13-year-old pre-teen | <strong>Exercise:</strong> Dumbbell Bench Press</div>
+                <div class="question-text">What is the most appropriate modification?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q6" value="a"> Light dumbbells; focus on technique and mind-muscle connection; higher reps</label>
+                    <label class="option-label"><input type="radio" name="q6" value="b"> Use heavy dumbbells to maximize strength development early</label>
+                    <label class="option-label"><input type="radio" name="q6" value="c"> Avoid until 18 years old; too young for resistance</label>
+                    <label class="option-label"><input type="radio" name="q6" value="d"> Use machines instead of free weights</label>
+                </div>
+            </div>
+
+            <!-- Question 7: Post-Injury (Lower Back Strain) -->
+            <div class="question-block">
+                <div class="question-number">Question 7</div>
+                <div class="scenario"><strong>Population:</strong> 2 weeks post lower back strain (cleared by MD) | <strong>Exercise:</strong> Stiff-Legged Deadlift</div>
+                <div class="question-text">What is the most appropriate modification?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q7" value="a"> Avoid spinal flexion; use leg press or quad focus; core stability work first</label>
+                    <label class="option-label"><input type="radio" name="q7" value="b"> Perform normal stiff-legged deadlifts with caution</label>
+                    <label class="option-label"><input type="radio" name="q7" value="c"> Skip all lower body work until full recovery</label>
+                    <label class="option-label"><input type="radio" name="q7" value="d"> Use maximum ROM to stretch the back muscles</label>
+                </div>
+            </div>
+
+            <!-- Question 8: Older Adult (Limited Mobility) -->
+            <div class="question-block">
+                <div class="question-number">Question 8</div>
+                <div class="scenario"><strong>Population:</strong> 76-year-old with hip tightness and limited mobility | <strong>Exercise:</strong> Goblet Squat</div>
+                <div class="question-text">What is the most appropriate modification?</div>
+                <div class="options">
+                    <label class="option-label"><input type="radio" name="q8" value="a"> Reduce ROM; use light load; elevate heels; emphasize mobility work before loading</label>
+                    <label class="option-label"><input type="radio" name="q8" value="b"> Full ROM goblet squat with adequate load</label>
+                    <label class="option-label"><input type="radio" name="q8" value="c"> Replace with chair stands only; no loaded movement</label>
+                    <label class="option-label"><input type="radio" name="q8" value="d"> Perform partial ROM with heavy load for functional strength</label>
+                </div>
+            </div>
+        </form>
+
+        <div class="buttons">
+            <button class="check-btn" onclick="checkAnswers()">Check Answers</button>
+            <button class="reset-btn" onclick="resetActivity()">Reset</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <script>
+        const answers = {
+            q1: 'a',
+            q2: 'a',
+            q3: 'a',
+            q4: 'a',
+            q5: 'a',
+            q6: 'a',
+            q7: 'a',
+            q8: 'a'
+        };
+
+        const explanations = {
+            q1: 'Youth require significantly reduced loads, emphasis on movement quality, and low injury risk. Bodyweight or light loads build foundational strength safely.',
+            q2: 'Arthritis requires low-impact alternatives and reduced ROM to manage pain while maintaining strength capacity.',
+            q3: 'Early post-ACL recovery requires protected weight-bearing, single-leg stability work, and ROM restrictions based on surgical protocol.',
+            q4: 'Beginners need technical instruction with minimal load, progressively building competency and confidence before heavy loading.',
+            q5: 'Osteoporosis requires careful exercise selection, controlled loads, and attention to bone health without excessive shearing forces.',
+            q6: 'Early teens need movement quality focus, moderate loads, and technique emphasis to build proper movement patterns.',
+            q7: 'Back strain recovery requires avoiding spinal flexion, focusing on core stability and hip/leg strength instead of loading the spine.',
+            q8: 'Limited mobility in older adults requires reduced ROM, light loads, heel elevation, and mobility improvements before progressive loading.'
+        };
+
+        function checkAnswers() {
+            const form = document.getElementById('quizForm');
+            let correct = 0;
+            let details = '';
+
+            for (let i = 1; i <= 8; i++) {
+                const selected = form.querySelector(`input[name="q${i}"]:checked`);
+
+                if (!selected) {
+                    alert(`Please answer Question ${i}`);
+                    return;
+                }
+
+                const isCorrect = selected.value === answers[`q${i}`];
+                if (isCorrect) correct++;
+
+                details += `<div class="feedback-item ${isCorrect ? 'correct' : 'incorrect'}">
+                    <strong>Question ${i}: ${isCorrect ? '✓ Correct' : '✗ Incorrect'}</strong>
+                    <div class="feedback-detail">
+                        ${!isCorrect ? `<div>You selected: Option ${selected.value.toUpperCase()} | Correct: Option ${answers[`q${i}`].toUpperCase()}</div>` : ''}
+                        <div>${explanations[`q${i}`]}</div>
+                    </div>
+                </div>`;
+            }
+
+            const score = Math.round((correct / 8) * 100);
+            const feedback = document.getElementById('feedback');
+
+            feedback.innerHTML = details + `<div class="score">Score: ${score}% (${correct}/8 correct)</div>`;
+
+            if (correct === 8) {
+                feedback.className = 'feedback show success';
+            } else if (correct >= 6) {
+                feedback.className = 'feedback show';
+                feedback.style.background = '#FFF3CD';
+                feedback.style.borderLeft = '4px solid #ffc107';
+                feedback.style.color = '#856404';
+            } else {
+                feedback.className = 'feedback show error';
+            }
+
+            document.getElementById('progressBar').style.width = '100%';
+        }
+
+        function resetActivity() {
+            document.getElementById('quizForm').reset();
+            document.getElementById('feedback').classList.remove('show');
+            document.getElementById('progressBar').style.width = '0%';
+        }
+    </script>
+</body>
+</html>
