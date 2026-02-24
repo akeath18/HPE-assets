@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PETE 346 – Interactive Activities</title>
+  <title>PETE 346 – Module Activity Hubs</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -30,6 +30,15 @@
       border-radius: 20px;
       letter-spacing: .4px;
     }
+    .how-to {
+      background: #EBF8FF;
+      border-left: 4px solid #065A82;
+      padding: 14px 20px;
+      font-size: 13px;
+      color: #0C4A6E;
+      line-height: 1.7;
+    }
+    .how-to strong { color: #065A82; }
     main { max-width: 1100px; margin: 0 auto; padding: 36px 24px; }
     .module-grid {
       display: grid;
@@ -109,24 +118,25 @@
   <div class="badge-row">
     <span class="badge">16 Modules</span>
     <span class="badge">38 Activities</span>
-    <span class="badge">Quizzes · Sorting · Matching · Builders · Flashcards</span>
+    <span class="badge">Sequential Progression · Certificates Included</span>
   </div>
 </header>
+<div class="how-to">
+  <strong>How it works:</strong> Click a module card below to open the activity hub. Complete each activity in order (70%+ to pass). When all activities are passed, a <strong>certificate is generated</strong> — print it as a PDF and upload it to the Canvas assignment.
+  &nbsp; Each module hub is also the page you embed via iFrame in Canvas.
+</div>
 
 <main>
   <div class="module-grid">
 
     <div class="module-card">
-      <div class="module-header">
-        <span class="module-num">MOD 01</span>
-        <span class="module-title">Introduction to Fitness-Based PE</span>
-      </div>
+      <div class="module-header" style="cursor:pointer" onclick="this.closest('.module-card').querySelector('.launch-btn').click()"><span class="module-num">MOD 01</span><span class="module-title">Introduction to Fitness-Based PE</span></div>
       <div class="activity-list">
-        <a class="activity-link" href="modules/module_01/M01_FitnessBased_PE_Quiz.html" target="_blank">
+        <a class="activity-link" href="modules/module_01/hub.html" target="_blank">
           <span class="tag tag-quiz">Quiz</span>
           <span class="activity-name">Fitness-Based PE Quiz</span>
         </a>
-        <a class="activity-link" href="modules/module_01/M01_Wellness_Domain_Sort.html" target="_blank">
+        <a class="activity-link" href="modules/module_01/hub.html" target="_blank">
           <span class="tag tag-sort">Sort</span>
           <span class="activity-name">Wellness Domain Sort</span>
         </a>
@@ -134,20 +144,17 @@
     </div>
 
     <div class="module-card">
-      <div class="module-header">
-        <span class="module-num">MOD 02</span>
-        <span class="module-title">Body Systems &amp; Exercise Science</span>
-      </div>
+      <div class="module-header" style="cursor:pointer" onclick="this.closest('.module-card').querySelector('.launch-btn').click()"><span class="module-num">MOD 02</span><span class="module-title">Body Systems &amp; Exercise Science</span></div>
       <div class="activity-list">
-        <a class="activity-link" href="modules/module_02/M02_Body_Systems_Flashcards.html" target="_blank">
+        <a class="activity-link" href="modules/module_02/hub.html" target="_blank">
           <span class="tag tag-flash">Flashcards</span>
           <span class="activity-name">Body Systems Flashcards</span>
         </a>
-        <a class="activity-link" href="modules/module_02/M02_Exercise_Systems_Quiz.html" target="_blank">
+        <a class="activity-link" href="modules/module_02/hub.html" target="_blank">
           <span class="tag tag-quiz">Quiz</span>
           <span class="activity-name">Exercise Systems Quiz</span>
         </a>
-        <a class="activity-link" href="modules/module_02/M02_Joint_Action_Matching.html" target="_blank">
+        <a class="activity-link" href="modules/module_02/hub.html" target="_blank">
           <span class="tag tag-match">Match</span>
           <span class="activity-name">Joint Action Matching</span>
         </a>
@@ -155,20 +162,17 @@
     </div>
 
     <div class="module-card">
-      <div class="module-header">
-        <span class="module-num">MOD 03</span>
-        <span class="module-title">Muscular Anatomy &amp; Contractions</span>
-      </div>
+      <div class="module-header" style="cursor:pointer" onclick="this.closest('.module-card').querySelector('.launch-btn').click()"><span class="module-num">MOD 03</span><span class="module-title">Muscular Anatomy &amp; Contractions</span></div>
       <div class="activity-list">
-        <a class="activity-link" href="modules/module_03/M03_Agonist_Antagonist_Matching.html" target="_blank">
+        <a class="activity-link" href="modules/module_03/hub.html" target="_blank">
           <span class="tag tag-match">Match</span>
           <span class="activity-name">Agonist/Antagonist Matching</span>
         </a>
-        <a class="activity-link" href="modules/module_03/M03_Contraction_Type_Quiz.html" target="_blank">
+        <a class="activity-link" href="modules/module_03/hub.html" target="_blank">
           <span class="tag tag-quiz">Quiz</span>
           <span class="activity-name">Contraction Type Quiz</span>
         </a>
-        <a class="activity-link" href="modules/module_03/M03_Muscle_Group_Sort.html" target="_blank">
+        <a class="activity-link" href="modules/module_03/hub.html" target="_blank">
           <span class="tag tag-sort">Sort</span>
           <span class="activity-name">Muscle Group Sort</span>
         </a>
@@ -176,16 +180,13 @@
     </div>
 
     <div class="module-card">
-      <div class="module-header">
-        <span class="module-num">MOD 04</span>
-        <span class="module-title">Biomechanics &amp; Movement Planes</span>
-      </div>
+      <div class="module-header" style="cursor:pointer" onclick="this.closest('.module-card').querySelector('.launch-btn').click()"><span class="module-num">MOD 04</span><span class="module-title">Biomechanics &amp; Movement Planes</span></div>
       <div class="activity-list">
-        <a class="activity-link" href="modules/module_04/M04_Biomechanics_Scenarios.html" target="_blank">
+        <a class="activity-link" href="modules/module_04/hub.html" target="_blank">
           <span class="tag tag-scenario">Scenarios</span>
           <span class="activity-name">Biomechanics Scenarios</span>
         </a>
-        <a class="activity-link" href="modules/module_04/M04_Planes_Axes_Sort.html" target="_blank">
+        <a class="activity-link" href="modules/module_04/hub.html" target="_blank">
           <span class="tag tag-sort">Sort</span>
           <span class="activity-name">Planes &amp; Axes Sort</span>
         </a>
@@ -193,20 +194,17 @@
     </div>
 
     <div class="module-card">
-      <div class="module-header">
-        <span class="module-num">MOD 05</span>
-        <span class="module-title">Training Principles &amp; Energy Systems</span>
-      </div>
+      <div class="module-header" style="cursor:pointer" onclick="this.closest('.module-card').querySelector('.launch-btn').click()"><span class="module-num">MOD 05</span><span class="module-title">Training Principles &amp; Energy Systems</span></div>
       <div class="activity-list">
-        <a class="activity-link" href="modules/module_05/M05_Acute_Chronic_Flashcards.html" target="_blank">
+        <a class="activity-link" href="modules/module_05/hub.html" target="_blank">
           <span class="tag tag-flash">Flashcards</span>
           <span class="activity-name">Acute/Chronic Load Flashcards</span>
         </a>
-        <a class="activity-link" href="modules/module_05/M05_Energy_System_Sort.html" target="_blank">
+        <a class="activity-link" href="modules/module_05/hub.html" target="_blank">
           <span class="tag tag-sort">Sort</span>
           <span class="activity-name">Energy System Sort</span>
         </a>
-        <a class="activity-link" href="modules/module_05/M05_HR_Zone_Calculator.html" target="_blank">
+        <a class="activity-link" href="modules/module_05/hub.html" target="_blank">
           <span class="tag tag-calc">Calculator</span>
           <span class="activity-name">HR Zone Calculator</span>
         </a>
@@ -214,16 +212,13 @@
     </div>
 
     <div class="module-card">
-      <div class="module-header">
-        <span class="module-num">MOD 06</span>
-        <span class="module-title">Fitness Components &amp; Flexibility</span>
-      </div>
+      <div class="module-header" style="cursor:pointer" onclick="this.closest('.module-card').querySelector('.launch-btn').click()"><span class="module-num">MOD 06</span><span class="module-title">Fitness Components &amp; Flexibility</span></div>
       <div class="activity-list">
-        <a class="activity-link" href="modules/module_06/M06_Fitness_Component_Sort.html" target="_blank">
+        <a class="activity-link" href="modules/module_06/hub.html" target="_blank">
           <span class="tag tag-sort">Sort</span>
           <span class="activity-name">Fitness Component Sort</span>
         </a>
-        <a class="activity-link" href="modules/module_06/M06_Stretching_Methods_Quiz.html" target="_blank">
+        <a class="activity-link" href="modules/module_06/hub.html" target="_blank">
           <span class="tag tag-quiz">Quiz</span>
           <span class="activity-name">Stretching Methods Quiz</span>
         </a>
@@ -231,20 +226,17 @@
     </div>
 
     <div class="module-card">
-      <div class="module-header">
-        <span class="module-num">MOD 07</span>
-        <span class="module-title">Instruction, Cueing &amp; Motor Learning</span>
-      </div>
+      <div class="module-header" style="cursor:pointer" onclick="this.closest('.module-card').querySelector('.launch-btn').click()"><span class="module-num">MOD 07</span><span class="module-title">Instruction, Cueing &amp; Motor Learning</span></div>
       <div class="activity-list">
-        <a class="activity-link" href="modules/module_07/M07_Cueing_Fill_Blanks.html" target="_blank">
+        <a class="activity-link" href="modules/module_07/hub.html" target="_blank">
           <span class="tag tag-fill">Fill-in</span>
           <span class="activity-name">Cueing Fill in the Blanks</span>
         </a>
-        <a class="activity-link" href="modules/module_07/M07_Feedback_Type_Sort.html" target="_blank">
+        <a class="activity-link" href="modules/module_07/hub.html" target="_blank">
           <span class="tag tag-sort">Sort</span>
           <span class="activity-name">Feedback Type Sort</span>
         </a>
-        <a class="activity-link" href="modules/module_07/M07_Motor_Learning_Stages.html" target="_blank">
+        <a class="activity-link" href="modules/module_07/hub.html" target="_blank">
           <span class="tag tag-match">Match</span>
           <span class="activity-name">Motor Learning Stages</span>
         </a>
@@ -252,16 +244,13 @@
     </div>
 
     <div class="module-card">
-      <div class="module-header">
-        <span class="module-num">MOD 08</span>
-        <span class="module-title">Movement Frameworks &amp; Laban</span>
-      </div>
+      <div class="module-header" style="cursor:pointer" onclick="this.closest('.module-card').querySelector('.launch-btn').click()"><span class="module-num">MOD 08</span><span class="module-title">Movement Frameworks &amp; Laban</span></div>
       <div class="activity-list">
-        <a class="activity-link" href="modules/module_08/M08_Laban_Framework_Quiz.html" target="_blank">
+        <a class="activity-link" href="modules/module_08/hub.html" target="_blank">
           <span class="tag tag-quiz">Quiz</span>
           <span class="activity-name">Laban Framework Quiz</span>
         </a>
-        <a class="activity-link" href="modules/module_08/M08_Movement_Pattern_Sort.html" target="_blank">
+        <a class="activity-link" href="modules/module_08/hub.html" target="_blank">
           <span class="tag tag-sort">Sort</span>
           <span class="activity-name">Movement Pattern Sort</span>
         </a>
@@ -269,20 +258,17 @@
     </div>
 
     <div class="module-card">
-      <div class="module-header">
-        <span class="module-num">MOD 09</span>
-        <span class="module-title">FITT-VP &amp; Training Principles</span>
-      </div>
+      <div class="module-header" style="cursor:pointer" onclick="this.closest('.module-card').querySelector('.launch-btn').click()"><span class="module-num">MOD 09</span><span class="module-title">FITT-VP &amp; Training Principles</span></div>
       <div class="activity-list">
-        <a class="activity-link" href="modules/module_09/M09_FITT_VP_Builder.html" target="_blank">
+        <a class="activity-link" href="modules/module_09/hub.html" target="_blank">
           <span class="tag tag-build">Builder</span>
           <span class="activity-name">FITT-VP Builder</span>
         </a>
-        <a class="activity-link" href="modules/module_09/M09_Overtraining_Scenarios.html" target="_blank">
+        <a class="activity-link" href="modules/module_09/hub.html" target="_blank">
           <span class="tag tag-scenario">Scenarios</span>
           <span class="activity-name">Overtraining Scenarios</span>
         </a>
-        <a class="activity-link" href="modules/module_09/M09_Training_Principle_Match.html" target="_blank">
+        <a class="activity-link" href="modules/module_09/hub.html" target="_blank">
           <span class="tag tag-match">Match</span>
           <span class="activity-name">Training Principle Matching</span>
         </a>
@@ -290,16 +276,13 @@
     </div>
 
     <div class="module-card">
-      <div class="module-header">
-        <span class="module-num">MOD 10</span>
-        <span class="module-title">Goal Setting &amp; Program Design</span>
-      </div>
+      <div class="module-header" style="cursor:pointer" onclick="this.closest('.module-card').querySelector('.launch-btn').click()"><span class="module-num">MOD 10</span><span class="module-title">Goal Setting &amp; Program Design</span></div>
       <div class="activity-list">
-        <a class="activity-link" href="modules/module_10/M10_Exercise_Order_Fix.html" target="_blank">
+        <a class="activity-link" href="modules/module_10/hub.html" target="_blank">
           <span class="tag tag-build">Fix-It</span>
           <span class="activity-name">Exercise Order Fix-It</span>
         </a>
-        <a class="activity-link" href="modules/module_10/M10_SMART_Goal_Builder.html" target="_blank">
+        <a class="activity-link" href="modules/module_10/hub.html" target="_blank">
           <span class="tag tag-build">Builder</span>
           <span class="activity-name">SMART Goal Builder</span>
         </a>
@@ -307,16 +290,13 @@
     </div>
 
     <div class="module-card">
-      <div class="module-header">
-        <span class="module-num">MOD 11</span>
-        <span class="module-title">Resistance Training &amp; Populations</span>
-      </div>
+      <div class="module-header" style="cursor:pointer" onclick="this.closest('.module-card').querySelector('.launch-btn').click()"><span class="module-num">MOD 11</span><span class="module-title">Resistance Training &amp; Populations</span></div>
       <div class="activity-list">
-        <a class="activity-link" href="modules/module_11/M11_Population_Modification_Quiz.html" target="_blank">
+        <a class="activity-link" href="modules/module_11/hub.html" target="_blank">
           <span class="tag tag-quiz">Quiz</span>
           <span class="activity-name">Population Modification Quiz</span>
         </a>
-        <a class="activity-link" href="modules/module_11/M11_Set_Structure_Match.html" target="_blank">
+        <a class="activity-link" href="modules/module_11/hub.html" target="_blank">
           <span class="tag tag-match">Match</span>
           <span class="activity-name">Set Structure Matching</span>
         </a>
@@ -324,20 +304,17 @@
     </div>
 
     <div class="module-card">
-      <div class="module-header">
-        <span class="module-num">MOD 12</span>
-        <span class="module-title">Motivation &amp; Behavior Change</span>
-      </div>
+      <div class="module-header" style="cursor:pointer" onclick="this.closest('.module-card').querySelector('.launch-btn').click()"><span class="module-num">MOD 12</span><span class="module-title">Motivation &amp; Behavior Change</span></div>
       <div class="activity-list">
-        <a class="activity-link" href="modules/module_12/M12_Motivation_Scenarios.html" target="_blank">
+        <a class="activity-link" href="modules/module_12/hub.html" target="_blank">
           <span class="tag tag-scenario">Scenarios</span>
           <span class="activity-name">Motivation Scenarios</span>
         </a>
-        <a class="activity-link" href="modules/module_12/M12_SDT_Needs_Match.html" target="_blank">
+        <a class="activity-link" href="modules/module_12/hub.html" target="_blank">
           <span class="tag tag-match">Match</span>
           <span class="activity-name">SDT Needs Matching</span>
         </a>
-        <a class="activity-link" href="modules/module_12/M12_Stages_of_Change_Sort.html" target="_blank">
+        <a class="activity-link" href="modules/module_12/hub.html" target="_blank">
           <span class="tag tag-sort">Sort</span>
           <span class="activity-name">Stages of Change Sort</span>
         </a>
@@ -345,16 +322,13 @@
     </div>
 
     <div class="module-card">
-      <div class="module-header">
-        <span class="module-num">MOD 13</span>
-        <span class="module-title">Safety &amp; Risk Stratification</span>
-      </div>
+      <div class="module-header" style="cursor:pointer" onclick="this.closest('.module-card').querySelector('.launch-btn').click()"><span class="module-num">MOD 13</span><span class="module-title">Safety &amp; Risk Stratification</span></div>
       <div class="activity-list">
-        <a class="activity-link" href="modules/module_13/M13_Risk_Stratification_Quiz.html" target="_blank">
+        <a class="activity-link" href="modules/module_13/hub.html" target="_blank">
           <span class="tag tag-quiz">Quiz</span>
           <span class="activity-name">Risk Stratification Quiz</span>
         </a>
-        <a class="activity-link" href="modules/module_13/M13_Safety_Decision_Scenarios.html" target="_blank">
+        <a class="activity-link" href="modules/module_13/hub.html" target="_blank">
           <span class="tag tag-scenario">Scenarios</span>
           <span class="activity-name">Safety Decision Scenarios</span>
         </a>
@@ -362,16 +336,13 @@
     </div>
 
     <div class="module-card">
-      <div class="module-header">
-        <span class="module-num">MOD 14</span>
-        <span class="module-title">Developmental Appropriateness</span>
-      </div>
+      <div class="module-header" style="cursor:pointer" onclick="this.closest('.module-card').querySelector('.launch-btn').click()"><span class="module-num">MOD 14</span><span class="module-title">Developmental Appropriateness</span></div>
       <div class="activity-list">
-        <a class="activity-link" href="modules/module_14/M14_Dev_Appropriate_Quiz.html" target="_blank">
+        <a class="activity-link" href="modules/module_14/hub.html" target="_blank">
           <span class="tag tag-quiz">Quiz</span>
           <span class="activity-name">Developmentally Appropriate Quiz</span>
         </a>
-        <a class="activity-link" href="modules/module_14/M14_Movement_Combination_Builder.html" target="_blank">
+        <a class="activity-link" href="modules/module_14/hub.html" target="_blank">
           <span class="tag tag-build">Builder</span>
           <span class="activity-name">Movement Combination Builder</span>
         </a>
@@ -379,16 +350,13 @@
     </div>
 
     <div class="module-card">
-      <div class="module-header">
-        <span class="module-num">MOD 15</span>
-        <span class="module-title">Client Communication &amp; Progress</span>
-      </div>
+      <div class="module-header" style="cursor:pointer" onclick="this.closest('.module-card').querySelector('.launch-btn').click()"><span class="module-num">MOD 15</span><span class="module-title">Client Communication &amp; Progress</span></div>
       <div class="activity-list">
-        <a class="activity-link" href="modules/module_15/M15_Client_Communication_Quiz.html" target="_blank">
+        <a class="activity-link" href="modules/module_15/hub.html" target="_blank">
           <span class="tag tag-quiz">Quiz</span>
           <span class="activity-name">Client Communication Quiz</span>
         </a>
-        <a class="activity-link" href="modules/module_15/M15_Progress_Data_Analysis.html" target="_blank">
+        <a class="activity-link" href="modules/module_15/hub.html" target="_blank">
           <span class="tag tag-build">Analysis</span>
           <span class="activity-name">Progress Data Analysis</span>
         </a>
@@ -396,16 +364,13 @@
     </div>
 
     <div class="module-card">
-      <div class="module-header">
-        <span class="module-num">MOD 16</span>
-        <span class="module-title">GACE Review &amp; Program Integration</span>
-      </div>
+      <div class="module-header" style="cursor:pointer" onclick="this.closest('.module-card').querySelector('.launch-btn').click()"><span class="module-num">MOD 16</span><span class="module-title">GACE Review &amp; Program Integration</span></div>
       <div class="activity-list">
-        <a class="activity-link" href="modules/module_16/M16_GACE_Cumulative_Review.html" target="_blank">
+        <a class="activity-link" href="modules/module_16/hub.html" target="_blank">
           <span class="tag tag-review">Review</span>
           <span class="activity-name">GACE Cumulative Review</span>
         </a>
-        <a class="activity-link" href="modules/module_16/M16_Individual_to_Group_Match.html" target="_blank">
+        <a class="activity-link" href="modules/module_16/hub.html" target="_blank">
           <span class="tag tag-match">Match</span>
           <span class="activity-name">Individual to Group Matching</span>
         </a>

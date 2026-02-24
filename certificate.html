@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PETE 346 – Module Certificate</title>
+<script src="shared/tracker.js"></script>
+<style>
+  /* ── Screen chrome ─────────────────────────────────────── */
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: #F0F4F8;
+    color: #1E293B;
+    min-height: 100vh;
+  }
+  .screen-header {
+    background: linear-gradient(135deg, #065A82, #1C7293);
+    color: white;
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .screen-header h1 { font-size: 16px; font-weight: 700; }
+  .print-btn {
+    background: #10B981;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 9px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: .3px;
+  }
+  .print-btn:hover { background: #059669; }
+  .instructions {
+    background: #EBF8FF;
+    border-left: 4px solid #065A82;
+    padding: 10px 28px;
+    font-size: 12px;
+    color: #0C4A6E;
+  }
+  .page-wrap {
+    padding: 32px 28px 60px;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* ── Certificate paper ─────────────────────────────────── */
+  .cert-paper {
+    background: white;
+    width: 800px;
+    min-height: 1050px;
+    box-shadow: 0 4px 24px rgba(0,0,0,.12);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Gold border frame */
+  .cert-frame {
+    margin: 18px;
+    border: 3px solid #B45309;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+  }
+
+  /* Header band */
+  .cert-header {
+    background: linear-gradient(135deg, #065A82 0%, #1C7293 100%);
+    color: white;
+    text-align: center;
+    padding: 28px 30px 22px;
+  }
+  .cert-header .university { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; opacity: .85; margin-bottom: 4px; }
+  .cert-header .course     { font-size: 22px; font-weight: 800; letter-spacing: .5px; margin-bottom: 2px; }
+  .cert-header .course-sub { font-size: 12px; opacity: .8; }
+
+  /* Gold accent bar */
+  .gold-bar { background: linear-gradient(90deg, #B45309, #D97706, #B45309); height: 4px; }
+
+  /* Body */
+  .cert-body { padding: 28px 36px; flex: 1; display: flex; flex-direction: column; gap: 20px; }
+
+  .cert-certifies-line {
+    text-align: center;
+    font-size: 13px;
+    color: #64748B;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .cert-name-box {
+    border-bottom: 2px solid #065A82;
+    text-align: center;
+    padding: 10px 20px 6px;
+    font-size: 26px;
+    font-weight: 700;
+    color: #065A82;
+    letter-spacing: .5px;
+    font-style: italic;
+    min-height: 50px;
+  }
+
+  .cert-completion-text {
+    text-align: center;
+    font-size: 13px;
+    color: #475569;
+    line-height: 1.7;
+  }
+  .cert-completion-text strong { color: #065A82; font-size: 15px; }
+
+  .cert-module-badge {
+    text-align: center;
+    margin: 0 auto;
+  }
+  .cert-module-badge .badge-inner {
+    display: inline-block;
+    background: linear-gradient(135deg, #065A82, #1C7293);
+    color: white;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .cert-module-badge .badge-num { font-size: 11px; opacity: .8; display: block; margin-bottom: 2px; letter-spacing: 1px; text-transform: uppercase; }
+
+  /* Score table */
+  .score-section { }
+  .score-section h4 {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #E2E8F0;
+  }
+  .score-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .score-table th { background: #F8FAFC; color: #64748B; font-weight: 700; text-align: left; padding: 7px 10px; border: 1px solid #E2E8F0; font-size: 11px; text-transform: uppercase; letter-spacing: .4px; }
+  .score-table td { padding: 8px 10px; border: 1px solid #E2E8F0; vertical-align: top; }
+  .score-table tr:nth-child(even) td { background: #FAFAFA; }
+  .pass-pill  { display: inline-block; background: #D1FAE5; color: #065F46; border-radius: 10px; padding: 2px 8px; font-size: 10px; font-weight: 700; }
+  .score-pct  { font-weight: 700; }
+  .score-pct.hi { color: #065F46; }
+  .score-pct.mid { color: #D97706; }
+
+  /* Weaknesses section */
+  .weak-section { }
+  .weak-section h4 {
+    font-size: 11px; font-weight: 700; color: #64748B; text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #E2E8F0;
+  }
+  .weak-list { display: flex; flex-direction: column; gap: 5px; }
+  .weak-item {
+    background: #FEF3C7; border-left: 3px solid #D97706;
+    padding: 6px 10px; border-radius: 0 4px 4px 0;
+    font-size: 12px; color: #78350F;
+  }
+  .no-weak { font-size: 12px; color: #10B981; font-weight: 600; }
+
+  /* Footer */
+  .cert-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid #E2E8F0;
+  }
+  .sig-line { flex: 1; text-align: center; }
+  .sig-line .line { border-top: 1px solid #94A3B8; margin: 0 20px 6px; }
+  .sig-line .label { font-size: 10px; color: #94A3B8; text-transform: uppercase; letter-spacing: .5px; }
+  .cert-id { font-size: 9px; color: #CBD5E1; text-align: right; }
+
+  /* Gold bottom bar */
+  .cert-bottom { background: linear-gradient(90deg, #B45309, #D97706, #B45309); height: 8px; margin-top: auto; }
+
+  /* Error state */
+  .error-box { padding: 60px; text-align: center; color: #94A3B8; }
+  .error-box h2 { margin-bottom: 12px; color: #64748B; }
+
+  /* ── Print styles ──────────────────────────────────────── */
+  @media print {
+    body { background: white; }
+    .screen-header, .instructions, .print-btn { display: none !important; }
+    .page-wrap { padding: 0; }
+    .cert-paper {
+      width: 100%;
+      min-height: auto;
+      box-shadow: none;
+      border-radius: 0;
+    }
+    .cert-frame { margin: 12px; }
+    @page { margin: 0.5cm; size: A4 portrait; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Screen chrome (hidden when printing) -->
+<div class="screen-header">
+  <h1>PETE 346 – Module Completion Certificate</h1>
+  <button class="print-btn" onclick="window.print()">🖨 Print / Save as PDF</button>
+</div>
+<div class="instructions">
+  To submit to Canvas: Click <strong>Print / Save as PDF</strong> → choose <strong>Save as PDF</strong> as the destination → save the file → upload to the Canvas assignment.
+</div>
+
+<!-- Certificate paper -->
+<div class="page-wrap">
+  <div class="cert-paper" id="certPaper">
+    <div class="error-box" id="errorBox" style="display:none">
+      <h2>Certificate Not Ready</h2>
+      <p id="errorMsg">Please complete all activities in this module first.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Module metadata (mirrors generate_hubs.py) ─────── */
+const MODULE_META = {
+  "01": { title: "Introduction to Fitness-Based PE", activities: [
+    {id:"M01_FitnessBased_PE_Quiz",       title:"Fitness-Based PE Quiz"},
+    {id:"M01_Wellness_Domain_Sort",        title:"Wellness Domain Sort"},
+  ]},
+  "02": { title: "Body Systems & Exercise Science", activities: [
+    {id:"M02_Body_Systems_Flashcards",     title:"Body Systems Flashcards"},
+    {id:"M02_Exercise_Systems_Quiz",       title:"Exercise Systems Quiz"},
+    {id:"M02_Joint_Action_Matching",       title:"Joint Action Matching"},
+  ]},
+  "03": { title: "Muscular Anatomy & Contractions", activities: [
+    {id:"M03_Agonist_Antagonist_Matching", title:"Agonist/Antagonist Matching"},
+    {id:"M03_Contraction_Type_Quiz",       title:"Contraction Type Quiz"},
+    {id:"M03_Muscle_Group_Sort",           title:"Muscle Group Sort"},
+  ]},
+  "04": { title: "Biomechanics & Movement Planes", activities: [
+    {id:"M04_Biomechanics_Scenarios",      title:"Biomechanics Scenarios"},
+    {id:"M04_Planes_Axes_Sort",            title:"Planes & Axes Sort"},
+  ]},
+  "05": { title: "Training Principles & Energy Systems", activities: [
+    {id:"M05_Acute_Chronic_Flashcards",    title:"Acute/Chronic Load Flashcards"},
+    {id:"M05_Energy_System_Sort",          title:"Energy System Sort"},
+    {id:"M05_HR_Zone_Calculator",          title:"HR Zone Calculator"},
+  ]},
+  "06": { title: "Fitness Components & Flexibility", activities: [
+    {id:"M06_Fitness_Component_Sort",      title:"Fitness Component Sort"},
+    {id:"M06_Stretching_Methods_Quiz",     title:"Stretching Methods Quiz"},
+  ]},
+  "07": { title: "Instruction, Cueing & Motor Learning", activities: [
+    {id:"M07_Cueing_Fill_Blanks",          title:"Cueing Fill in the Blanks"},
+    {id:"M07_Feedback_Type_Sort",          title:"Feedback Type Sort"},
+    {id:"M07_Motor_Learning_Stages",       title:"Motor Learning Stages"},
+  ]},
+  "08": { title: "Movement Frameworks & Laban", activities: [
+    {id:"M08_Laban_Framework_Quiz",        title:"Laban Framework Quiz"},
+    {id:"M08_Movement_Pattern_Sort",       title:"Movement Pattern Sort"},
+  ]},
+  "09": { title: "FITT-VP & Training Principles", activities: [
+    {id:"M09_FITT_VP_Builder",             title:"FITT-VP Builder"},
+    {id:"M09_Overtraining_Scenarios",      title:"Overtraining Scenarios"},
+    {id:"M09_Training_Principle_Match",    title:"Training Principle Matching"},
+  ]},
+  "10": { title: "Goal Setting & Program Design", activities: [
+    {id:"M10_Exercise_Order_Fix",          title:"Exercise Order Fix-It"},
+    {id:"M10_SMART_Goal_Builder",          title:"SMART Goal Builder"},
+  ]},
+  "11": { title: "Resistance Training & Populations", activities: [
+    {id:"M11_Population_Modification_Quiz",title:"Population Modification Quiz"},
+    {id:"M11_Set_Structure_Match",         title:"Set Structure Matching"},
+  ]},
+  "12": { title: "Motivation & Behavior Change", activities: [
+    {id:"M12_Motivation_Scenarios",        title:"Motivation Scenarios"},
+    {id:"M12_SDT_Needs_Match",             title:"SDT Needs Matching"},
+    {id:"M12_Stages_of_Change_Sort",       title:"Stages of Change Sort"},
+  ]},
+  "13": { title: "Safety & Risk Stratification", activities: [
+    {id:"M13_Risk_Stratification_Quiz",    title:"Risk Stratification Quiz"},
+    {id:"M13_Safety_Decision_Scenarios",   title:"Safety Decision Scenarios"},
+  ]},
+  "14": { title: "Developmental Appropriateness", activities: [
+    {id:"M14_Dev_Appropriate_Quiz",        title:"Developmentally Appropriate Quiz"},
+    {id:"M14_Movement_Combination_Builder",title:"Movement Combination Builder"},
+  ]},
+  "15": { title: "Client Communication & Progress", activities: [
+    {id:"M15_Client_Communication_Quiz",   title:"Client Communication Quiz"},
+    {id:"M15_Progress_Data_Analysis",      title:"Progress Data Analysis"},
+  ]},
+  "16": { title: "GACE Review & Program Integration", activities: [
+    {id:"M16_GACE_Cumulative_Review",      title:"GACE Cumulative Review"},
+    {id:"M16_Individual_to_Group_Match",   title:"Individual to Group Matching"},
+  ]},
+};
+
+/* ── Build certificate ──────────────────────────────── */
+(function () {
+  const params = new URLSearchParams(window.location.search);
+  const mod    = params.get('module');
+  const meta   = mod && MODULE_META[mod];
+  const paper  = document.getElementById('certPaper');
+  const errBox = document.getElementById('errorBox');
+
+  function showError(msg) {
+    errBox.style.display = 'block';
+    document.getElementById('errorMsg').textContent = msg;
+  }
+
+  if (!meta) {
+    showError('No module specified. Please access this page from a module hub.');
+    return;
+  }
+
+  const studentName = PETE346.getStudentName();
+  if (!studentName) {
+    showError('Student name not found. Please go back to the module hub and enter your name.');
+    return;
+  }
+
+  // Gather activity data
+  const actData = meta.activities.map(function(a) {
+    return { title: a.title, data: PETE346.get(mod, a.id) };
+  });
+
+  const allPassed = actData.every(function(a) { return a.data && a.data.passed; });
+  if (!allPassed) {
+    showError('Not all activities have been passed yet. Please complete all activities in Module ' + mod + ' first.');
+    return;
+  }
+
+  // Compute overall score
+  const scores    = actData.map(function(a) { return a.data.bestScore || a.data.percentage; });
+  const avgScore  = Math.round(scores.reduce(function(s,v){return s+v;},0) / scores.length);
+  const completedAt = actData.reduce(function(latest, a) {
+    return (!latest || a.data.completedAt > latest) ? a.data.completedAt : latest;
+  }, null);
+  const dateStr = completedAt ? new Date(completedAt).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : 'N/A';
+
+  // Collect all weaknesses across activities
+  const allWeak = [];
+  actData.forEach(function(a) {
+    if (a.data.weaknesses && a.data.weaknesses.length) {
+      a.data.weaknesses.forEach(function(w) {
+        if (w && allWeak.indexOf(w) === -1) allWeak.push(w);
+      });
+    }
+  });
+
+  // Unique cert ID
+  const certId = 'PETE346-M' + mod + '-' + btoa(studentName).replace(/[^A-Z0-9]/gi,'').substring(0,8).toUpperCase();
+
+  // Build score table rows
+  const scoreRows = actData.map(function(a) {
+    var pct   = a.data.bestScore || a.data.percentage;
+    var cls   = pct >= 85 ? 'hi' : 'mid';
+    var weaks = (a.data.weaknesses && a.data.weaknesses.length)
+      ? a.data.weaknesses.slice(0,2).join('; ')
+      : '—';
+    return '<tr><td>' + a.title + '</td>'
+      + '<td><span class="score-pct ' + cls + '">' + pct + '%</span></td>'
+      + '<td><span class="pass-pill">PASSED</span></td>'
+      + '<td style="font-size:11px;color:#64748B">' + weaks + '</td></tr>';
+  }).join('');
+
+  // Weakness list
+  var weakHtml = '';
+  if (allWeak.length === 0) {
+    weakHtml = '<p class="no-weak">✓ Excellent work — no significant weaknesses identified across all activities.</p>';
+  } else {
+    weakHtml = '<div class="weak-list">' +
+      allWeak.slice(0,8).map(function(w){ return '<div class="weak-item">⚠ ' + w + '</div>'; }).join('') +
+      '</div>';
+  }
+
+  // Inject certificate HTML
+  paper.innerHTML = `
+    <div class="cert-frame">
+      <div class="cert-header">
+        <div class="university">Mercer University &nbsp;·&nbsp; Department of Health &amp; Human Performance</div>
+        <div class="course">PETE 346</div>
+        <div class="course-sub">Fitness-Based Physical Education</div>
+      </div>
+      <div class="gold-bar"></div>
+
+      <div class="cert-body">
+
+        <div class="cert-certifies-line">This certifies that</div>
+
+        <div class="cert-name-box">${studentName}</div>
+
+        <div class="cert-completion-text">
+          has successfully completed all required interactive activities for<br>
+          <strong>Module ${mod}: ${meta.title}</strong><br>
+          <span style="font-size:12px;color:#64748B">with an overall score of
+            <strong style="color:#065A82;font-size:14px">${avgScore}%</strong>
+            &nbsp;·&nbsp; Completed ${dateStr}
+          </span>
+        </div>
+
+        <div class="cert-module-badge">
+          <div class="badge-inner">
+            <span class="badge-num">Module ${mod} of 16</span>
+            ${meta.title}
+          </div>
+        </div>
+
+        <div class="score-section">
+          <h4>Activity Scores</h4>
+          <table class="score-table">
+            <thead>
+              <tr>
+                <th>Activity</th>
+                <th>Best Score</th>
+                <th>Status</th>
+                <th>Areas for Review</th>
+              </tr>
+            </thead>
+            <tbody>${scoreRows}</tbody>
+          </table>
+        </div>
+
+        <div class="weak-section">
+          <h4>Areas for Continued Study</h4>
+          ${weakHtml}
+        </div>
+
+        <div class="cert-footer">
+          <div class="sig-line">
+            <div class="line"></div>
+            <div class="label">Student Signature</div>
+          </div>
+          <div class="sig-line">
+            <div class="line"></div>
+            <div class="label">Dr. Adam Keath · Instructor</div>
+          </div>
+          <div class="sig-line">
+            <div class="line"></div>
+            <div class="label">Date</div>
+          </div>
+        </div>
+
+        <div class="cert-id">Certificate ID: ${certId}</div>
+      </div>
+
+      <div class="cert-bottom"></div>
+    </div>
+  `;
+})();
+</script>
+</body>
+</html>

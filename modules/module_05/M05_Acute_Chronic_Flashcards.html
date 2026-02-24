@@ -242,5 +242,76 @@
 
         document.addEventListener('DOMContentLoaded', init);
     </script>
+
+<script src="../../shared/tracker.js"></script>
+<script>
+window.PETE346_CONFIG = {
+  module  : '05',
+  activity: 'M05_Acute_Chronic_Flashcards',
+  title   : 'Acute/Chronic Load Flashcards'
+};
+
+(function () {
+  /* ── DOM score reader ───────────────────────────── */
+  function extractScore() {
+    var el = document.querySelector(
+      '.score-circle, .score-box, #score-circle, #score-box, ' +
+      '[class*="score-circle"], [class*="score-box"], ' +
+      '#scoreDisplay, .score-display, .final-score'
+    );
+    if (!el) return 0;
+    var m = el.textContent.match(/\d+/);
+    return m ? Math.min(parseInt(m[0], 10), 100) : 0;
+  }
+
+  /* ── Weakness reader (reads from DOM after results render) ── */
+  function extractWeaknesses() {
+    var selectors = [
+      '.feedback-item.incorrect', '.result-item.incorrect',
+      '.incorrect-answer', '.wrong',
+      '.feedback.incorrect', '.answer-feedback.incorrect'
+    ];
+    var items = [];
+    selectors.forEach(function (sel) {
+      document.querySelectorAll(sel).forEach(function (el) {
+        var t = el.querySelector('strong, .question-text, p, span, h4');
+        var txt = (t || el).textContent.replace(/[✓✗❌⚠️]/g, '').trim();
+        if (txt && txt.length > 3 && txt.length < 120) items.push(txt);
+      });
+    });
+    return items.slice(0, 6);
+  }
+
+  /* ── Fire tracker after a short delay (DOM settles) ── */
+  function doReport() {
+    setTimeout(function () {
+      var pct = extractScore();
+      if (pct > 0) {
+        PETE346.reportCompletion(pct, extractWeaknesses(), PETE346_CONFIG.title);
+      }
+    }, 400);
+  }
+
+  /* ── Wrap markMastered for flashcard completion ── */
+  document.addEventListener('DOMContentLoaded', function () {
+    if (typeof markMastered === 'function') {
+      var _origMM = markMastered;
+      markMastered = function () {
+        var r = _origMM.apply(this, arguments);
+        setTimeout(function () {
+          var total   = (typeof flashcards !== 'undefined') ? flashcards.length : 0;
+          var mastCt  = (typeof mastered   !== 'undefined') ? mastered.size     : 0;
+          var pct     = total > 0 ? Math.round(mastCt / total * 100) : 0;
+          if (pct >= 70) {
+            PETE346.reportCompletion(pct, [], PETE346_CONFIG.title);
+          }
+        }, 200);
+        return r;
+      };
+    }
+  });
+
+})();
+</script>
 </body>
 </html>

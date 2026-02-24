@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 03 – Muscular Anatomy & Contractions</title>
+<script src="../../shared/tracker.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,sans-serif;background:#F0F4F8;color:#1E293B;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+
+/* ── Top bar ── */
+.topbar{background:linear-gradient(135deg,#065A82,#1C7293);color:#fff;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.mod-badge{background:rgba(255,255,255,.22);border-radius:5px;font-size:11px;font-weight:700;padding:3px 9px}
+.mod-title{font-size:15px;font-weight:700}
+.progress-pill{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600}
+
+/* ── Name banner ── */
+.name-banner{background:#EBF8FF;border-bottom:1px solid #BAE6FD;padding:8px 20px;display:flex;align-items:center;gap:10px;flex-shrink:0;font-size:13px}
+.name-banner input{border:1px solid #7DD3FC;border-radius:4px;padding:4px 10px;font-size:13px;outline:none;width:200px}
+.name-banner input:focus{border-color:#065A82}
+.name-save{background:#065A82;color:#fff;border:none;border-radius:4px;padding:5px 12px;font-size:12px;cursor:pointer;font-weight:600}
+.name-saved{color:#065F46;font-weight:600}
+
+/* ── Main layout ── */
+.main{display:flex;flex:1;overflow:hidden}
+
+/* ── Sidebar ── */
+.sidebar{width:300px;flex-shrink:0;background:#fff;border-right:1px solid #E2E8F0;overflow-y:auto;display:flex;flex-direction:column}
+.sidebar-header{padding:14px 16px;font-size:12px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid #F1F5F9;background:#FAFAFA}
+.act-item{padding:12px 14px;border-bottom:1px solid #F1F5F9;cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:space-between}
+.act-item:hover{background:#F8FAFC}
+.act-item.active{background:#EBF8FF;border-left:3px solid #065A82}
+.act-item.locked{opacity:.55;cursor:not-allowed}
+.act-item.passed{border-left:3px solid #10B981}
+.act-left{display:flex;align-items:center;gap:10px}
+.act-icon{font-size:18px;width:24px;text-align:center}
+.act-title{font-size:13px;font-weight:600;color:#1E293B;margin-bottom:3px}
+.act-meta{display:flex;align-items:center;gap:6px}
+.act-score{font-size:11px;font-weight:700;color:#065A82}
+.tag{font-size:10px;font-weight:700;padding:2px 6px;border-radius:3px}
+
+/* ── Progress bar ── */
+.prog-bar-wrap{padding:12px 16px;border-top:1px solid #F1F5F9;background:#FAFAFA;flex-shrink:0}
+.prog-label{font-size:11px;color:#64748B;margin-bottom:6px;display:flex;justify-content:space-between}
+.prog-bar{background:#E2E8F0;height:8px;border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;background:#10B981;border-radius:4px;transition:width .4s ease}
+
+/* ── Certificate banner ── */
+.cert-banner{background:linear-gradient(135deg,#064E3B,#065F46);color:#fff;padding:16px 20px;text-align:center;display:none;flex-shrink:0}
+.cert-banner h3{font-size:14px;margin-bottom:6px}
+.cert-btn{background:#10B981;color:#fff;border:none;border-radius:6px;padding:10px 24px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.3px;margin-top:4px}
+.cert-btn:hover{background:#059669}
+
+/* ── Activity frame area ── */
+.frame-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.frame-header{padding:10px 18px;background:#FAFAFA;border-bottom:1px solid #E2E8F0;font-size:13px;color:#475569;flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
+.frame-header .act-current{font-weight:700;color:#065A82}
+.locked-overlay{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;background:#F8FAFC;color:#94A3B8}
+.locked-overlay h3{font-size:16px;color:#64748B}
+.locked-overlay p{font-size:13px;text-align:center;max-width:280px}
+#activityFrame{flex:1;border:none;width:100%;height:100%}
+.passed-overlay{flex:1;display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px;background:#F0FDF4;color:#065F46}
+.passed-overlay .big-check{font-size:56px}
+.passed-overlay h3{font-size:18px;font-weight:700}
+.passed-overlay p{font-size:13px;color:#047857}
+.retake-btn{background:#065F46;color:#fff;border:none;border-radius:6px;padding:8px 18px;font-size:12px;font-weight:600;cursor:pointer;margin-top:4px}
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="mod-badge">MOD 03</span>
+    <span class="mod-title">Muscular Anatomy & Contractions</span>
+  </div>
+  <span class="progress-pill" id="progressPill">0 / 3 passed</span>
+</div>
+
+<!-- Student name banner -->
+<div class="name-banner" id="nameBanner">
+  <span>Your name:</span>
+  <input type="text" id="nameInput" placeholder="Enter your full name…" maxlength="60" />
+  <button class="name-save" onclick="saveName()">Save</button>
+  <span class="name-saved" id="nameSavedMsg" style="display:none">✓ Saved</span>
+</div>
+
+<div class="main">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">Activities – complete in order</div>
+    
+        <div class="act-item" id="act-0" onclick="selectActivity(0)">
+          <div class="act-left">
+            <span class="act-icon" id="icon-0">🔒</span>
+            <div>
+              <div class="act-title">Agonist/Antagonist Matching</div>
+              <div class="act-meta"><span class="tag" style="background:#EDE9FE;color:#5B21B6">Match</span> <span class="act-score" id="score-0"></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="act-item" id="act-1" onclick="selectActivity(1)">
+          <div class="act-left">
+            <span class="act-icon" id="icon-1">🔒</span>
+            <div>
+              <div class="act-title">Contraction Type Quiz</div>
+              <div class="act-meta"><span class="tag" style="background:#DBEAFE;color:#1D4ED8">Quiz</span> <span class="act-score" id="score-1"></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="act-item" id="act-2" onclick="selectActivity(2)">
+          <div class="act-left">
+            <span class="act-icon" id="icon-2">🔒</span>
+            <div>
+              <div class="act-title">Muscle Group Sort</div>
+              <div class="act-meta"><span class="tag" style="background:#D1FAE5;color:#065F46">Sort</span> <span class="act-score" id="score-2"></span></div>
+            </div>
+          </div>
+        </div>
+    <div class="prog-bar-wrap">
+      <div class="prog-label">
+        <span>Progress</span>
+        <span id="progPct">0%</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <!-- Right: activity iframe + certificate -->
+  <div class="frame-area" style="display:flex;flex-direction:column">
+
+    <!-- Certificate banner (hidden until all done) -->
+    <div class="cert-banner" id="certBanner">
+      <h3>🎓 All activities passed! Your certificate is ready.</h3>
+      <button class="cert-btn" onclick="openCertificate()">Generate &amp; Print Certificate</button>
+    </div>
+
+    <!-- Frame header -->
+    <div class="frame-header">
+      <span>Now viewing: <span class="act-current" id="frameLabel">—</span></span>
+      <span style="font-size:11px;color:#94A3B8">Complete each activity at 70%+ to unlock the next</span>
+    </div>
+
+    <!-- Locked placeholder -->
+    <div class="locked-overlay" id="lockedOverlay" style="display:none">
+      <span style="font-size:48px">🔒</span>
+      <h3>Activity Locked</h3>
+      <p>Pass the previous activity (70%+) to unlock this one.</p>
+    </div>
+
+    <!-- Passed overlay (shown when revisiting a passed activity) -->
+    <div class="passed-overlay" id="passedOverlay">
+      <div class="big-check">✅</div>
+      <h3 id="passedTitle">Activity Passed!</h3>
+      <p id="passedScore"></p>
+      <button class="retake-btn" onclick="retakeActive()">Retake Activity</button>
+    </div>
+
+    <!-- Activity iframe -->
+    <iframe id="activityFrame" src="about:blank" style="display:none"
+            title="Activity frame" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+
+  </div>
+</div>
+
+<script>
+/* ── Config ───────────────────────────────────────────── */
+const MODULE     = '03';
+const ACTIVITIES = [{"id": "M03_Agonist_Antagonist_Matching", "title": "Agonist/Antagonist Matching", "kind": "match"}, {"id": "M03_Contraction_Type_Quiz", "title": "Contraction Type Quiz", "kind": "quiz"}, {"id": "M03_Muscle_Group_Sort", "title": "Muscle Group Sort", "kind": "sort"}];
+const N          = ACTIVITIES.length;
+let activeIdx    = 0;
+
+/* ── Init ─────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', function () {
+  // Restore name
+  var name = PETE346.getStudentName();
+  if (name) {
+    document.getElementById('nameInput').value = name;
+    document.getElementById('nameSavedMsg').style.display = 'inline';
+  }
+
+  refreshUI();
+  // Load first incomplete activity
+  var next = PETE346.nextIncomplete(MODULE, ACTIVITIES.map(a => a.id));
+  selectActivity(next >= 0 ? next : 0);
+});
+
+/* ── Name save ────────────────────────────────────────── */
+function saveName() {
+  var v = document.getElementById('nameInput').value.trim();
+  if (!v) { alert('Please enter your name.'); return; }
+  PETE346.setStudentName(v);
+  var msg = document.getElementById('nameSavedMsg');
+  msg.style.display = 'inline';
+  setTimeout(function() { msg.style.display='none'; }, 2000);
+}
+
+/* ── Activity selection ────────────────────────────────── */
+function selectActivity(idx) {
+  if (idx < 0 || idx >= N) return;
+  var act  = ACTIVITIES[idx];
+  var data = PETE346.get(MODULE, act.id);
+
+  // Check if locked (sequential: previous must be passed)
+  var locked = false;
+  for (var i = 0; i < idx; i++) {
+    var prev = PETE346.get(MODULE, ACTIVITIES[i].id);
+    if (!prev || !prev.passed) { locked = true; break; }
+  }
+
+  activeIdx = idx;
+
+  // Update sidebar active state
+  document.querySelectorAll('.act-item').forEach(function(el, i) {
+    el.classList.toggle('active', i === idx);
+  });
+
+  document.getElementById('frameLabel').textContent = act.title;
+
+  var frame    = document.getElementById('activityFrame');
+  var locked_o = document.getElementById('lockedOverlay');
+  var passed_o = document.getElementById('passedOverlay');
+
+  if (locked) {
+    frame.style.display    = 'none';
+    locked_o.style.display = 'flex';
+    passed_o.style.display = 'none';
+    return;
+  }
+
+  locked_o.style.display = 'none';
+
+  // If already passed, show passed overlay (student can choose to retake)
+  if (data && data.passed) {
+    frame.style.display    = 'none';
+    passed_o.style.display = 'flex';
+    document.getElementById('passedTitle').textContent  = act.title + ' — Passed!';
+    document.getElementById('passedScore').textContent  =
+      'Your best score: ' + (data.bestScore || data.percentage) + '% · ' +
+      'Completed ' + new Date(data.completedAt).toLocaleDateString();
+  } else {
+    passed_o.style.display = 'none';
+    frame.style.display    = 'flex';
+    frame.src              = act.id + '.html';
+  }
+}
+
+/* ── Retake active activity ───────────────────────────── */
+function retakeActive() {
+  var frame = document.getElementById('activityFrame');
+  document.getElementById('passedOverlay').style.display = 'none';
+  frame.style.display = 'flex';
+  frame.src           = ACTIVITIES[activeIdx].id + '.html';
+}
+
+/* ── Listen for activity completions ──────────────────── */
+window.addEventListener('message', function(e) {
+  if (!e.data || e.data.type !== 'pete346_complete') return;
+  if (e.data.module !== MODULE) return;
+
+  refreshUI();
+
+  // Auto-advance if passed
+  if (e.data.passed) {
+    setTimeout(function() {
+      var next = PETE346.nextIncomplete(MODULE, ACTIVITIES.map(a => a.id));
+      if (next >= 0) {
+        selectActivity(next);
+      } else {
+        // All done – show cert banner, keep current view
+        refreshUI();
+        // Show passed overlay for this activity
+        var data = PETE346.get(MODULE, e.data.activity);
+        var frame = document.getElementById('activityFrame');
+        frame.style.display = 'none';
+        document.getElementById('passedOverlay').style.display = 'flex';
+        document.getElementById('passedTitle').textContent =
+          ACTIVITIES[activeIdx].title + ' — Passed!';
+        document.getElementById('passedScore').textContent =
+          'Score: ' + e.data.percentage + '%';
+      }
+    }, 1200);
+  }
+});
+
+/* ── Refresh sidebar + progress bar ──────────────────── */
+function refreshUI() {
+  var passed = 0;
+
+  ACTIVITIES.forEach(function(act, i) {
+    var data = PETE346.get(MODULE, act.id);
+    var el   = document.getElementById('act-' + i);
+    var icon = document.getElementById('icon-' + i);
+    var sc   = document.getElementById('score-' + i);
+
+    // Determine lock state
+    var locked = false;
+    for (var j = 0; j < i; j++) {
+      var p = PETE346.get(MODULE, ACTIVITIES[j].id);
+      if (!p || !p.passed) { locked = true; break; }
+    }
+
+    el.classList.remove('locked','passed','active');
+    if (i === activeIdx) el.classList.add('active');
+
+    if (locked) {
+      el.classList.add('locked');
+      icon.textContent = '🔒';
+      sc.textContent   = '';
+    } else if (data && data.passed) {
+      el.classList.add('passed');
+      icon.textContent = '✅';
+      sc.textContent   = (data.bestScore || data.percentage) + '%';
+      passed++;
+    } else if (data) {
+      icon.textContent = '⚠️';
+      sc.textContent   = data.percentage + '% – retry';
+    } else {
+      icon.textContent = '▶';
+      sc.textContent   = '';
+    }
+  });
+
+  // Progress pill + bar
+  document.getElementById('progressPill').textContent = passed + ' / ' + N + ' passed';
+  var pct = Math.round(passed / N * 100);
+  document.getElementById('progFill').style.width  = pct + '%';
+  document.getElementById('progPct').textContent   = pct + '%';
+
+  // Certificate banner
+  document.getElementById('certBanner').style.display =
+    (passed === N) ? 'block' : 'none';
+}
+
+/* ── Open certificate ──────────────────────────────────── */
+function openCertificate() {
+  var name = PETE346.getStudentName();
+  if (!name) {
+    name = prompt('Please enter your full name for the certificate:');
+    if (!name || !name.trim()) { alert('A name is required to generate the certificate.'); return; }
+    PETE346.setStudentName(name.trim());
+    document.getElementById('nameInput').value = name.trim();
+  }
+  window.open('../../certificate.html?module=' + MODULE, '_blank');
+}
+</script>
+</body>
+</html>
