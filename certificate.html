@@ -316,15 +316,32 @@ const MODULE_META = {
     return;
   }
 
-  const studentName = PETE346.getStudentName();
+  /* ── Name: URL param first, then localStorage fallback ── */
+  const nameParam = params.get('name');
+  const studentName = nameParam
+    ? decodeURIComponent(nameParam)
+    : PETE346.getStudentName();
+
   if (!studentName) {
     showError('Student name not found. Please go back to the module hub and enter your name.');
     return;
   }
 
+  /* ── Score data: URL param first (base64 JSON), then localStorage fallback ── */
+  let urlScoreData = null;
+  const dataParam = params.get('data');
+  if (dataParam) {
+    try {
+      urlScoreData = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(dataParam)))));
+    } catch (e) {
+      urlScoreData = null; // fall through to localStorage
+    }
+  }
+
   // Gather activity data
   const actData = meta.activities.map(function(a) {
-    return { title: a.title, data: PETE346.get(mod, a.id) };
+    var d = (urlScoreData && urlScoreData[a.id]) ? urlScoreData[a.id] : PETE346.get(mod, a.id);
+    return { title: a.title, data: d };
   });
 
   const allPassed = actData.every(function(a) { return a.data && a.data.passed; });

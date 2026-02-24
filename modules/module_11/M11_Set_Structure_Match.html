@@ -457,6 +457,37 @@
 
 <script src="../../shared/tracker.js"></script>
 <script>
+
+/* ── Fisher-Yates shuffle ── */
+function _pete346Shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function _pete346ShuffleNodes(container) {
+  if (!container) return;
+  var nodes = Array.from(container.children);
+  var shuffled = _pete346Shuffle(nodes);
+  shuffled.forEach(function(n) { container.appendChild(n); });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var cols = document.querySelectorAll('.matching-container .column');
+  cols.forEach(function(col) {
+    /* Preserve the column-title header, shuffle only item children */
+    var title = col.querySelector('.column-title');
+    var items = Array.from(col.children).filter(function(c) {
+      return !c.classList.contains('column-title');
+    });
+    var shuffled = _pete346Shuffle(items);
+    shuffled.forEach(function(item) { col.appendChild(item); });
+    if (title) col.insertBefore(title, col.firstChild);
+  });
+});
+
 window.PETE346_CONFIG = {
   module  : '11',
   activity: 'M11_Set_Structure_Match',

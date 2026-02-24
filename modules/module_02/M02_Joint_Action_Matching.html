@@ -348,7 +348,7 @@
             const container = document.getElementById('leftItems');
             container.innerHTML = '';
 
-            pairs.forEach(pair => {
+            _pete346Shuffle([...pairs]).forEach(pair => {
                 const div = document.createElement('div');
                 div.className = 'item';
                 div.id = `action-${pair.id}`;
@@ -367,7 +367,7 @@
             const container = document.getElementById('rightItems');
             container.innerHTML = '';
 
-            pairs.forEach(pair => {
+            _pete346Shuffle([...pairs]).forEach(pair => {
                 const dropZone = document.createElement('div');
                 dropZone.id = `drop-${pair.id}`;
                 dropZone.dataset.id = pair.id;
@@ -505,6 +505,23 @@
 
 <script src="../../shared/tracker.js"></script>
 <script>
+
+/* ── Fisher-Yates shuffle ── */
+function _pete346Shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function _pete346ShuffleNodes(container) {
+  if (!container) return;
+  var nodes = Array.from(container.children);
+  var shuffled = _pete346Shuffle(nodes);
+  shuffled.forEach(function(n) { container.appendChild(n); });
+}
+
 window.PETE346_CONFIG = {
   module  : '02',
   activity: 'M02_Joint_Action_Matching',
