@@ -446,6 +446,21 @@ tr:last-child td {
   align-items: center;
 }
 
+.session-editor-grid {
+  margin-top: 0.75rem;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.table-wrap input {
+  width: 100%;
+  border: 1px solid rgba(16, 37, 56, 0.25);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.82rem;
+  padding: 0.4rem 0.45rem;
+}
+
 .toggle-row {
   margin-top: 0.65rem;
   display: inline-flex;
