@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#15304a" />
+    <meta
+      name="description"
+      content="Trainer portal for updating and publishing client training plans."
+    />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Training Plan Trainer Portal</title>
+  </head>
+  <body>
+    <div class="ambient-bg" aria-hidden="true"></div>
+
+    <header class="app-header">
+      <div class="header-row">
+        <p class="eyebrow">Training Plan Trainer</p>
+        <a href="index.html" class="btn ghost">Client View</a>
+      </div>
+      <h1>Trainer Portal</h1>
+      <p class="subtitle">Edit plans, publish updates to GitHub, and share client links.</p>
+    </header>
+
+    <main class="app-shell trainer-shell" aria-live="polite">
+      <section class="panel">
+        <h2 class="section-title">Publish Settings</h2>
+        <p class="section-subtitle">These values control where updates are committed.</p>
+
+        <div class="form-grid">
+          <label class="field">
+            <span>GitHub Owner</span>
+            <input id="ownerInput" type="text" placeholder="akeath18" />
+          </label>
+          <label class="field">
+            <span>Repository</span>
+            <input id="repoInput" type="text" placeholder="HPE-assets" />
+          </label>
+          <label class="field">
+            <span>Branch</span>
+            <input id="branchInput" type="text" placeholder="main" />
+          </label>
+          <label class="field">
+            <span>File Path</span>
+            <input id="pathInput" type="text" placeholder="training-plan/data/training-plans.json" />
+          </label>
+          <label class="field field-wide">
+            <span>GitHub Token (repo scope)</span>
+            <input id="tokenInput" type="password" autocomplete="off" placeholder="ghp_..." />
+          </label>
+        </div>
+
+        <label class="toggle-row">
+          <input id="rememberTokenInput" type="checkbox" />
+          <span>Remember token in this browser</span>
+        </label>
+
+        <div class="toolbar">
+          <button id="validateDataBtn" class="btn ghost" type="button">Validate Data</button>
+          <button id="downloadBackupBtn" class="btn ghost" type="button">Download Backup JSON</button>
+          <button id="publishBtn" class="btn" type="button">Publish Update to GitHub</button>
+        </div>
+
+        <p id="publishStatus" class="status-line">Loading plan data...</p>
+      </section>
+
+      <section class="panel">
+        <h2 class="section-title">Client Manager</h2>
+        <div class="toolbar">
+          <label class="field compact-field" style="min-width: 220px;">
+            <span>Active Client</span>
+            <select id="clientSelect"></select>
+          </label>
+          <button id="addClientBtn" class="btn ghost" type="button">Add Client</button>
+          <button id="removeClientBtn" class="btn ghost" type="button">Remove Client</button>
+          <button id="shareClientBtn" class="btn" type="button">Share Client Link</button>
+          <button id="openClientBtn" class="btn ghost" type="button">Open Client View</button>
+        </div>
+
+        <div class="form-grid" style="margin-top: 0.6rem;">
+          <label class="field">
+            <span>Client Name</span>
+            <input id="nameInput" type="text" />
+          </label>
+          <label class="field">
+            <span>Trainer Name</span>
+            <input id="trainerInput" type="text" />
+          </label>
+          <label class="field">
+            <span>Program Start Date</span>
+            <input id="startDateInput" type="text" />
+          </label>
+          <label class="field">
+            <span>Program End Date</span>
+            <input id="endDateInput" type="text" />
+          </label>
+          <label class="field">
+            <span>Primary Goal</span>
+            <input id="goalInput" type="text" />
+          </label>
+          <label class="field">
+            <span>Coached Session Day</span>
+            <input id="coachedDayInput" type="text" />
+          </label>
+          <label class="field">
+            <span>Independent Day 1</span>
+            <input id="indDayOneInput" type="text" />
+          </label>
+          <label class="field">
+            <span>Independent Day 2</span>
+            <input id="indDayTwoInput" type="text" />
+          </label>
+        </div>
+
+        <div class="toolbar">
+          <button id="applyQuickFieldsBtn" class="btn ghost" type="button">Apply Quick Fields to Editor</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2 class="section-title">Client JSON Editor</h2>
+        <p class="section-subtitle">
+          Edit the selected client object directly. Use Save Draft before publishing.
+        </p>
+        <textarea id="clientJsonEditor" class="json-editor" spellcheck="false"></textarea>
+
+        <div class="toolbar">
+          <button id="saveDraftBtn" class="btn" type="button">Save Client Draft</button>
+          <button id="resetEditorBtn" class="btn ghost" type="button">Reset Editor</button>
+        </div>
+
+        <p id="editorStatus" class="status-line"></p>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <p>
+        Publishing commits updates to GitHub and makes the new plan visible to clients once GitHub Pages refreshes.
+      </p>
+    </footer>
+
+    <script src="trainer.js" defer></script>
+  </body>
+</html>

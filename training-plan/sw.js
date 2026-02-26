@@ -1,9 +1,11 @@
-const CACHE_NAME = "training-plan-v1";
+const CACHE_NAME = "training-plan-v2";
 const ASSETS = [
   "./",
   "./index.html",
+  "./trainer.html",
   "./styles.css",
   "./app.js",
+  "./trainer.js",
   "./manifest.webmanifest",
   "./data/training-plans.json"
 ];
@@ -33,6 +35,11 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") {
+    return;
+  }
+
+  const requestUrl = new URL(event.request.url);
+  if (requestUrl.origin !== self.location.origin) {
     return;
   }
 

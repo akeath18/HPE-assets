@@ -1,39 +1,47 @@
 # Training Plan Web App
 
-Mobile-first training plan portal for clients and students.
+Mobile-first training plan portal with a trainer-side publisher.
 
-## What this app does
-- Shows one training plan per link using `?client=<client-id>`.
+## Live URLs
+- Client directory: `https://akeath18.github.io/HPE-assets/training-plan/`
+- Trainer portal: `https://akeath18.github.io/HPE-assets/training-plan/trainer.html`
+
+## Client view
+- Shows one plan per share link using `?client=<client-id>`.
 - Mirrors your template sections: profile, goals, weekly sessions, check-ins, and final assessment.
-- Works on phones and can be installed to the home screen (PWA support).
+- Installable on mobile (PWA behavior).
+
+## Trainer view
+The trainer portal allows you to:
+- Select/add/remove clients.
+- Edit key fields quickly.
+- Edit full client JSON directly.
+- Save draft changes in-browser.
+- Publish updates to GitHub (commits to `training-plan/data/training-plans.json`).
+- Share direct client links immediately.
+
+## Trainer publish setup
+In `trainer.html`, set:
+- `GitHub Owner`: `akeath18`
+- `Repository`: `HPE-assets`
+- `Branch`: `main`
+- `File Path`: `training-plan/data/training-plans.json`
+- `GitHub Token`: a PAT with repo write access
+
+After pressing **Publish Update to GitHub**, GitHub Pages usually reflects updates within about 1 minute.
 
 ## Local preview
-From this folder, run a simple static server:
+From the repo root:
 
 ```bash
-cd training-plan-webapp
+cd training-plan
 python3 -m http.server 8080
 ```
 
-Then open:
-- `http://localhost:8080/` for the client directory page
-- `http://localhost:8080/?client=maria-thompson` for a direct client plan
+Open:
+- `http://localhost:8080/`
+- `http://localhost:8080/trainer.html`
 
-## Update plans
-1. Edit `data/training-plans.json`.
-2. Update `lastUpdated` in the same file.
-3. Republish the `training-plan-webapp` folder.
-
-## Add a new client
-1. Duplicate one client object in `data/training-plans.json`.
-2. Set a unique `id` (for example `john-smith`).
-3. Update profile, weekly sessions, and final assessment fields.
-4. Share this direct link format:
-   - `https://your-domain.com/?client=john-smith`
-
-## Deployment options
-- GitHub Pages (recommended for simple static hosting)
-- Netlify drag-and-drop deployment
-- Vercel static deployment
-
-Publish the contents of this folder as the site root.
+## Data file
+Primary source of truth:
+- `training-plan/data/training-plans.json`
