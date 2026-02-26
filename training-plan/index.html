@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#15304a" />
+    <meta
+      name="description"
+      content="Mobile-friendly training plans for clients and students."
+    />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Training Plan Portal</title>
+  </head>
+  <body>
+    <div class="ambient-bg" aria-hidden="true"></div>
+
+    <header class="app-header">
+      <div class="header-row">
+        <p class="eyebrow">Training Plan Portal</p>
+        <button id="installAppBtn" class="btn ghost" hidden>Install App</button>
+      </div>
+      <h1 id="pageTitle">Client Training Plans</h1>
+      <p id="subtitle" class="subtitle">
+        Open your personal link to view your latest weekly plan.
+      </p>
+      <div class="header-actions">
+        <button id="shareBtn" class="btn">Share Plan</button>
+        <button id="copyBtn" class="btn ghost">Copy Link</button>
+      </div>
+    </header>
+
+    <main id="app" class="app-shell" aria-live="polite">
+      <section class="panel loading" id="loadingPanel">
+        <p>Loading training plans...</p>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <p>
+        Keep this link bookmarked on your phone for quick access to updated sessions.
+      </p>
+    </footer>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>

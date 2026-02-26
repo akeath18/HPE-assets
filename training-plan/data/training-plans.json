@@ -1,0 +1,1208 @@
+{
+  "programTitle": "My Personal Training Plan",
+  "organization": "Mercer University",
+  "lastUpdated": "2026-02-26",
+  "effortScale": [
+    {
+      "range": "1-2",
+      "description": "Very light movement"
+    },
+    {
+      "range": "3-4",
+      "description": "Easy effort"
+    },
+    {
+      "range": "5-6",
+      "description": "Moderate effort"
+    },
+    {
+      "range": "7-8",
+      "description": "Hard but controlled"
+    },
+    {
+      "range": "9-10",
+      "description": "Max effort"
+    }
+  ],
+  "guidelines": [
+    "Warm up for 5 minutes before each session.",
+    "If something causes pain, stop and report it at your next coached session.",
+    "If you miss a day, continue with the next scheduled session.",
+    "Hydrate before, during, and after training.",
+    "Use an effort of 5-8 for most working sets."
+  ],
+  "clients": [
+    {
+      "id": "maria-thompson",
+      "profile": {
+        "clientName": "Maria Thompson",
+        "trainerName": "Coach Keath",
+        "programStartDate": "March 10, 2026",
+        "programEndDate": "April 28, 2026",
+        "primaryGoal": "Improve strength and confidence in free weights",
+        "weeklyCoachedSessionDay": "Tuesday",
+        "independentSessionDays": [
+          "Thursday",
+          "Saturday"
+        ]
+      },
+      "programAtAGlance": [
+        {
+          "phase": "Foundation",
+          "weeks": "1-2",
+          "focus": "Learn key movement patterns and consistency",
+          "loadIntensity": "Light to moderate",
+          "notice": "Exercises feel smoother each week"
+        },
+        {
+          "phase": "Building",
+          "weeks": "3-4",
+          "focus": "Increase training volume and stamina",
+          "loadIntensity": "Moderate",
+          "notice": "Higher work capacity and improved form"
+        },
+        {
+          "phase": "Intensification",
+          "weeks": "5-6",
+          "focus": "Lift heavier with controlled effort",
+          "loadIntensity": "Moderate to hard",
+          "notice": "Peak strength and confidence"
+        },
+        {
+          "phase": "Deload",
+          "weeks": "7",
+          "focus": "Recover and reinforce movement quality",
+          "loadIntensity": "Light",
+          "notice": "Better recovery and readiness"
+        }
+      ],
+      "goals": {
+        "primaryGoalInOwnWords": "I want to feel stronger in everyday activities and at the gym.",
+        "successAfter7Weeks": "Complete all sessions with stronger form and increased weights.",
+        "oneThingToImprove": "Upper-body pulling strength"
+      },
+      "weeks": [
+        {
+          "number": 1,
+          "dateRange": "March 10 - 16",
+          "phase": "Foundation",
+          "tagline": "Learn the movement patterns",
+          "sessions": [
+            {
+              "number": 1,
+              "title": "With Your Trainer",
+              "date": "March 10",
+              "focus": "Lower-body mechanics and tempo",
+              "exercises": [
+                {
+                  "exercise": "Goblet squat",
+                  "equipment": "Dumbbell",
+                  "sets": "3",
+                  "reps": "8",
+                  "effort": "6",
+                  "notes": "3-second lowering"
+                },
+                {
+                  "exercise": "Hip hinge drill",
+                  "equipment": "PVC pipe",
+                  "sets": "3",
+                  "reps": "10",
+                  "effort": "5",
+                  "notes": "Neutral spine"
+                },
+                {
+                  "exercise": "Split squat",
+                  "equipment": "Bodyweight",
+                  "sets": "2",
+                  "reps": "8/leg",
+                  "effort": "6",
+                  "notes": "Controlled depth"
+                }
+              ]
+            },
+            {
+              "number": 2,
+              "title": "On Your Own",
+              "date": "March 12",
+              "focus": "Core + posture",
+              "exercises": [
+                {
+                  "exercise": "Farmer carry",
+                  "equipment": "Kettlebells",
+                  "sets": "3",
+                  "reps": "30 sec",
+                  "effort": "6",
+                  "notes": "Tall posture"
+                },
+                {
+                  "exercise": "Step-up",
+                  "equipment": "Bench",
+                  "sets": "3",
+                  "reps": "10/leg",
+                  "effort": "6",
+                  "notes": "Slow down phase"
+                },
+                {
+                  "exercise": "Dead bug",
+                  "equipment": "Mat",
+                  "sets": "2",
+                  "reps": "8/side",
+                  "effort": "5",
+                  "notes": "Brace core"
+                }
+              ]
+            },
+            {
+              "number": 3,
+              "title": "On Your Own",
+              "date": "March 14",
+              "focus": "Upper-body basics",
+              "exercises": [
+                {
+                  "exercise": "Incline push-up",
+                  "equipment": "Bench",
+                  "sets": "3",
+                  "reps": "8",
+                  "effort": "6",
+                  "notes": "Full range"
+                },
+                {
+                  "exercise": "Supported row",
+                  "equipment": "Dumbbell",
+                  "sets": "3",
+                  "reps": "10/arm",
+                  "effort": "6",
+                  "notes": "Pause at top"
+                },
+                {
+                  "exercise": "Pallof press",
+                  "equipment": "Cable",
+                  "sets": "2",
+                  "reps": "12/side",
+                  "effort": "5",
+                  "notes": "Resist rotation"
+                }
+              ]
+            }
+          ],
+          "clientCheckIn": {
+            "energy": "OK",
+            "soreness": "Mild",
+            "winsChallenges": "Stayed consistent with session timing; hip hinge felt new.",
+            "trainerNotes": "Keep tempo controlled and reinforce breathing on squats.",
+            "completedSessions": 3,
+            "nextWeek": "Continue"
+          }
+        },
+        {
+          "number": 2,
+          "dateRange": "March 17 - 23",
+          "phase": "Foundation",
+          "tagline": "Reinforce form under light load",
+          "sessions": [
+            {
+              "number": 1,
+              "title": "With Your Trainer",
+              "date": "March 17",
+              "focus": "Squat pattern progression",
+              "exercises": [
+                {
+                  "exercise": "Front-foot elevated split squat",
+                  "equipment": "Dumbbells",
+                  "sets": "3",
+                  "reps": "8/leg",
+                  "effort": "6",
+                  "notes": "Steady pace"
+                },
+                {
+                  "exercise": "Romanian deadlift",
+                  "equipment": "Dumbbells",
+                  "sets": "3",
+                  "reps": "10",
+                  "effort": "6",
+                  "notes": "Feel hamstrings"
+                },
+                {
+                  "exercise": "Plank",
+                  "equipment": "Mat",
+                  "sets": "3",
+                  "reps": "30 sec",
+                  "effort": "6",
+                  "notes": "No low-back sag"
+                }
+              ]
+            },
+            {
+              "number": 2,
+              "title": "On Your Own",
+              "date": "March 19",
+              "focus": "Upper-body push/pull",
+              "exercises": [
+                {
+                  "exercise": "Dumbbell bench press",
+                  "equipment": "Dumbbells",
+                  "sets": "3",
+                  "reps": "8",
+                  "effort": "6",
+                  "notes": "Controlled press"
+                },
+                {
+                  "exercise": "Lat pulldown",
+                  "equipment": "Machine",
+                  "sets": "3",
+                  "reps": "10",
+                  "effort": "6",
+                  "notes": "Drive elbows down"
+                },
+                {
+                  "exercise": "Side plank",
+                  "equipment": "Mat",
+                  "sets": "2",
+                  "reps": "20 sec/side",
+                  "effort": "5",
+                  "notes": "Stack hips"
+                }
+              ]
+            },
+            {
+              "number": 3,
+              "title": "On Your Own",
+              "date": "March 21",
+              "focus": "Full-body movement flow",
+              "exercises": [
+                {
+                  "exercise": "Step-up",
+                  "equipment": "Bench",
+                  "sets": "3",
+                  "reps": "10/leg",
+                  "effort": "6",
+                  "notes": "Drive knee up"
+                },
+                {
+                  "exercise": "Single-arm row",
+                  "equipment": "Dumbbell",
+                  "sets": "3",
+                  "reps": "10/arm",
+                  "effort": "6",
+                  "notes": "Pause at top"
+                },
+                {
+                  "exercise": "Bike intervals",
+                  "equipment": "Bike",
+                  "sets": "6",
+                  "reps": "20 sec hard",
+                  "effort": "7",
+                  "notes": "40 sec easy between"
+                }
+              ]
+            }
+          ],
+          "clientCheckIn": {
+            "energy": "Great",
+            "soreness": "Mild",
+            "winsChallenges": "Independent sessions felt more natural this week.",
+            "trainerNotes": "Ready to begin moderate volume progression.",
+            "completedSessions": 3,
+            "nextWeek": "Continue"
+          }
+        },
+        {
+          "number": 3,
+          "dateRange": "March 24 - 30",
+          "phase": "Building",
+          "tagline": "Add volume",
+          "sessions": [
+            {
+              "number": 1,
+              "title": "With Your Trainer",
+              "date": "March 24",
+              "focus": "Higher set volume",
+              "exercises": [
+                {
+                  "exercise": "Goblet squat",
+                  "equipment": "Dumbbell",
+                  "sets": "4",
+                  "reps": "8",
+                  "effort": "7",
+                  "notes": "Add load if form holds"
+                },
+                {
+                  "exercise": "RDL",
+                  "equipment": "Dumbbells",
+                  "sets": "4",
+                  "reps": "8",
+                  "effort": "7",
+                  "notes": "Hip hinge pattern"
+                },
+                {
+                  "exercise": "Cable row",
+                  "equipment": "Cable",
+                  "sets": "3",
+                  "reps": "10",
+                  "effort": "7",
+                  "notes": "Squeeze shoulder blades"
+                }
+              ]
+            },
+            {
+              "number": 2,
+              "title": "On Your Own",
+              "date": "March 26",
+              "focus": "Conditioning circuit",
+              "exercises": [
+                {
+                  "exercise": "Kettlebell deadlift",
+                  "equipment": "Kettlebell",
+                  "sets": "3",
+                  "reps": "10",
+                  "effort": "7",
+                  "notes": "Power through floor"
+                },
+                {
+                  "exercise": "Push-up",
+                  "equipment": "Bodyweight",
+                  "sets": "3",
+                  "reps": "8",
+                  "effort": "7",
+                  "notes": "Elevate hands if needed"
+                },
+                {
+                  "exercise": "Row erg",
+                  "equipment": "Rower",
+                  "sets": "5",
+                  "reps": "1 min",
+                  "effort": "7",
+                  "notes": "1 min easy between"
+                }
+              ]
+            },
+            {
+              "number": 3,
+              "title": "On Your Own",
+              "date": "March 28",
+              "focus": "Accessory + core",
+              "exercises": [
+                {
+                  "exercise": "Walking lunge",
+                  "equipment": "Dumbbells",
+                  "sets": "3",
+                  "reps": "8/leg",
+                  "effort": "7",
+                  "notes": "Stay upright"
+                },
+                {
+                  "exercise": "Assisted pull-up",
+                  "equipment": "Band",
+                  "sets": "3",
+                  "reps": "6",
+                  "effort": "7",
+                  "notes": "Full hang to chest tall"
+                },
+                {
+                  "exercise": "Hollow hold",
+                  "equipment": "Mat",
+                  "sets": "3",
+                  "reps": "25 sec",
+                  "effort": "6",
+                  "notes": "Low back pressed down"
+                }
+              ]
+            }
+          ],
+          "clientCheckIn": {
+            "energy": "OK",
+            "soreness": "Mild",
+            "winsChallenges": "Increased weight on squats and rows.",
+            "trainerNotes": "Keep recovery habits consistent.",
+            "completedSessions": 3,
+            "nextWeek": "Continue"
+          }
+        },
+        {
+          "number": 4,
+          "dateRange": "March 31 - April 6",
+          "phase": "Building",
+          "tagline": "Sustain moderate intensity",
+          "sessions": [
+            {
+              "number": 1,
+              "title": "With Your Trainer",
+              "date": "March 31",
+              "focus": "Progressive overload",
+              "exercises": [
+                {
+                  "exercise": "Barbell box squat",
+                  "equipment": "Barbell",
+                  "sets": "4",
+                  "reps": "6",
+                  "effort": "7",
+                  "notes": "Add 5 lb if clean"
+                },
+                {
+                  "exercise": "DB bench press",
+                  "equipment": "Dumbbells",
+                  "sets": "4",
+                  "reps": "8",
+                  "effort": "7",
+                  "notes": "Neutral wrist"
+                },
+                {
+                  "exercise": "Cable anti-rotation press",
+                  "equipment": "Cable",
+                  "sets": "3",
+                  "reps": "10/side",
+                  "effort": "6",
+                  "notes": "Pause each rep"
+                }
+              ]
+            },
+            {
+              "number": 2,
+              "title": "On Your Own",
+              "date": "April 2",
+              "focus": "Pull strength",
+              "exercises": [
+                {
+                  "exercise": "Lat pulldown",
+                  "equipment": "Machine",
+                  "sets": "4",
+                  "reps": "8",
+                  "effort": "7",
+                  "notes": "Full stretch"
+                },
+                {
+                  "exercise": "Single-leg RDL",
+                  "equipment": "Dumbbell",
+                  "sets": "3",
+                  "reps": "8/leg",
+                  "effort": "7",
+                  "notes": "Balance first"
+                },
+                {
+                  "exercise": "Bike sprint",
+                  "equipment": "Bike",
+                  "sets": "8",
+                  "reps": "15 sec",
+                  "effort": "8",
+                  "notes": "45 sec easy"
+                }
+              ]
+            },
+            {
+              "number": 3,
+              "title": "On Your Own",
+              "date": "April 4",
+              "focus": "Full-body circuit",
+              "exercises": [
+                {
+                  "exercise": "Trap-bar deadlift",
+                  "equipment": "Trap bar",
+                  "sets": "3",
+                  "reps": "6",
+                  "effort": "7",
+                  "notes": "Brace core"
+                },
+                {
+                  "exercise": "Incline DB press",
+                  "equipment": "Dumbbells",
+                  "sets": "3",
+                  "reps": "8",
+                  "effort": "7",
+                  "notes": "Smooth press"
+                },
+                {
+                  "exercise": "Face pull",
+                  "equipment": "Cable",
+                  "sets": "3",
+                  "reps": "12",
+                  "effort": "6",
+                  "notes": "Elbows high"
+                }
+              ]
+            }
+          ],
+          "clientCheckIn": {
+            "energy": "OK",
+            "soreness": "Mild",
+            "winsChallenges": "Handled higher volume without missed sessions.",
+            "trainerNotes": "Transition to harder work next week.",
+            "completedSessions": 3,
+            "nextWeek": "Continue"
+          }
+        },
+        {
+          "number": 5,
+          "dateRange": "April 7 - 13",
+          "phase": "Intensification",
+          "tagline": "Peak effort begins",
+          "sessions": [
+            {
+              "number": 1,
+              "title": "With Your Trainer",
+              "date": "April 7",
+              "focus": "Heavier compound lifts",
+              "exercises": [
+                {
+                  "exercise": "Back squat",
+                  "equipment": "Barbell",
+                  "sets": "5",
+                  "reps": "5",
+                  "effort": "8",
+                  "notes": "Rest 2-3 min"
+                },
+                {
+                  "exercise": "Romanian deadlift",
+                  "equipment": "Barbell",
+                  "sets": "4",
+                  "reps": "6",
+                  "effort": "8",
+                  "notes": "Strong hinge"
+                },
+                {
+                  "exercise": "Chest-supported row",
+                  "equipment": "Dumbbells",
+                  "sets": "4",
+                  "reps": "8",
+                  "effort": "8",
+                  "notes": "Hard pull"
+                }
+              ]
+            },
+            {
+              "number": 2,
+              "title": "On Your Own",
+              "date": "April 9",
+              "focus": "Push power",
+              "exercises": [
+                {
+                  "exercise": "DB floor press",
+                  "equipment": "Dumbbells",
+                  "sets": "4",
+                  "reps": "6",
+                  "effort": "8",
+                  "notes": "Fast concentric"
+                },
+                {
+                  "exercise": "Rear-foot elevated split squat",
+                  "equipment": "Dumbbells",
+                  "sets": "3",
+                  "reps": "6/leg",
+                  "effort": "8",
+                  "notes": "Keep torso tall"
+                },
+                {
+                  "exercise": "Sled push",
+                  "equipment": "Sled",
+                  "sets": "6",
+                  "reps": "20 m",
+                  "effort": "8",
+                  "notes": "Steady drive"
+                }
+              ]
+            },
+            {
+              "number": 3,
+              "title": "On Your Own",
+              "date": "April 11",
+              "focus": "Upper pull + core",
+              "exercises": [
+                {
+                  "exercise": "Assisted pull-up",
+                  "equipment": "Band",
+                  "sets": "4",
+                  "reps": "5",
+                  "effort": "8",
+                  "notes": "Strict reps"
+                },
+                {
+                  "exercise": "Single-arm cable row",
+                  "equipment": "Cable",
+                  "sets": "3",
+                  "reps": "8/arm",
+                  "effort": "7",
+                  "notes": "Pause each rep"
+                },
+                {
+                  "exercise": "Suitcase carry",
+                  "equipment": "Kettlebell",
+                  "sets": "3",
+                  "reps": "25 m/side",
+                  "effort": "7",
+                  "notes": "No side bend"
+                }
+              ]
+            }
+          ],
+          "clientCheckIn": {
+            "energy": "OK",
+            "soreness": "High",
+            "winsChallenges": "Pushed through heavier sets while keeping form.",
+            "trainerNotes": "Add recovery walk on rest days.",
+            "completedSessions": 3,
+            "nextWeek": "Adjust"
+          }
+        },
+        {
+          "number": 6,
+          "dateRange": "April 14 - 20",
+          "phase": "Intensification",
+          "tagline": "Strongest training week",
+          "sessions": [
+            {
+              "number": 1,
+              "title": "With Your Trainer",
+              "date": "April 14",
+              "focus": "Heavy but controlled",
+              "exercises": [
+                {
+                  "exercise": "Trap-bar deadlift",
+                  "equipment": "Trap bar",
+                  "sets": "5",
+                  "reps": "4",
+                  "effort": "8",
+                  "notes": "Solid brace"
+                },
+                {
+                  "exercise": "Incline DB bench",
+                  "equipment": "Dumbbells",
+                  "sets": "4",
+                  "reps": "6",
+                  "effort": "8",
+                  "notes": "Drive evenly"
+                },
+                {
+                  "exercise": "Seated row",
+                  "equipment": "Machine",
+                  "sets": "4",
+                  "reps": "8",
+                  "effort": "8",
+                  "notes": "Control return"
+                }
+              ]
+            },
+            {
+              "number": 2,
+              "title": "On Your Own",
+              "date": "April 16",
+              "focus": "Lower-body power",
+              "exercises": [
+                {
+                  "exercise": "Box squat",
+                  "equipment": "Barbell",
+                  "sets": "4",
+                  "reps": "5",
+                  "effort": "8",
+                  "notes": "Explode up"
+                },
+                {
+                  "exercise": "Walking lunge",
+                  "equipment": "Dumbbells",
+                  "sets": "3",
+                  "reps": "8/leg",
+                  "effort": "8",
+                  "notes": "Long stride"
+                },
+                {
+                  "exercise": "Rower intervals",
+                  "equipment": "Rower",
+                  "sets": "8",
+                  "reps": "30 sec",
+                  "effort": "8",
+                  "notes": "60 sec easy"
+                }
+              ]
+            },
+            {
+              "number": 3,
+              "title": "On Your Own",
+              "date": "April 18",
+              "focus": "Upper-body consolidation",
+              "exercises": [
+                {
+                  "exercise": "Push-up",
+                  "equipment": "Bodyweight",
+                  "sets": "4",
+                  "reps": "8",
+                  "effort": "7",
+                  "notes": "Strict form"
+                },
+                {
+                  "exercise": "Lat pulldown",
+                  "equipment": "Machine",
+                  "sets": "4",
+                  "reps": "8",
+                  "effort": "8",
+                  "notes": "Controlled"
+                },
+                {
+                  "exercise": "Plank",
+                  "equipment": "Mat",
+                  "sets": "3",
+                  "reps": "40 sec",
+                  "effort": "7",
+                  "notes": "Brace + breathe"
+                }
+              ]
+            }
+          ],
+          "clientCheckIn": {
+            "energy": "OK",
+            "soreness": "Mild",
+            "winsChallenges": "Maintained quality with harder loads.",
+            "trainerNotes": "Prepare for deload volume reduction.",
+            "completedSessions": 3,
+            "nextWeek": "Continue"
+          }
+        },
+        {
+          "number": 7,
+          "dateRange": "April 21 - 27",
+          "phase": "Deload",
+          "tagline": "Recover and reset",
+          "sessions": [
+            {
+              "number": 1,
+              "title": "With Your Trainer",
+              "date": "April 21",
+              "focus": "Technique refresh",
+              "exercises": [
+                {
+                  "exercise": "Goblet squat",
+                  "equipment": "Dumbbell",
+                  "sets": "3",
+                  "reps": "8",
+                  "effort": "5",
+                  "notes": "Light load"
+                },
+                {
+                  "exercise": "Romanian deadlift",
+                  "equipment": "Dumbbells",
+                  "sets": "3",
+                  "reps": "8",
+                  "effort": "5",
+                  "notes": "Smooth pace"
+                },
+                {
+                  "exercise": "Cable row",
+                  "equipment": "Cable",
+                  "sets": "3",
+                  "reps": "10",
+                  "effort": "5",
+                  "notes": "Focus on form"
+                }
+              ]
+            },
+            {
+              "number": 2,
+              "title": "On Your Own",
+              "date": "April 23",
+              "focus": "Mobility and recovery",
+              "exercises": [
+                {
+                  "exercise": "Bike easy spin",
+                  "equipment": "Bike",
+                  "sets": "1",
+                  "reps": "20 min",
+                  "effort": "4",
+                  "notes": "Keep breathing easy"
+                },
+                {
+                  "exercise": "Dynamic mobility",
+                  "equipment": "Mat",
+                  "sets": "1",
+                  "reps": "15 min",
+                  "effort": "3",
+                  "notes": "Full range"
+                },
+                {
+                  "exercise": "Core activation",
+                  "equipment": "Mat",
+                  "sets": "2",
+                  "reps": "8/side",
+                  "effort": "4",
+                  "notes": "Stay relaxed"
+                }
+              ]
+            },
+            {
+              "number": 3,
+              "title": "On Your Own",
+              "date": "April 25",
+              "focus": "Movement quality",
+              "exercises": [
+                {
+                  "exercise": "Step-up",
+                  "equipment": "Bench",
+                  "sets": "2",
+                  "reps": "8/leg",
+                  "effort": "4",
+                  "notes": "Controlled tempo"
+                },
+                {
+                  "exercise": "Supported row",
+                  "equipment": "Dumbbell",
+                  "sets": "2",
+                  "reps": "10/arm",
+                  "effort": "4",
+                  "notes": "Light weight"
+                },
+                {
+                  "exercise": "Walk",
+                  "equipment": "Track",
+                  "sets": "1",
+                  "reps": "15 min",
+                  "effort": "3",
+                  "notes": "Nasal breathing"
+                }
+              ]
+            }
+          ],
+          "clientCheckIn": {
+            "energy": "Great",
+            "soreness": "None",
+            "winsChallenges": "Body feels fresh and ready for final testing.",
+            "trainerNotes": "Maintain hydration and sleep before assessment.",
+            "completedSessions": 3,
+            "nextWeek": "Continue"
+          }
+        }
+      ],
+      "finalAssessment": {
+        "date": "April 28, 2026",
+        "items": [
+          {
+            "assessment": "Goblet squat (working weight)",
+            "startingScore": "20 lb",
+            "finalScore": "35 lb",
+            "change": "+15 lb"
+          },
+          {
+            "assessment": "Push-up quality reps",
+            "startingScore": "6",
+            "finalScore": "14",
+            "change": "+8 reps"
+          },
+          {
+            "assessment": "5-minute bike distance",
+            "startingScore": "1.4 km",
+            "finalScore": "1.8 km",
+            "change": "+0.4 km"
+          }
+        ],
+        "proudOf": "Consistency and confidence using the free-weight area.",
+        "keepWorkingOn": "Pulling strength and progressive loading.",
+        "trainerSummary": "Excellent adherence and strong movement quality improvements across all phases."
+      }
+    },
+    {
+      "id": "jalen-rivera",
+      "profile": {
+        "clientName": "Jalen Rivera",
+        "trainerName": "Coach Keath",
+        "programStartDate": "March 10, 2026",
+        "programEndDate": "April 28, 2026",
+        "primaryGoal": "Build conditioning and total-body endurance",
+        "weeklyCoachedSessionDay": "Monday",
+        "independentSessionDays": [
+          "Wednesday",
+          "Friday"
+        ]
+      },
+      "programAtAGlance": [
+        {
+          "phase": "Foundation",
+          "weeks": "1-2",
+          "focus": "Technique and pacing",
+          "loadIntensity": "Light to moderate",
+          "notice": "Better control and consistency"
+        },
+        {
+          "phase": "Building",
+          "weeks": "3-4",
+          "focus": "Increase work rate",
+          "loadIntensity": "Moderate",
+          "notice": "Less fatigue between sets"
+        },
+        {
+          "phase": "Intensification",
+          "weeks": "5-6",
+          "focus": "Higher conditioning demand",
+          "loadIntensity": "Moderate to hard",
+          "notice": "Higher output capacity"
+        },
+        {
+          "phase": "Deload",
+          "weeks": "7",
+          "focus": "Recovery and maintenance",
+          "loadIntensity": "Light",
+          "notice": "Reduced fatigue"
+        }
+      ],
+      "goals": {
+        "primaryGoalInOwnWords": "I want to finish workouts feeling strong, not exhausted.",
+        "successAfter7Weeks": "Complete all weekly sessions and improve cardio intervals.",
+        "oneThingToImprove": "Pacing during circuits"
+      },
+      "weeks": [
+        {
+          "number": 1,
+          "dateRange": "March 10 - 16",
+          "phase": "Foundation",
+          "tagline": "Set baseline",
+          "sessions": [
+            {
+              "number": 1,
+              "title": "With Your Trainer",
+              "date": "March 10",
+              "focus": "Baseline movement + interval pace"
+            },
+            {
+              "number": 2,
+              "title": "On Your Own",
+              "date": "March 12",
+              "focus": "Low-impact cardio + core"
+            },
+            {
+              "number": 3,
+              "title": "On Your Own",
+              "date": "March 14",
+              "focus": "Full-body bodyweight circuit"
+            }
+          ],
+          "clientCheckIn": {
+            "energy": "OK",
+            "soreness": "Mild",
+            "winsChallenges": "Completed all sessions; pacing improved in last set.",
+            "trainerNotes": "Start week 2 with same layout and slight interval bump.",
+            "completedSessions": 3,
+            "nextWeek": "Continue"
+          }
+        },
+        {
+          "number": 2,
+          "dateRange": "March 17 - 23",
+          "phase": "Foundation",
+          "tagline": "Consistency first",
+          "sessions": [
+            {
+              "number": 1,
+              "title": "With Your Trainer",
+              "date": "March 17",
+              "focus": "Review mechanics"
+            },
+            {
+              "number": 2,
+              "title": "On Your Own",
+              "date": "March 19",
+              "focus": "Steady-state cardio"
+            },
+            {
+              "number": 3,
+              "title": "On Your Own",
+              "date": "March 21",
+              "focus": "Circuit progression"
+            }
+          ],
+          "clientCheckIn": {
+            "energy": "OK",
+            "soreness": "Mild",
+            "winsChallenges": "Kept rest times consistent.",
+            "trainerNotes": "Ready for moderate building phase.",
+            "completedSessions": 3,
+            "nextWeek": "Continue"
+          }
+        },
+        {
+          "number": 3,
+          "dateRange": "March 24 - 30",
+          "phase": "Building",
+          "tagline": "Increase work",
+          "sessions": [
+            {
+              "number": 1,
+              "title": "With Your Trainer",
+              "date": "March 24",
+              "focus": "Volume progression"
+            },
+            {
+              "number": 2,
+              "title": "On Your Own",
+              "date": "March 26",
+              "focus": "Longer circuits"
+            },
+            {
+              "number": 3,
+              "title": "On Your Own",
+              "date": "March 28",
+              "focus": "Cardio intervals"
+            }
+          ],
+          "clientCheckIn": {
+            "energy": "OK",
+            "soreness": "Mild",
+            "winsChallenges": "Improved pace awareness.",
+            "trainerNotes": "Continue progression into week 4.",
+            "completedSessions": 3,
+            "nextWeek": "Continue"
+          }
+        },
+        {
+          "number": 4,
+          "dateRange": "March 31 - April 6",
+          "phase": "Building",
+          "tagline": "Sustain pace",
+          "sessions": [
+            {
+              "number": 1,
+              "title": "With Your Trainer",
+              "date": "March 31",
+              "focus": "Technique under fatigue"
+            },
+            {
+              "number": 2,
+              "title": "On Your Own",
+              "date": "April 2",
+              "focus": "Tempo intervals"
+            },
+            {
+              "number": 3,
+              "title": "On Your Own",
+              "date": "April 4",
+              "focus": "Recovery-paced circuit"
+            }
+          ],
+          "clientCheckIn": {
+            "energy": "OK",
+            "soreness": "Mild",
+            "winsChallenges": "Good pacing on intervals.",
+            "trainerNotes": "Transition to intensification safely.",
+            "completedSessions": 3,
+            "nextWeek": "Continue"
+          }
+        },
+        {
+          "number": 5,
+          "dateRange": "April 7 - 13",
+          "phase": "Intensification",
+          "tagline": "Harder outputs",
+          "sessions": [
+            {
+              "number": 1,
+              "title": "With Your Trainer",
+              "date": "April 7",
+              "focus": "High-output circuits"
+            },
+            {
+              "number": 2,
+              "title": "On Your Own",
+              "date": "April 9",
+              "focus": "Threshold intervals"
+            },
+            {
+              "number": 3,
+              "title": "On Your Own",
+              "date": "April 11",
+              "focus": "Mixed-modal conditioning"
+            }
+          ],
+          "clientCheckIn": {
+            "energy": "Low",
+            "soreness": "High",
+            "winsChallenges": "Completed 2 sessions on schedule.",
+            "trainerNotes": "Reduce volume by 10 percent and keep effort quality.",
+            "completedSessions": 2,
+            "nextWeek": "Adjust"
+          }
+        },
+        {
+          "number": 6,
+          "dateRange": "April 14 - 20",
+          "phase": "Intensification",
+          "tagline": "Highest demand week",
+          "sessions": [
+            {
+              "number": 1,
+              "title": "With Your Trainer",
+              "date": "April 14",
+              "focus": "Performance pacing"
+            },
+            {
+              "number": 2,
+              "title": "On Your Own",
+              "date": "April 16",
+              "focus": "Interval repeats"
+            },
+            {
+              "number": 3,
+              "title": "On Your Own",
+              "date": "April 18",
+              "focus": "Recovery circuit"
+            }
+          ],
+          "clientCheckIn": {
+            "energy": "OK",
+            "soreness": "Mild",
+            "winsChallenges": "Recovered well from previous week adjustment.",
+            "trainerNotes": "Ready for deload.",
+            "completedSessions": 3,
+            "nextWeek": "Continue"
+          }
+        },
+        {
+          "number": 7,
+          "dateRange": "April 21 - 27",
+          "phase": "Deload",
+          "tagline": "Recover and evaluate",
+          "sessions": [
+            {
+              "number": 1,
+              "title": "With Your Trainer",
+              "date": "April 21",
+              "focus": "Light technical work"
+            },
+            {
+              "number": 2,
+              "title": "On Your Own",
+              "date": "April 23",
+              "focus": "Easy cardio"
+            },
+            {
+              "number": 3,
+              "title": "On Your Own",
+              "date": "April 25",
+              "focus": "Mobility and breathing"
+            }
+          ],
+          "clientCheckIn": {
+            "energy": "Great",
+            "soreness": "None",
+            "winsChallenges": "Finished feeling fresh.",
+            "trainerNotes": "Proceed to final assessment.",
+            "completedSessions": 3,
+            "nextWeek": "Continue"
+          }
+        }
+      ],
+      "finalAssessment": {
+        "date": "April 28, 2026",
+        "items": [
+          {
+            "assessment": "10-minute bike distance",
+            "startingScore": "3.7 km",
+            "finalScore": "4.4 km",
+            "change": "+0.7 km"
+          },
+          {
+            "assessment": "Circuit rounds in 12 minutes",
+            "startingScore": "4 rounds",
+            "finalScore": "6 rounds",
+            "change": "+2 rounds"
+          }
+        ],
+        "proudOf": "Improved pacing and consistency.",
+        "keepWorkingOn": "Sustainable effort at higher intensity.",
+        "trainerSummary": "Strong improvement in endurance with better fatigue management."
+      }
+    }
+  ]
+}

@@ -1,0 +1,406 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap");
+
+:root {
+  --ink: #102538;
+  --muted: #3f5968;
+  --brand: #15304a;
+  --brand-soft: #2f5573;
+  --accent: #e16b2f;
+  --canvas: #f3f6f8;
+  --card: rgba(255, 255, 255, 0.9);
+  --border: rgba(16, 37, 56, 0.14);
+  --success: #1f7a4f;
+  --warning: #b56f08;
+  --danger: #a22b2b;
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow: 0 18px 36px rgba(14, 37, 57, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  position: relative;
+  color: var(--ink);
+  font-family: "Manrope", "Avenir Next", "Segoe UI", sans-serif;
+  background: linear-gradient(130deg, #f9fbfc 0%, #e9f2f7 48%, #f8f1eb 100%);
+}
+
+.ambient-bg {
+  position: fixed;
+  inset: -30vh -20vw;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 15% 22%, rgba(225, 107, 47, 0.18), transparent 36%),
+    radial-gradient(circle at 78% 16%, rgba(21, 48, 74, 0.15), transparent 40%),
+    radial-gradient(circle at 64% 70%, rgba(23, 121, 106, 0.14), transparent 32%);
+}
+
+.app-header,
+.app-shell,
+.app-footer {
+  width: min(1024px, 100% - 1.5rem);
+  margin-inline: auto;
+}
+
+.app-header {
+  padding: 1.25rem 0.5rem 0.75rem;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.73rem;
+  font-weight: 800;
+  color: var(--brand-soft);
+}
+
+h1 {
+  margin: 0.3rem 0 0;
+  font-size: clamp(1.55rem, 1.1rem + 1.8vw, 2.3rem);
+  line-height: 1.15;
+}
+
+.subtitle {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+  font-size: 0.96rem;
+}
+
+.header-actions {
+  margin-top: 0.9rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.58rem 0.95rem;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--brand);
+  cursor: pointer;
+}
+
+.btn:hover,
+.btn:focus-visible {
+  background: #0f2539;
+}
+
+.btn.ghost {
+  color: var(--brand);
+  background: rgba(21, 48, 74, 0.08);
+}
+
+.btn.ghost:hover,
+.btn.ghost:focus-visible {
+  background: rgba(21, 48, 74, 0.14);
+}
+
+.app-shell {
+  padding-bottom: 1.1rem;
+}
+
+.panel {
+  background: var(--card);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1rem;
+  margin-bottom: 0.95rem;
+}
+
+.panel.loading {
+  text-align: center;
+  color: var(--muted);
+}
+
+.info-grid {
+  display: grid;
+  gap: 0.7rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.info-card {
+  border-radius: var(--radius-sm);
+  padding: 0.72rem;
+  background: #ffffff;
+  border: 1px solid var(--border);
+}
+
+.info-label {
+  margin: 0;
+  font-size: 0.74rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+}
+
+.info-value {
+  margin: 0.35rem 0 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.section-subtitle {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0.65rem 0 0;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.66rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: 1px solid var(--border);
+  background: #fff;
+}
+
+.week-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  overflow: clip;
+}
+
+.week-card + .week-card {
+  margin-top: 0.7rem;
+}
+
+.week-card summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 0.88rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.65rem;
+  background: linear-gradient(90deg, #f7fbff, #fbf6f2);
+}
+
+.week-card summary::-webkit-details-marker {
+  display: none;
+}
+
+.week-meta {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.week-body {
+  padding: 0.7rem;
+}
+
+.session-grid {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.session-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  padding: 0.72rem;
+  background: #ffffff;
+}
+
+.session-heading {
+  margin: 0;
+  font-size: 0.97rem;
+}
+
+.session-meta {
+  margin: 0.28rem 0 0.65rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 0.7rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 580px;
+}
+
+th,
+td {
+  border-bottom: 1px solid var(--border);
+  padding: 0.47rem;
+  text-align: left;
+  vertical-align: top;
+  font-size: 0.83rem;
+}
+
+th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  background: #f8fafc;
+}
+
+tr:last-child td {
+  border-bottom: 0;
+}
+
+.inline-list {
+  margin: 0.62rem 0 0;
+  padding-left: 1.05rem;
+}
+
+.inline-list li + li {
+  margin-top: 0.38rem;
+}
+
+.note {
+  margin: 0.45rem 0 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.55rem;
+}
+
+.badge {
+  border-radius: 999px;
+  padding: 0.3rem 0.62rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.badge.success {
+  color: var(--success);
+  background: rgba(31, 122, 79, 0.13);
+}
+
+.badge.warning {
+  color: var(--warning);
+  background: rgba(181, 111, 8, 0.14);
+}
+
+.badge.danger {
+  color: var(--danger);
+  background: rgba(162, 43, 43, 0.13);
+}
+
+.client-grid {
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+
+.client-link {
+  display: block;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: #fff;
+  color: inherit;
+  text-decoration: none;
+  padding: 0.78rem;
+}
+
+.client-link:hover,
+.client-link:focus-visible {
+  border-color: rgba(21, 48, 74, 0.36);
+  box-shadow: 0 8px 18px rgba(18, 54, 82, 0.13);
+}
+
+.client-name {
+  margin: 0;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.client-role {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.83rem;
+}
+
+.empty {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.app-footer {
+  padding: 0.18rem 0.5rem 1.25rem;
+}
+
+.app-footer p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 700px) {
+  .app-header,
+  .app-shell,
+  .app-footer {
+    width: min(1024px, 100% - 1rem);
+  }
+
+  .panel {
+    padding: 0.84rem;
+  }
+
+  .header-actions {
+    gap: 0.45rem;
+  }
+
+  .btn {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+
+  .week-card summary {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
