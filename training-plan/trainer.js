@@ -1,15 +1,28 @@
 const DATA_PATH = "data/training-plans.json";
+const SETTINGS_KEY = "trainerStudioSettingsV1";
 const EXERCISE_ROWS = 5;
 const ASSESSMENT_ROWS = 4;
-const SUBMITTER_NAME_KEY = "planEditorSubmitterNameV1";
-const API_BASE = (window.PLAN_API_BASE || "").replace(/\/$/, "");
-const ADMIN_MODE = new URL(window.location.href).searchParams.get("admin") === "1";
+
+const CONFIG = window.TRAINER_CONFIG || {};
+const GITHUB_TARGET = {
+  owner: CONFIG.githubOwner || "akeath18",
+  repo: CONFIG.githubRepo || "HPE-assets",
+  branch: CONFIG.githubBranch || "main",
+  path: CONFIG.githubFilePath || "training-plan/data/training-plans.json",
+};
 
 let dataState = null;
 let selectedClientId = null;
+let selectedTemplateId = null;
 let selectedWeekIndex = 0;
 let dirty = false;
-let lockedClientMode = false;
+
+const templateSelect = document.getElementById("templateSelect");
+const templateNameInput = document.getElementById("templateNameInput");
+const newTemplateBtn = document.getElementById("newTemplateBtn");
+const saveTemplateBtn = document.getElementById("saveTemplateBtn");
+const deleteTemplateBtn = document.getElementById("deleteTemplateBtn");
+const applyTemplateBtn = document.getElementById("applyTemplateBtn");
 
 const clientSelect = document.getElementById("clientSelect");
 const addClientBtn = document.getElementById("addClientBtn");
@@ -49,9 +62,10 @@ const keepWorkingInput = document.getElementById("keepWorkingInput");
 const summaryInput = document.getElementById("summaryInput");
 const assessmentTableBody = document.getElementById("assessmentTableBody");
 
-const submitterNameInput = document.getElementById("submitterNameInput");
-const submitNoteInput = document.getElementById("submitNoteInput");
-const submitBtn = document.getElementById("submitBtn");
+const tokenInput = document.getElementById("tokenInput");
+const rememberTokenInput = document.getElementById("rememberTokenInput");
+const downloadBackupBtn = document.getElementById("downloadBackupBtn");
+const publishBtn = document.getElementById("publishBtn");
 
 const editorStatus = document.getElementById("editorStatus");
 const publishStatus = document.getElementById("publishStatus");
@@ -59,9 +73,14 @@ const publishStatus = document.getElementById("publishStatus");
 init();
 
 async function init() {
+  if (!validateAccessPin()) {
+    lockPage();
+    return;
+  }
+
   registerServiceWorker();
+  hydrateSettings();
   wireEvents();
-  hydrateSubmitterName();
 
   try {
     const response = await fetch(DATA_PATH, { cache: "no-store" });
@@ -72,20 +91,33 @@ async function init() {
     dataState = await response.json();
     ensureDataShape(dataState);
 
-    selectedClientId = pickInitialClientId();
+    selectedTemplateId = dataState.templates[0]?.id || null;
+    selectedClientId = dataState.clients[0]?.id || null;
+
+    renderTemplateOptions();
     renderClientOptions();
-    applyClientLockUi();
+    loadTemplateHeader();
     loadClientIntoForm();
     renderDirtyState();
 
-    if (!API_BASE) {
-      setPublishStatus("Submission server is not configured yet. Ask your coach to finish setup.", "warning");
-    }
-
-    setEditorStatus(`Loaded ${dataState.clients.length} student plans.`, "success");
+    setEditorStatus(`Loaded ${dataState.clients.length} clients and ${dataState.templates.length} templates.`, "success");
   } catch (error) {
-    setEditorStatus(error.message || "Failed to load plans.", "error");
+    setEditorStatus(error.message || "Failed to load training plans.", "error");
   }
+}
+
+function validateAccessPin() {
+  const pin = String(CONFIG.accessPin || "").trim();
+  if (!pin) {
+    return true;
+  }
+
+  const entered = window.prompt("Enter trainer PIN:", "");
+  return entered !== null && entered.trim() === pin;
+}
+
+function lockPage() {
+  document.body.innerHTML = `<main class="app-shell"><section class="panel"><h1>Trainer Access Denied</h1><p class="section-subtitle">Incorrect PIN.</p></section></main>`;
 }
 
 function registerServiceWorker() {
@@ -94,15 +126,44 @@ function registerServiceWorker() {
   }
 
   navigator.serviceWorker.register("sw.js").catch(() => {
-    // Ignore service worker registration errors.
+    // Ignore registration errors.
   });
 }
 
 function wireEvents() {
-  clientSelect.addEventListener("change", onClientChange);
-  weekSelect.addEventListener("change", onWeekChange);
+  templateSelect.addEventListener("change", () => {
+    selectedTemplateId = templateSelect.value;
+    loadTemplateHeader();
+  });
 
-  addClientBtn.addEventListener("click", addClient);
+  templateNameInput.addEventListener("input", () => {
+    const template = getSelectedTemplate();
+    if (!template) {
+      return;
+    }
+
+    template.name = templateNameInput.value.trim() || template.name;
+    renderTemplateOptions();
+    touchData();
+  });
+
+  newTemplateBtn.addEventListener("click", createTemplate);
+  saveTemplateBtn.addEventListener("click", saveTemplateFromClient);
+  deleteTemplateBtn.addEventListener("click", deleteTemplate);
+  applyTemplateBtn.addEventListener("click", applyTemplateToCurrentClient);
+
+  clientSelect.addEventListener("change", () => {
+    selectedClientId = clientSelect.value;
+    selectedWeekIndex = 0;
+    loadClientIntoForm();
+  });
+
+  weekSelect.addEventListener("change", () => {
+    selectedWeekIndex = Number(weekSelect.value) || 0;
+    loadWeekIntoForm();
+  });
+
+  addClientBtn.addEventListener("click", addClientFromTemplate);
   removeClientBtn.addEventListener("click", removeClient);
   shareClientBtn.addEventListener("click", shareClientLink);
   openClientBtn.addEventListener("click", openClientView);
@@ -110,15 +171,14 @@ function wireEvents() {
   const profileBindings = [
     [nameInput, (profile, value) => {
       profile.clientName = value;
-      const current = getSelectedClient();
-      if (!current) {
+      const client = getSelectedClient();
+      if (!client) {
         return;
       }
 
-      const oldId = current.id;
-      const newId = slugify(value || oldId);
-      if (newId !== oldId && isUniqueClientId(newId, oldId)) {
-        current.id = newId;
+      const newId = slugify(value || client.id);
+      if (newId !== client.id && isUniqueClientId(newId, client.id)) {
+        client.id = newId;
         selectedClientId = newId;
         renderClientOptions();
       }
@@ -128,12 +188,8 @@ function wireEvents() {
     [endDateInput, (profile, value) => (profile.programEndDate = value)],
     [goalInput, (profile, value) => (profile.primaryGoal = value)],
     [coachedDayInput, (profile, value) => (profile.weeklyCoachedSessionDay = value)],
-    [indDayOneInput, (profile, value) => {
-      profile.independentSessionDays[0] = value;
-    }],
-    [indDayTwoInput, (profile, value) => {
-      profile.independentSessionDays[1] = value;
-    }],
+    [indDayOneInput, (profile, value) => (profile.independentSessionDays[0] = value)],
+    [indDayTwoInput, (profile, value) => (profile.independentSessionDays[1] = value)],
   ];
 
   profileBindings.forEach(([input, writer]) => {
@@ -143,7 +199,6 @@ function wireEvents() {
         return;
       }
 
-      ensureClientShape(client);
       writer(client.profile, input.value.trim());
       touchData();
     });
@@ -259,47 +314,50 @@ function wireEvents() {
 
   assessmentTableBody.addEventListener("input", onAssessmentInput);
 
-  submitterNameInput.addEventListener("input", persistSubmitterName);
-  submitBtn.addEventListener("click", submitForCoachReview);
+  rememberTokenInput.addEventListener("change", persistSettings);
+  tokenInput.addEventListener("blur", persistSettings);
+
+  downloadBackupBtn.addEventListener("click", downloadBackup);
+  publishBtn.addEventListener("click", publishData);
 }
 
-function hydrateSubmitterName() {
-  const saved = localStorage.getItem(SUBMITTER_NAME_KEY);
-  if (saved) {
-    submitterNameInput.value = saved;
-  }
+function hydrateSettings() {
+  const settings = readSettings();
+  rememberTokenInput.checked = Boolean(settings.rememberToken);
+  tokenInput.value = settings.rememberToken ? settings.token || "" : "";
 }
 
-function persistSubmitterName() {
-  localStorage.setItem(SUBMITTER_NAME_KEY, submitterNameInput.value.trim());
+function persistSettings() {
+  const settings = {
+    rememberToken: rememberTokenInput.checked,
+    token: rememberTokenInput.checked ? tokenInput.value.trim() : "",
+  };
+
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
 }
 
-function pickInitialClientId() {
-  const requested = new URL(window.location.href).searchParams.get("client");
-  if (requested) {
-    const matching = dataState.clients.find((client) => client.id === requested);
-    if (matching) {
-      lockedClientMode = true;
-      return matching.id;
+function readSettings() {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (!raw) {
+      return { rememberToken: false, token: "" };
     }
-  }
 
-  lockedClientMode = false;
-  return dataState.clients[0]?.id || null;
-}
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") {
+      return { rememberToken: false, token: "" };
+    }
 
-function applyClientLockUi() {
-  addClientBtn.hidden = !ADMIN_MODE || lockedClientMode;
-  removeClientBtn.hidden = !ADMIN_MODE || lockedClientMode;
-
-  if (lockedClientMode) {
-    clientSelect.disabled = true;
+    return parsed;
+  } catch (_) {
+    return { rememberToken: false, token: "" };
   }
 }
 
 function ensureDataShape(data) {
   if (!data || typeof data !== "object") {
-    dataState = { clients: [] };
+    dataState = { templates: [], clients: [] };
+    return;
   }
 
   if (!Array.isArray(data.clients)) {
@@ -307,13 +365,23 @@ function ensureDataShape(data) {
   }
 
   data.clients.forEach((client) => ensureClientShape(client));
+
+  if (!Array.isArray(data.templates)) {
+    data.templates = [];
+  }
+
+  if (data.templates.length === 0 && data.clients.length > 0) {
+    data.templates.push(buildTemplateFromClient(data.clients[0], "Default Template"));
+  }
+
+  data.templates.forEach((template) => ensureTemplateShape(template));
 }
 
 function ensureClientShape(client) {
-  client.id = slugify(client.id || client.profile?.clientName || "student");
+  client.id = slugify(client.id || client.profile?.clientName || "client");
 
   client.profile = client.profile || {};
-  client.profile.clientName = client.profile.clientName || "Student";
+  client.profile.clientName = client.profile.clientName || "Client";
   client.profile.trainerName = client.profile.trainerName || "Coach";
   client.profile.programStartDate = client.profile.programStartDate || "";
   client.profile.programEndDate = client.profile.programEndDate || "";
@@ -322,17 +390,16 @@ function ensureClientShape(client) {
   client.profile.independentSessionDays = Array.isArray(client.profile.independentSessionDays)
     ? client.profile.independentSessionDays.slice(0, 2)
     : ["", ""];
-
   while (client.profile.independentSessionDays.length < 2) {
     client.profile.independentSessionDays.push("");
   }
+
+  client.programAtAGlance = Array.isArray(client.programAtAGlance) ? client.programAtAGlance : [];
 
   client.goals = client.goals || {};
   client.goals.primaryGoalInOwnWords = client.goals.primaryGoalInOwnWords || "";
   client.goals.successAfter7Weeks = client.goals.successAfter7Weeks || "";
   client.goals.oneThingToImprove = client.goals.oneThingToImprove || "";
-
-  client.programAtAGlance = Array.isArray(client.programAtAGlance) ? client.programAtAGlance : [];
 
   client.weeks = Array.isArray(client.weeks) ? client.weeks : [];
   while (client.weeks.length < 7) {
@@ -346,7 +413,6 @@ function ensureClientShape(client) {
   client.finalAssessment.items = Array.isArray(client.finalAssessment.items)
     ? client.finalAssessment.items
     : [];
-
   while (client.finalAssessment.items.length < ASSESSMENT_ROWS) {
     client.finalAssessment.items.push({
       assessment: "",
@@ -355,11 +421,57 @@ function ensureClientShape(client) {
       change: "",
     });
   }
-
   client.finalAssessment.items = client.finalAssessment.items.slice(0, ASSESSMENT_ROWS);
   client.finalAssessment.proudOf = client.finalAssessment.proudOf || "";
   client.finalAssessment.keepWorkingOn = client.finalAssessment.keepWorkingOn || "";
   client.finalAssessment.trainerSummary = client.finalAssessment.trainerSummary || "";
+}
+
+function ensureTemplateShape(template) {
+  template.id = slugify(template.id || template.name || "template");
+  template.name = template.name || "Template";
+
+  template.profileDefaults = template.profileDefaults || {};
+  template.profileDefaults.primaryGoal = template.profileDefaults.primaryGoal || "";
+  template.profileDefaults.weeklyCoachedSessionDay = template.profileDefaults.weeklyCoachedSessionDay || "";
+  template.profileDefaults.independentSessionDays = Array.isArray(template.profileDefaults.independentSessionDays)
+    ? template.profileDefaults.independentSessionDays.slice(0, 2)
+    : ["", ""];
+  while (template.profileDefaults.independentSessionDays.length < 2) {
+    template.profileDefaults.independentSessionDays.push("");
+  }
+
+  template.programAtAGlance = Array.isArray(template.programAtAGlance) ? template.programAtAGlance : [];
+
+  template.goals = template.goals || {};
+  template.goals.primaryGoalInOwnWords = template.goals.primaryGoalInOwnWords || "";
+  template.goals.successAfter7Weeks = template.goals.successAfter7Weeks || "";
+  template.goals.oneThingToImprove = template.goals.oneThingToImprove || "";
+
+  template.weeks = Array.isArray(template.weeks) ? template.weeks : [];
+  while (template.weeks.length < 7) {
+    template.weeks.push(buildWeekTemplate(template.weeks.length + 1));
+  }
+  template.weeks = template.weeks.slice(0, 7);
+  template.weeks.forEach((week, index) => ensureWeekShape(week, index + 1));
+
+  template.finalAssessment = template.finalAssessment || {};
+  template.finalAssessment.date = template.finalAssessment.date || "";
+  template.finalAssessment.items = Array.isArray(template.finalAssessment.items)
+    ? template.finalAssessment.items
+    : [];
+  while (template.finalAssessment.items.length < ASSESSMENT_ROWS) {
+    template.finalAssessment.items.push({
+      assessment: "",
+      startingScore: "",
+      finalScore: "",
+      change: "",
+    });
+  }
+  template.finalAssessment.items = template.finalAssessment.items.slice(0, ASSESSMENT_ROWS);
+  template.finalAssessment.proudOf = template.finalAssessment.proudOf || "";
+  template.finalAssessment.keepWorkingOn = template.finalAssessment.keepWorkingOn || "";
+  template.finalAssessment.trainerSummary = template.finalAssessment.trainerSummary || "";
 }
 
 function ensureWeekShape(week, weekNumber) {
@@ -439,13 +551,35 @@ function buildSessionTemplate(sessionNumber) {
   };
 }
 
+function buildTemplateFromClient(client, overrideName) {
+  return {
+    id: slugify(overrideName || `${client.profile.clientName}-template`),
+    name: overrideName || `${client.profile.clientName} Template`,
+    profileDefaults: {
+      primaryGoal: client.profile.primaryGoal,
+      weeklyCoachedSessionDay: client.profile.weeklyCoachedSessionDay,
+      independentSessionDays: clone(client.profile.independentSessionDays),
+    },
+    programAtAGlance: clone(client.programAtAGlance),
+    goals: clone(client.goals),
+    weeks: clone(client.weeks),
+    finalAssessment: clone(client.finalAssessment),
+  };
+}
+
+function renderTemplateOptions() {
+  templateSelect.innerHTML = dataState.templates
+    .map((template) => `<option value="${escapeHtml(template.id)}">${escapeHtml(template.name)}</option>`)
+    .join("");
+
+  if (selectedTemplateId) {
+    templateSelect.value = selectedTemplateId;
+  }
+}
+
 function renderClientOptions() {
   clientSelect.innerHTML = dataState.clients
-    .map((client) => {
-      const label = escapeHtml(client.profile.clientName || client.id);
-      const id = escapeHtml(client.id);
-      return `<option value="${id}">${label}</option>`;
-    })
+    .map((client) => `<option value="${escapeHtml(client.id)}">${escapeHtml(client.profile.clientName || client.id)}</option>`)
     .join("");
 
   if (selectedClientId) {
@@ -466,16 +600,9 @@ function renderWeekOptions(client) {
   weekSelect.value = String(selectedWeekIndex);
 }
 
-function onClientChange() {
-  selectedClientId = clientSelect.value;
-  selectedWeekIndex = 0;
-  loadClientIntoForm();
-  renderDirtyState();
-}
-
-function onWeekChange() {
-  selectedWeekIndex = Number(weekSelect.value) || 0;
-  loadWeekIntoForm();
+function loadTemplateHeader() {
+  const template = getSelectedTemplate();
+  templateNameInput.value = template?.name || "";
 }
 
 function loadClientIntoForm() {
@@ -483,8 +610,6 @@ function loadClientIntoForm() {
   if (!client) {
     return;
   }
-
-  ensureClientShape(client);
 
   nameInput.value = client.profile.clientName;
   trainerInput.value = client.profile.trainerName;
@@ -666,20 +791,16 @@ function onAssessmentInput(event) {
   touchData();
 }
 
-function addClient() {
-  const name = window.prompt("Enter new student name:", "New Student");
-  if (!name) {
+function createTemplate() {
+  const templateName = window.prompt("Template name:", "New Template");
+  if (!templateName) {
     return;
   }
 
-  const id = uniqueClientId(slugify(name));
-  const client = {
-    id,
-    profile: {
-      clientName: name.trim(),
-      trainerName: "Coach",
-      programStartDate: "",
-      programEndDate: "",
+  const template = {
+    id: uniqueTemplateId(slugify(templateName)),
+    name: templateName.trim(),
+    profileDefaults: {
       primaryGoal: "",
       weeklyCoachedSessionDay: "",
       independentSessionDays: ["", ""],
@@ -705,13 +826,125 @@ function addClient() {
     },
   };
 
+  dataState.templates.push(template);
+  selectedTemplateId = template.id;
+  renderTemplateOptions();
+  loadTemplateHeader();
+  touchData();
+}
+
+function saveTemplateFromClient() {
+  const client = getSelectedClient();
+  const template = getSelectedTemplate();
+  if (!client || !template) {
+    return;
+  }
+
+  const name = templateNameInput.value.trim() || template.name;
+  const rebuilt = buildTemplateFromClient(client, name);
+  rebuilt.id = template.id;
+
+  const index = dataState.templates.findIndex((item) => item.id === template.id);
+  dataState.templates[index] = rebuilt;
+
+  renderTemplateOptions();
+  loadTemplateHeader();
+  setPublishStatus(`Template '${name}' updated from current client.`, "success");
+  touchData();
+}
+
+function deleteTemplate() {
+  const template = getSelectedTemplate();
+  if (!template) {
+    return;
+  }
+
+  if (dataState.templates.length <= 1) {
+    setPublishStatus("At least one template is required.", "error");
+    return;
+  }
+
+  const confirmed = window.confirm(`Delete template '${template.name}'?`);
+  if (!confirmed) {
+    return;
+  }
+
+  dataState.templates = dataState.templates.filter((item) => item.id !== template.id);
+  selectedTemplateId = dataState.templates[0]?.id || null;
+  renderTemplateOptions();
+  loadTemplateHeader();
+  touchData();
+}
+
+function applyTemplateToCurrentClient() {
+  const client = getSelectedClient();
+  const template = getSelectedTemplate();
+  if (!client || !template) {
+    return;
+  }
+
+  const confirmed = window.confirm(
+    `Apply template '${template.name}' to ${client.profile.clientName}? This will replace weekly plan content.`
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  client.profile.primaryGoal = template.profileDefaults.primaryGoal;
+  client.profile.weeklyCoachedSessionDay = template.profileDefaults.weeklyCoachedSessionDay;
+  client.profile.independentSessionDays = clone(template.profileDefaults.independentSessionDays);
+  client.programAtAGlance = clone(template.programAtAGlance);
+  client.goals = clone(template.goals);
+  client.weeks = clone(template.weeks);
+  client.finalAssessment = clone(template.finalAssessment);
+
+  ensureClientShape(client);
+  selectedWeekIndex = 0;
+  loadClientIntoForm();
+  touchData();
+  setPublishStatus(`Template '${template.name}' applied to ${client.profile.clientName}.`, "success");
+}
+
+function addClientFromTemplate() {
+  const template = getSelectedTemplate();
+  if (!template) {
+    return;
+  }
+
+  const clientName = window.prompt("Client name:", "New Client");
+  if (!clientName) {
+    return;
+  }
+
+  const clientId = uniqueClientId(slugify(clientName));
+
+  const client = {
+    id: clientId,
+    profile: {
+      clientName: clientName.trim(),
+      trainerName: "Coach",
+      programStartDate: "",
+      programEndDate: "",
+      primaryGoal: template.profileDefaults.primaryGoal,
+      weeklyCoachedSessionDay: template.profileDefaults.weeklyCoachedSessionDay,
+      independentSessionDays: clone(template.profileDefaults.independentSessionDays),
+    },
+    programAtAGlance: clone(template.programAtAGlance),
+    goals: clone(template.goals),
+    weeks: clone(template.weeks),
+    finalAssessment: clone(template.finalAssessment),
+  };
+
+  ensureClientShape(client);
+
   dataState.clients.push(client);
   selectedClientId = client.id;
   selectedWeekIndex = 0;
-  touchData();
   renderClientOptions();
   loadClientIntoForm();
-  setEditorStatus(`Added ${name.trim()}.`, "success");
+  touchData();
+  setPublishStatus(`${client.profile.clientName} created from '${template.name}'.`, "success");
 }
 
 function removeClient() {
@@ -720,7 +953,7 @@ function removeClient() {
     return;
   }
 
-  const confirmed = window.confirm(`Remove ${client.profile.clientName}?`);
+  const confirmed = window.confirm(`Remove client '${client.profile.clientName}'?`);
   if (!confirmed) {
     return;
   }
@@ -728,11 +961,9 @@ function removeClient() {
   dataState.clients = dataState.clients.filter((item) => item.id !== client.id);
   selectedClientId = dataState.clients[0]?.id || null;
   selectedWeekIndex = 0;
-  touchData();
-
   renderClientOptions();
   loadClientIntoForm();
-  setEditorStatus("Student removed.", "warning");
+  touchData();
 }
 
 async function shareClientLink() {
@@ -751,7 +982,7 @@ async function shareClientLink() {
   if (navigator.share) {
     try {
       await navigator.share(shareData);
-      setEditorStatus("Student link shared.", "success");
+      setEditorStatus("Client link shared.", "success");
       return;
     } catch (_) {
       // User canceled share.
@@ -760,7 +991,7 @@ async function shareClientLink() {
 
   try {
     await navigator.clipboard.writeText(url);
-    setEditorStatus("Student link copied.", "success");
+    setEditorStatus("Client link copied.", "success");
   } catch (_) {
     setEditorStatus(`Copy this link: ${url}`, "warning");
   }
@@ -775,80 +1006,109 @@ function openClientView() {
   window.open(buildClientUrl(client.id), "_blank", "noopener");
 }
 
-async function submitForCoachReview() {
+function downloadBackup() {
   if (!dataState) {
-    setPublishStatus("No data available to submit.", "error");
     return;
   }
 
-  if (!API_BASE) {
-    setPublishStatus("Submission server not configured. Ask your coach to set PLAN_API_BASE.", "error");
+  const payload = JSON.stringify(dataState, null, 2) + "\n";
+  const blob = new Blob([payload], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `training-plans-backup-${todayIso()}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+  setPublishStatus("Backup downloaded.", "success");
+}
+
+async function publishData() {
+  if (!dataState) {
+    setPublishStatus("No data to publish.", "error");
     return;
   }
 
-  const client = getSelectedClient();
-  if (!client) {
-    setPublishStatus("No student plan selected.", "error");
-    return;
-  }
-
-  const submitterName = submitterNameInput.value.trim();
-  if (!submitterName) {
-    setPublishStatus("Enter your name before submitting.", "error");
+  const token = tokenInput.value.trim();
+  if (!token) {
+    setPublishStatus("Enter trainer publish key first.", "error");
     return;
   }
 
   const issues = validateData(dataState);
   if (issues.length > 0) {
-    setPublishStatus(`Please fix: ${issues.join(" | ")}`, "error");
+    setPublishStatus(`Cannot publish: ${issues.join(" | ")}`, "error");
     return;
   }
 
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Submitting...";
-  setPublishStatus("Submitting changes for coach review...", "warning");
+  setPublishStatus("Publishing updates live...", "warning");
+  publishBtn.disabled = true;
+  publishBtn.textContent = "Publishing...";
 
   try {
-    const response = await fetch(`${API_BASE}/api/submissions`, {
-      method: "POST",
+    dataState.lastUpdated = todayIso();
+    const encodedPath = GITHUB_TARGET.path
+      .split("/")
+      .map((segment) => encodeURIComponent(segment))
+      .join("/");
+
+    const contentUrl = `https://api.github.com/repos/${encodeURIComponent(
+      GITHUB_TARGET.owner
+    )}/${encodeURIComponent(GITHUB_TARGET.repo)}/contents/${encodedPath}`;
+
+    const headers = {
+      Accept: "application/vnd.github+json",
+      Authorization: `Bearer ${token}`,
+      "X-GitHub-Api-Version": "2022-11-28",
+    };
+
+    const lookupResponse = await fetch(`${contentUrl}?ref=${encodeURIComponent(GITHUB_TARGET.branch)}`, {
+      headers,
+    });
+
+    if (!lookupResponse.ok) {
+      throw new Error(await readApiError(lookupResponse));
+    }
+
+    const lookup = await lookupResponse.json();
+    const payload = JSON.stringify(dataState, null, 2) + "\n";
+
+    const updateResponse = await fetch(contentUrl, {
+      method: "PUT",
       headers: {
+        ...headers,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        clientId: client.id,
-        submittedBy: submitterName,
-        note: submitNoteInput.value.trim(),
-        updatedClient: client,
+        message: `update training plans (${new Date().toISOString().slice(0, 16).replace("T", " ")})`,
+        content: toBase64Unicode(payload),
+        sha: lookup.sha,
+        branch: GITHUB_TARGET.branch,
       }),
     });
 
-    if (!response.ok) {
-      const message = await readApiError(response);
-      throw new Error(message);
+    if (!updateResponse.ok) {
+      throw new Error(await readApiError(updateResponse));
     }
 
-    const result = await response.json();
+    const result = await updateResponse.json();
+    persistSettings();
     dirty = false;
     renderDirtyState();
     setPublishStatus(
-      `Submitted for coach review${result.submissionId ? ` (request ${result.submissionId})` : ""}.`,
+      `Published live. ${result.commit?.html_url || "Update complete"}. GitHub Pages may take about 1 minute to refresh.`,
       "success"
     );
   } catch (error) {
-    setPublishStatus(error.message || "Submission failed.", "error");
+    setPublishStatus(error.message || "Publish failed.", "error");
   } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Submit for Coach Review";
+    publishBtn.disabled = false;
+    publishBtn.textContent = "Publish Updates Live";
   }
 }
 
 async function readApiError(response) {
   try {
     const data = await response.json();
-    if (data?.error) {
-      return data.error;
-    }
-
     if (data?.message) {
       return data.message;
     }
@@ -861,25 +1121,30 @@ async function readApiError(response) {
 
 function validateData(data) {
   const issues = [];
+
+  if (!Array.isArray(data.templates) || data.templates.length === 0) {
+    issues.push("At least one template is required");
+  }
+
   if (!Array.isArray(data.clients) || data.clients.length === 0) {
-    issues.push("Add at least one student plan");
+    issues.push("At least one client is required");
     return issues;
   }
 
-  const ids = new Set();
+  const clientIds = new Set();
   data.clients.forEach((client, index) => {
     if (!client.id) {
-      issues.push(`Student ${index + 1} missing id`);
+      issues.push(`Client ${index + 1} missing id`);
     }
 
-    if (ids.has(client.id)) {
-      issues.push(`Duplicate student id: ${client.id}`);
+    if (clientIds.has(client.id)) {
+      issues.push(`Duplicate client id: ${client.id}`);
     }
 
-    ids.add(client.id);
+    clientIds.add(client.id);
 
     if (!client.profile?.clientName) {
-      issues.push(`Student ${index + 1} missing name`);
+      issues.push(`Client ${index + 1} missing name`);
     }
 
     if (!Array.isArray(client.weeks) || client.weeks.length < 1) {
@@ -892,6 +1157,10 @@ function validateData(data) {
 
 function getSelectedClient() {
   return dataState?.clients?.find((client) => client.id === selectedClientId) || null;
+}
+
+function getSelectedTemplate() {
+  return dataState?.templates?.find((template) => template.id === selectedTemplateId) || null;
 }
 
 function getSelectedWeek() {
@@ -910,15 +1179,15 @@ function touchData() {
 
 function renderDirtyState() {
   if (dirty) {
-    setEditorStatus("You have unsent changes. Click Submit for Coach Review when ready.", "warning");
+    setEditorStatus("Unsaved updates detected. Publish when ready.", "warning");
     return;
   }
 
-  setEditorStatus("All visible changes are saved in this page.", "success");
+  setEditorStatus("All changes are published.", "success");
 }
 
 function uniqueClientId(base) {
-  const fallback = base || "student";
+  const fallback = base || "client";
   let candidate = fallback;
   let index = 2;
 
@@ -930,8 +1199,25 @@ function uniqueClientId(base) {
   return candidate;
 }
 
+function uniqueTemplateId(base) {
+  const fallback = base || "template";
+  let candidate = fallback;
+  let index = 2;
+
+  while (!isUniqueTemplateId(candidate)) {
+    candidate = `${fallback}-${index}`;
+    index += 1;
+  }
+
+  return candidate;
+}
+
 function isUniqueClientId(candidate, currentId = null) {
   return !dataState.clients.some((client) => client.id === candidate && client.id !== currentId);
+}
+
+function isUniqueTemplateId(candidate, currentId = null) {
+  return !dataState.templates.some((template) => template.id === candidate && template.id !== currentId);
 }
 
 function normalizeCount(value) {
@@ -970,12 +1256,32 @@ function statusClass(type) {
   return "status-warning";
 }
 
+function todayIso() {
+  return new Date().toISOString().slice(0, 10);
+}
+
 function slugify(value) {
   return String(value || "")
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "") || "student";
+    .replace(/^-+|-+$/g, "") || "item";
+}
+
+function toBase64Unicode(value) {
+  const bytes = new TextEncoder().encode(value);
+  const chunkSize = 0x8000;
+  let binary = "";
+
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+  }
+
+  return btoa(binary);
+}
+
+function clone(value) {
+  return JSON.parse(JSON.stringify(value));
 }
 
 function escapeHtml(input) {

@@ -1,35 +1,40 @@
 # Training Plan Web App
 
-Training plans with controlled student submissions and coach approval.
+Trainer-first workflow: create templates, assign/edit client plans, publish, then share client links.
 
 ## Live pages
 - Client view: `https://akeath18.github.io/HPE-assets/training-plan/`
-- Student plan editor: `https://akeath18.github.io/HPE-assets/training-plan/trainer.html`
-- Coach review: `https://akeath18.github.io/HPE-assets/training-plan/coach-review.html`
+- Trainer studio: `https://akeath18.github.io/HPE-assets/training-plan/trainer.html`
 
-## Security model
-- Students do **not** get GitHub/repo keys.
-- Students submit edits to a backend queue.
-- Coaches review requests and approve/reject.
-- Backend (server-side secret) publishes approved changes to GitHub.
+## Recommended workflow
+1. Open **Trainer Studio**.
+2. Build or update a **Template** in Template Library.
+3. Create a **New Client from Template**.
+4. Edit the client plan (profile, goals, weekly sessions, final assessment).
+5. Click **Publish Updates Live**.
+6. Click **Share Client Link** to send the plan to the client.
 
-## Required backend
-GitHub Pages is static, so approval/publishing runs in `training-plan/backend`.
+Students only need their client link and never need publishing access.
 
-### Backend setup
-1. Deploy `training-plan/backend` to a Node host (Render/Railway/Fly/VM).
-2. Set env vars from `training-plan/backend/.env.example`.
-3. Start server (`npm install && npm start`).
-
-### Frontend connection
-Set API base URL in:
-- `training-plan/api-config.js`
+## Trainer access controls
+Configure in `training-plan/trainer-config.js`:
+- `accessPin`: optional trainer-only page PIN
+- `githubOwner`, `githubRepo`, `githubBranch`, `githubFilePath`: publish target
 
 Example:
 ```js
-window.PLAN_API_BASE = "https://your-backend-domain.example.com";
+window.TRAINER_CONFIG = {
+  accessPin: "1234",
+  githubOwner: "akeath18",
+  githubRepo: "HPE-assets",
+  githubBranch: "main",
+  githubFilePath: "training-plan/data/training-plans.json"
+};
 ```
 
+## Publish key
+`Publish Updates Live` uses your GitHub token (trainer device only). Do not share this page or key with students.
+
 ## Data file
-Approved updates are written to:
+Primary source of truth:
 - `training-plan/data/training-plans.json`

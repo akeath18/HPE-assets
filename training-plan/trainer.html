@@ -6,11 +6,11 @@
     <meta name="theme-color" content="#15304a" />
     <meta
       name="description"
-      content="Simple plan editor for students to submit training-plan changes for coach approval."
+      content="Trainer studio for creating templates, assigning client plans, and publishing updates."
     />
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="stylesheet" href="styles.css" />
-    <title>Plan Editor</title>
+    <title>Trainer Studio</title>
   </head>
   <body>
     <div class="ambient-bg" aria-hidden="true"></div>
@@ -20,35 +20,55 @@
         <p class="eyebrow">Training Plan</p>
         <a href="index.html" class="btn ghost">Client View</a>
       </div>
-      <h1>Plan Editor</h1>
-      <p class="subtitle">Edit a plan using simple fields, then submit for coach review.</p>
+      <h1>Trainer Studio</h1>
+      <p class="subtitle">Create templates, assign plans to clients, and publish updates.</p>
     </header>
 
     <main class="app-shell trainer-shell" aria-live="polite">
       <section class="panel">
-        <h2 class="section-title">Student Selector</h2>
+        <h2 class="section-title">Template Library</h2>
         <div class="toolbar">
           <label class="field compact-field">
-            <span>Student</span>
+            <span>Template</span>
+            <select id="templateSelect"></select>
+          </label>
+          <button id="newTemplateBtn" class="btn ghost" type="button">New Template</button>
+          <button id="saveTemplateBtn" class="btn ghost" type="button">Save From Current Client</button>
+          <button id="deleteTemplateBtn" class="btn ghost" type="button">Delete Template</button>
+          <button id="applyTemplateBtn" class="btn" type="button">Apply Template to Client</button>
+        </div>
+        <div class="form-grid" style="margin-top: 0.6rem;">
+          <label class="field field-wide">
+            <span>Template Name</span>
+            <input id="templateNameInput" type="text" />
+          </label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2 class="section-title">Client Manager</h2>
+        <div class="toolbar">
+          <label class="field compact-field">
+            <span>Client</span>
             <select id="clientSelect"></select>
           </label>
-          <button id="addClientBtn" class="btn ghost" type="button">Add Student</button>
-          <button id="removeClientBtn" class="btn ghost" type="button">Remove Student</button>
-          <button id="shareClientBtn" class="btn" type="button">Share Student Link</button>
-          <button id="openClientBtn" class="btn ghost" type="button">Open Student View</button>
+          <button id="addClientBtn" class="btn ghost" type="button">New Client from Template</button>
+          <button id="removeClientBtn" class="btn ghost" type="button">Remove Client</button>
+          <button id="shareClientBtn" class="btn" type="button">Share Client Link</button>
+          <button id="openClientBtn" class="btn ghost" type="button">Open Client View</button>
         </div>
         <p id="editorStatus" class="status-line">Loading plan data...</p>
       </section>
 
       <section class="panel">
-        <h2 class="section-title">Student Profile</h2>
+        <h2 class="section-title">Client Profile</h2>
         <div class="form-grid">
           <label class="field">
-            <span>Student Name</span>
+            <span>Client Name</span>
             <input id="nameInput" type="text" />
           </label>
           <label class="field">
-            <span>Coach Name</span>
+            <span>Trainer Name</span>
             <input id="trainerInput" type="text" />
           </label>
           <label class="field">
@@ -82,7 +102,7 @@
         <h2 class="section-title">Goals</h2>
         <div class="form-grid">
           <label class="field field-wide">
-            <span>Primary Goal (Student's words)</span>
+            <span>Primary Goal (Client words)</span>
             <input id="goalOwnWordsInput" type="text" />
           </label>
           <label class="field field-wide">
@@ -156,7 +176,7 @@
             <input id="winsInput" type="text" />
           </label>
           <label class="field field-wide">
-            <span>Coach Notes</span>
+            <span>Trainer Notes</span>
             <input id="trainerNotesInput" type="text" />
           </label>
         </div>
@@ -170,15 +190,15 @@
             <input id="assessmentDateInput" type="text" />
           </label>
           <label class="field field-wide">
-            <span>What I'm Most Proud Of</span>
+            <span>Most Proud Of</span>
             <input id="proudInput" type="text" />
           </label>
           <label class="field field-wide">
-            <span>What to Keep Working On</span>
+            <span>Keep Working On</span>
             <input id="keepWorkingInput" type="text" />
           </label>
           <label class="field field-wide">
-            <span>Coach Summary</span>
+            <span>Trainer Summary</span>
             <input id="summaryInput" type="text" />
           </label>
         </div>
@@ -199,33 +219,36 @@
       </section>
 
       <section class="panel">
-        <h2 class="section-title">Submit Changes</h2>
-        <p class="section-subtitle">Submit edits for coach approval. Students do not need a key.</p>
+        <h2 class="section-title">Publish Live</h2>
+        <p class="section-subtitle">Only trainer devices should use this page and key.</p>
         <div class="form-grid">
           <label class="field field-wide">
-            <span>Your Name</span>
-            <input id="submitterNameInput" type="text" placeholder="Enter your name" />
-          </label>
-          <label class="field field-wide">
-            <span>Message for Coach (optional)</span>
-            <input id="submitNoteInput" type="text" placeholder="What did you change?" />
+            <span>Trainer Publish Key</span>
+            <input id="tokenInput" type="password" autocomplete="off" placeholder="Enter GitHub key" />
           </label>
         </div>
 
+        <label class="toggle-row">
+          <input id="rememberTokenInput" type="checkbox" />
+          <span>Remember key on this device</span>
+        </label>
+
         <div class="toolbar">
-          <button id="submitBtn" class="btn" type="button">Submit for Coach Review</button>
+          <button id="downloadBackupBtn" class="btn ghost" type="button">Download Backup</button>
+          <button id="publishBtn" class="btn" type="button">Publish Updates Live</button>
         </div>
+
         <p id="publishStatus" class="status-line"></p>
       </section>
     </main>
 
     <footer class="app-footer">
       <p>
-        Edits save in this page immediately. Click "Submit for Coach Review" to request publication.
+        Workflow: select template, create/update client plan, then publish and share client link.
       </p>
     </footer>
 
-    <script src="api-config.js" defer></script>
+    <script src="trainer-config.js" defer></script>
     <script src="trainer.js" defer></script>
   </body>
 </html>
