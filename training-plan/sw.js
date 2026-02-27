@@ -1,11 +1,14 @@
-const CACHE_NAME = "training-plan-v3";
+const CACHE_NAME = "training-plan-v4";
 const ASSETS = [
   "./",
   "./index.html",
   "./trainer.html",
+  "./coach-review.html",
   "./styles.css",
   "./app.js",
   "./trainer.js",
+  "./coach-review.js",
+  "./api-config.js",
   "./manifest.webmanifest",
   "./data/training-plans.json"
 ];

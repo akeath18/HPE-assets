@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#15304a" />
     <meta
       name="description"
-      content="Simple plan editor for updating student training plans and publishing updates."
+      content="Simple plan editor for students to submit training-plan changes for coach approval."
     />
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="stylesheet" href="styles.css" />
@@ -21,7 +21,7 @@
         <a href="index.html" class="btn ghost">Client View</a>
       </div>
       <h1>Plan Editor</h1>
-      <p class="subtitle">Edit a student plan using simple fields, then post updates live.</p>
+      <p class="subtitle">Edit a plan using simple fields, then submit for coach review.</p>
     </header>
 
     <main class="app-shell trainer-shell" aria-live="polite">
@@ -199,35 +199,33 @@
       </section>
 
       <section class="panel">
-        <h2 class="section-title">Post Updates</h2>
-        <p class="section-subtitle">Use your coach publishing key to post updates live.</p>
+        <h2 class="section-title">Submit Changes</h2>
+        <p class="section-subtitle">Submit edits for coach approval. Students do not need a key.</p>
         <div class="form-grid">
           <label class="field field-wide">
-            <span>Publishing Key</span>
-            <input id="tokenInput" type="password" autocomplete="off" placeholder="Enter coach key" />
+            <span>Your Name</span>
+            <input id="submitterNameInput" type="text" placeholder="Enter your name" />
+          </label>
+          <label class="field field-wide">
+            <span>Message for Coach (optional)</span>
+            <input id="submitNoteInput" type="text" placeholder="What did you change?" />
           </label>
         </div>
 
-        <label class="toggle-row">
-          <input id="rememberTokenInput" type="checkbox" />
-          <span>Remember key on this device</span>
-        </label>
-
         <div class="toolbar">
-          <button id="downloadBackupBtn" class="btn ghost" type="button">Download Backup</button>
-          <button id="publishBtn" class="btn" type="button">Post Updates Live</button>
+          <button id="submitBtn" class="btn" type="button">Submit for Coach Review</button>
         </div>
-
         <p id="publishStatus" class="status-line"></p>
       </section>
     </main>
 
     <footer class="app-footer">
       <p>
-        Edits save in this page immediately. Click "Post Updates Live" to make changes visible to students.
+        Edits save in this page immediately. Click "Submit for Coach Review" to request publication.
       </p>
     </footer>
 
+    <script src="api-config.js" defer></script>
     <script src="trainer.js" defer></script>
   </body>
 </html>

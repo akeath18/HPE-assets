@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#15304a" />
+    <meta
+      name="description"
+      content="Coach review dashboard for approving or rejecting student plan submissions."
+    />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Coach Review</title>
+  </head>
+  <body>
+    <div class="ambient-bg" aria-hidden="true"></div>
+
+    <header class="app-header">
+      <div class="header-row">
+        <p class="eyebrow">Training Plan</p>
+        <a href="index.html" class="btn ghost">Client View</a>
+      </div>
+      <h1>Coach Review</h1>
+      <p class="subtitle">Approve student edits before they go live.</p>
+    </header>
+
+    <main class="app-shell trainer-shell" aria-live="polite">
+      <section class="panel">
+        <h2 class="section-title">Coach Access</h2>
+        <div class="form-grid">
+          <label class="field field-wide">
+            <span>Coach Access Key</span>
+            <input id="coachKeyInput" type="password" autocomplete="off" placeholder="Enter coach key" />
+          </label>
+        </div>
+        <label class="toggle-row">
+          <input id="rememberCoachKeyInput" type="checkbox" />
+          <span>Remember key on this device</span>
+        </label>
+        <div class="toolbar">
+          <button id="loadPendingBtn" class="btn" type="button">Load Pending Requests</button>
+        </div>
+        <p id="reviewStatus" class="status-line"></p>
+      </section>
+
+      <section class="panel">
+        <h2 class="section-title">Pending Requests</h2>
+        <div id="pendingList" class="session-editor-grid"></div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <p>
+        Approving a request updates `training-plan/data/training-plans.json` and publishes it to the live site.
+      </p>
+    </footer>
+
+    <script src="api-config.js" defer></script>
+    <script src="coach-review.js" defer></script>
+  </body>
+</html>

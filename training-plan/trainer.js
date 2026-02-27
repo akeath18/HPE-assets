@@ -1,20 +1,15 @@
 const DATA_PATH = "data/training-plans.json";
-const SETTINGS_KEY = "planEditorSettingsV2";
-
-const GITHUB_TARGET = {
-  owner: "akeath18",
-  repo: "HPE-assets",
-  branch: "main",
-  path: "training-plan/data/training-plans.json",
-};
-
 const EXERCISE_ROWS = 5;
 const ASSESSMENT_ROWS = 4;
+const SUBMITTER_NAME_KEY = "planEditorSubmitterNameV1";
+const API_BASE = (window.PLAN_API_BASE || "").replace(/\/$/, "");
+const ADMIN_MODE = new URL(window.location.href).searchParams.get("admin") === "1";
 
 let dataState = null;
 let selectedClientId = null;
 let selectedWeekIndex = 0;
 let dirty = false;
+let lockedClientMode = false;
 
 const clientSelect = document.getElementById("clientSelect");
 const addClientBtn = document.getElementById("addClientBtn");
@@ -54,10 +49,9 @@ const keepWorkingInput = document.getElementById("keepWorkingInput");
 const summaryInput = document.getElementById("summaryInput");
 const assessmentTableBody = document.getElementById("assessmentTableBody");
 
-const tokenInput = document.getElementById("tokenInput");
-const rememberTokenInput = document.getElementById("rememberTokenInput");
-const downloadBackupBtn = document.getElementById("downloadBackupBtn");
-const publishBtn = document.getElementById("publishBtn");
+const submitterNameInput = document.getElementById("submitterNameInput");
+const submitNoteInput = document.getElementById("submitNoteInput");
+const submitBtn = document.getElementById("submitBtn");
 
 const editorStatus = document.getElementById("editorStatus");
 const publishStatus = document.getElementById("publishStatus");
@@ -66,8 +60,8 @@ init();
 
 async function init() {
   registerServiceWorker();
-  hydrateSettings();
   wireEvents();
+  hydrateSubmitterName();
 
   try {
     const response = await fetch(DATA_PATH, { cache: "no-store" });
@@ -78,10 +72,15 @@ async function init() {
     dataState = await response.json();
     ensureDataShape(dataState);
 
-    selectedClientId = dataState.clients[0]?.id || null;
+    selectedClientId = pickInitialClientId();
     renderClientOptions();
+    applyClientLockUi();
     loadClientIntoForm();
     renderDirtyState();
+
+    if (!API_BASE) {
+      setPublishStatus("Submission server is not configured yet. Ask your coach to finish setup.", "warning");
+    }
 
     setEditorStatus(`Loaded ${dataState.clients.length} student plans.`, "success");
   } catch (error) {
@@ -95,7 +94,7 @@ function registerServiceWorker() {
   }
 
   navigator.serviceWorker.register("sw.js").catch(() => {
-    // Ignore registration errors.
+    // Ignore service worker registration errors.
   });
 }
 
@@ -111,10 +110,15 @@ function wireEvents() {
   const profileBindings = [
     [nameInput, (profile, value) => {
       profile.clientName = value;
-      const oldId = getSelectedClient().id;
+      const current = getSelectedClient();
+      if (!current) {
+        return;
+      }
+
+      const oldId = current.id;
       const newId = slugify(value || oldId);
       if (newId !== oldId && isUniqueClientId(newId, oldId)) {
-        getSelectedClient().id = newId;
+        current.id = newId;
         selectedClientId = newId;
         renderClientOptions();
       }
@@ -255,43 +259,41 @@ function wireEvents() {
 
   assessmentTableBody.addEventListener("input", onAssessmentInput);
 
-  rememberTokenInput.addEventListener("change", persistSettings);
-  tokenInput.addEventListener("blur", persistSettings);
-
-  downloadBackupBtn.addEventListener("click", downloadBackup);
-  publishBtn.addEventListener("click", publishData);
+  submitterNameInput.addEventListener("input", persistSubmitterName);
+  submitBtn.addEventListener("click", submitForCoachReview);
 }
 
-function hydrateSettings() {
-  const settings = readSettings();
-  rememberTokenInput.checked = Boolean(settings.rememberToken);
-  tokenInput.value = settings.rememberToken ? settings.token || "" : "";
+function hydrateSubmitterName() {
+  const saved = localStorage.getItem(SUBMITTER_NAME_KEY);
+  if (saved) {
+    submitterNameInput.value = saved;
+  }
 }
 
-function persistSettings() {
-  const settings = {
-    rememberToken: rememberTokenInput.checked,
-    token: rememberTokenInput.checked ? tokenInput.value.trim() : "",
-  };
-
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+function persistSubmitterName() {
+  localStorage.setItem(SUBMITTER_NAME_KEY, submitterNameInput.value.trim());
 }
 
-function readSettings() {
-  try {
-    const raw = localStorage.getItem(SETTINGS_KEY);
-    if (!raw) {
-      return { rememberToken: false, token: "" };
+function pickInitialClientId() {
+  const requested = new URL(window.location.href).searchParams.get("client");
+  if (requested) {
+    const matching = dataState.clients.find((client) => client.id === requested);
+    if (matching) {
+      lockedClientMode = true;
+      return matching.id;
     }
+  }
 
-    const parsed = JSON.parse(raw);
-    if (!parsed || typeof parsed !== "object") {
-      return { rememberToken: false, token: "" };
-    }
+  lockedClientMode = false;
+  return dataState.clients[0]?.id || null;
+}
 
-    return parsed;
-  } catch (_) {
-    return { rememberToken: false, token: "" };
+function applyClientLockUi() {
+  addClientBtn.hidden = !ADMIN_MODE || lockedClientMode;
+  removeClientBtn.hidden = !ADMIN_MODE || lockedClientMode;
+
+  if (lockedClientMode) {
+    clientSelect.disabled = true;
   }
 }
 
@@ -320,6 +322,7 @@ function ensureClientShape(client) {
   client.profile.independentSessionDays = Array.isArray(client.profile.independentSessionDays)
     ? client.profile.independentSessionDays.slice(0, 2)
     : ["", ""];
+
   while (client.profile.independentSessionDays.length < 2) {
     client.profile.independentSessionDays.push("");
   }
@@ -335,7 +338,7 @@ function ensureClientShape(client) {
   while (client.weeks.length < 7) {
     client.weeks.push(buildWeekTemplate(client.weeks.length + 1));
   }
-
+  client.weeks = client.weeks.slice(0, 7);
   client.weeks.forEach((week, index) => ensureWeekShape(week, index + 1));
 
   client.finalAssessment = client.finalAssessment || {};
@@ -343,6 +346,7 @@ function ensureClientShape(client) {
   client.finalAssessment.items = Array.isArray(client.finalAssessment.items)
     ? client.finalAssessment.items
     : [];
+
   while (client.finalAssessment.items.length < ASSESSMENT_ROWS) {
     client.finalAssessment.items.push({
       assessment: "",
@@ -351,8 +355,8 @@ function ensureClientShape(client) {
       change: "",
     });
   }
-  client.finalAssessment.items = client.finalAssessment.items.slice(0, ASSESSMENT_ROWS);
 
+  client.finalAssessment.items = client.finalAssessment.items.slice(0, ASSESSMENT_ROWS);
   client.finalAssessment.proudOf = client.finalAssessment.proudOf || "";
   client.finalAssessment.keepWorkingOn = client.finalAssessment.keepWorkingOn || "";
   client.finalAssessment.trainerSummary = client.finalAssessment.trainerSummary || "";
@@ -771,112 +775,80 @@ function openClientView() {
   window.open(buildClientUrl(client.id), "_blank", "noopener");
 }
 
-function downloadBackup() {
+async function submitForCoachReview() {
   if (!dataState) {
+    setPublishStatus("No data available to submit.", "error");
     return;
   }
 
-  const payload = JSON.stringify(dataState, null, 2) + "\n";
-  const blob = new Blob([payload], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `training-plans-backup-${todayIso()}.json`;
-  link.click();
-  URL.revokeObjectURL(url);
-  setPublishStatus("Backup downloaded.", "success");
-}
-
-async function publishData() {
-  if (!dataState) {
-    setPublishStatus("No data to publish.", "error");
+  if (!API_BASE) {
+    setPublishStatus("Submission server not configured. Ask your coach to set PLAN_API_BASE.", "error");
     return;
   }
 
-  const token = tokenInput.value.trim();
-  if (!token) {
-    setPublishStatus("Enter publishing key first.", "error");
+  const client = getSelectedClient();
+  if (!client) {
+    setPublishStatus("No student plan selected.", "error");
+    return;
+  }
+
+  const submitterName = submitterNameInput.value.trim();
+  if (!submitterName) {
+    setPublishStatus("Enter your name before submitting.", "error");
     return;
   }
 
   const issues = validateData(dataState);
   if (issues.length > 0) {
-    setPublishStatus(`Cannot post yet: ${issues.join(" | ")}`, "error");
+    setPublishStatus(`Please fix: ${issues.join(" | ")}`, "error");
     return;
   }
 
-  setPublishStatus("Posting updates live...", "warning");
-  publishBtn.disabled = true;
-  publishBtn.textContent = "Posting...";
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Submitting...";
+  setPublishStatus("Submitting changes for coach review...", "warning");
 
   try {
-    dataState.lastUpdated = todayIso();
-    const encodedPath = GITHUB_TARGET.path
-      .split("/")
-      .map((segment) => encodeURIComponent(segment))
-      .join("/");
-
-    const contentUrl = `https://api.github.com/repos/${encodeURIComponent(
-      GITHUB_TARGET.owner
-    )}/${encodeURIComponent(GITHUB_TARGET.repo)}/contents/${encodedPath}`;
-
-    const headers = {
-      Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${token}`,
-      "X-GitHub-Api-Version": "2022-11-28",
-    };
-
-    const lookupResponse = await fetch(
-      `${contentUrl}?ref=${encodeURIComponent(GITHUB_TARGET.branch)}`,
-      { headers }
-    );
-
-    if (!lookupResponse.ok) {
-      const message = await readApiError(lookupResponse);
-      throw new Error(`Could not load live file: ${message}`);
-    }
-
-    const lookup = await lookupResponse.json();
-    const payload = JSON.stringify(dataState, null, 2) + "\n";
-
-    const updateResponse = await fetch(contentUrl, {
-      method: "PUT",
+    const response = await fetch(`${API_BASE}/api/submissions`, {
+      method: "POST",
       headers: {
-        ...headers,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        message: `update training plans (${new Date().toISOString().slice(0, 16).replace("T", " ")})`,
-        content: toBase64Unicode(payload),
-        sha: lookup.sha,
-        branch: GITHUB_TARGET.branch,
+        clientId: client.id,
+        submittedBy: submitterName,
+        note: submitNoteInput.value.trim(),
+        updatedClient: client,
       }),
     });
 
-    if (!updateResponse.ok) {
-      const message = await readApiError(updateResponse);
-      throw new Error(`Post failed: ${message}`);
+    if (!response.ok) {
+      const message = await readApiError(response);
+      throw new Error(message);
     }
 
-    const result = await updateResponse.json();
-    persistSettings();
+    const result = await response.json();
     dirty = false;
     renderDirtyState();
     setPublishStatus(
-      `Posted live. ${result.commit?.html_url || "Update complete"}. Site refresh may take about 1 minute.`,
+      `Submitted for coach review${result.submissionId ? ` (request ${result.submissionId})` : ""}.`,
       "success"
     );
   } catch (error) {
-    setPublishStatus(error.message || "Post failed.", "error");
+    setPublishStatus(error.message || "Submission failed.", "error");
   } finally {
-    publishBtn.disabled = false;
-    publishBtn.textContent = "Post Updates Live";
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Submit for Coach Review";
   }
 }
 
 async function readApiError(response) {
   try {
     const data = await response.json();
+    if (data?.error) {
+      return data.error;
+    }
+
     if (data?.message) {
       return data.message;
     }
@@ -933,25 +905,25 @@ function getSelectedWeek() {
 
 function touchData() {
   dirty = true;
-  dataState.lastUpdated = todayIso();
   renderDirtyState();
 }
 
 function renderDirtyState() {
   if (dirty) {
-    setEditorStatus("You have unsent changes. Click Post Updates Live when ready.", "warning");
+    setEditorStatus("You have unsent changes. Click Submit for Coach Review when ready.", "warning");
     return;
   }
 
-  setEditorStatus("All changes are posted.", "success");
+  setEditorStatus("All visible changes are saved in this page.", "success");
 }
 
 function uniqueClientId(base) {
-  let candidate = base || "student";
+  const fallback = base || "student";
+  let candidate = fallback;
   let index = 2;
 
   while (!isUniqueClientId(candidate)) {
-    candidate = `${base}-${index}`;
+    candidate = `${fallback}-${index}`;
     index += 1;
   }
 
@@ -998,29 +970,12 @@ function statusClass(type) {
   return "status-warning";
 }
 
-function todayIso() {
-  return new Date().toISOString().slice(0, 10);
-}
-
 function slugify(value) {
   return String(value || "")
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "") || "student";
-}
-
-function toBase64Unicode(value) {
-  const bytes = new TextEncoder().encode(value);
-  const chunkSize = 0x8000;
-  let binary = "";
-
-  for (let i = 0; i < bytes.length; i += chunkSize) {
-    const chunk = bytes.subarray(i, i + chunkSize);
-    binary += String.fromCharCode(...chunk);
-  }
-
-  return btoa(binary);
 }
 
 function escapeHtml(input) {

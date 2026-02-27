@@ -1,42 +1,35 @@
 # Training Plan Web App
 
-Mobile-first training plan portal with a simple no-JSON plan editor.
+Training plans with controlled student submissions and coach approval.
 
-## Live URLs
-- Client directory: `https://akeath18.github.io/HPE-assets/training-plan/`
-- Plan editor: `https://akeath18.github.io/HPE-assets/training-plan/trainer.html`
+## Live pages
+- Client view: `https://akeath18.github.io/HPE-assets/training-plan/`
+- Student plan editor: `https://akeath18.github.io/HPE-assets/training-plan/trainer.html`
+- Coach review: `https://akeath18.github.io/HPE-assets/training-plan/coach-review.html`
 
-## Client view
-- Shows one plan per share link using `?client=<client-id>`.
-- Mirrors your template sections: profile, goals, weekly sessions, check-ins, and final assessment.
-- Installable on mobile (PWA behavior).
+## Security model
+- Students do **not** get GitHub/repo keys.
+- Students submit edits to a backend queue.
+- Coaches review requests and approve/reject.
+- Backend (server-side secret) publishes approved changes to GitHub.
 
-## Plan editor (student-friendly)
-The plan editor allows users to:
-- Pick a student and update the plan using normal form fields.
-- Edit week-by-week sessions and exercise rows directly.
-- Update check-ins and final assessment rows.
-- Share the student plan link instantly.
-- Post updates live with one button: **Post Updates Live**.
+## Required backend
+GitHub Pages is static, so approval/publishing runs in `training-plan/backend`.
 
-## Posting updates
-The editor only asks for one field:
-- `Publishing Key`: coach key used to post changes live.
+### Backend setup
+1. Deploy `training-plan/backend` to a Node host (Render/Railway/Fly/VM).
+2. Set env vars from `training-plan/backend/.env.example`.
+3. Start server (`npm install && npm start`).
 
-No JSON editor, repo, branch, or file-path setup is shown in the UI.
+### Frontend connection
+Set API base URL in:
+- `training-plan/api-config.js`
 
-## Local preview
-From the repo root:
-
-```bash
-cd training-plan
-python3 -m http.server 8080
+Example:
+```js
+window.PLAN_API_BASE = "https://your-backend-domain.example.com";
 ```
 
-Open:
-- `http://localhost:8080/`
-- `http://localhost:8080/trainer.html`
-
 ## Data file
-Primary source of truth:
+Approved updates are written to:
 - `training-plan/data/training-plans.json`
