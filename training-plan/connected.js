@@ -1,4 +1,4 @@
-import {Cloud} from './cloud.js';
+import {Cloud} from './cloud.js?v=live1';
 const cloud=new Cloud(),main=document.querySelector('#main'),dialog=document.querySelector('#dialog');
 const library=await fetch('./library.json').then(r=>r.json());
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

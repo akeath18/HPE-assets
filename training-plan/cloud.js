@@ -1,4 +1,4 @@
-import {API_URL} from './service-config.js';
+import {API_URL} from './service-config.js?v=live1';
 export class Cloud {
   constructor(){this.session=null;this.refreshing=null;try{this.session=JSON.parse(sessionStorage.getItem('hpe-session')||'null');}catch{}}
   get configured(){return API_URL.startsWith('https://');}
