@@ -1,0 +1,9 @@
+/* Account and coaching workspace additions, scoped to the connected app. */
+#main form {display:grid;gap:16px}
+#main fieldset {border:1px solid var(--line);border-radius:10px;padding:14px}
+#main legend {font-weight:700;padding:0 5px}
+#main fieldset .check {margin:10px 0}
+#main .card form > button {justify-self:start}
+#dialog form {display:grid;gap:16px}
+#dialog form > button {justify-self:start}
+@media(max-width:760px){#main .card form > button,#dialog form > button{width:100%}}
