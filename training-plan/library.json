@@ -1,0 +1,106 @@
+[
+  {
+    "id": "dead-bug",
+    "name": "Dead bug",
+    "category": "Core",
+    "equipment": "Mat",
+    "steps": [
+      "Lie on your back. Lift your arms toward the ceiling and bend your hips and knees to right angles.",
+      "Slowly reach one arm overhead while extending the opposite leg. Keep your lower back from arching.",
+      "Return to the start and alternate sides. Shorten the reach if your trunk moves."
+    ],
+    "cue": "Keep breathing as you move slowly.",
+    "source": "https://www.nasm.org/resource-center/exercise-library/dead-bug"
+  },
+  {
+    "id": "plank",
+    "name": "Plank",
+    "category": "Core",
+    "equipment": "Mat",
+    "steps": [
+      "Rest on your forearms with elbows under shoulders and legs extended.",
+      "Lift your body into a straight line and gently brace your trunk.",
+      "Breathe steadily for the prescribed time, then lower with control. End the hold if you cannot maintain your position."
+    ],
+    "cue": "Do not let your hips sag or hold your breath.",
+    "source": "https://www.nasm.org/resource-center/exercise-library/plank"
+  },
+  {
+    "id": "dumbbell-rdl",
+    "name": "Dumbbell Romanian deadlift",
+    "category": "Lower body",
+    "equipment": "Dumbbells",
+    "steps": [
+      "Stand with a dumbbell in each hand and a slight bend in your knees.",
+      "Push your hips back, keeping the weights close and your spine steady. Stop before your back begins to round.",
+      "Bring your hips forward to return to standing without leaning backward."
+    ],
+    "cue": "Learn the hip hinge with your trainer before adding load.",
+    "source": "https://www.nasm.org/resource-center/exercise-library/dumbbell-romanian-deadlift"
+  },
+  {
+    "id": "goblet-squat",
+    "name": "Goblet squat",
+    "category": "Lower body",
+    "equipment": "Dumbbell or kettlebell",
+    "steps": [
+      "Hold one weight close to your chest with both hands. Stand with feet comfortably apart.",
+      "Bend your hips and knees together, keeping your feet planted. Lower only as far as you can control.",
+      "Stand tall again without leaning back. Keep the weight close throughout."
+    ],
+    "cue": "Keep knees moving in the same direction as your toes.",
+    "source": "https://www.nasm.org/resource-center/exercise-library/goblet-squat"
+  },
+  {
+    "id": "bridge",
+    "name": "Glute bridge",
+    "category": "Lower body",
+    "equipment": "Mat",
+    "steps": [
+      "Lie on your back with knees bent and feet flat, about hip-width apart.",
+      "Gently brace your stomach and lift your hips without arching your lower back.",
+      "Pause briefly, then lower slowly to the mat."
+    ],
+    "cue": "Move from your hips, not by pushing your ribs upward.",
+    "source": "https://www.acefitness.org/resources/everyone/exercise-library/49/glute-bridge/"
+  },
+  {
+    "id": "bird-dog",
+    "name": "Bird dog",
+    "category": "Core",
+    "equipment": "Mat",
+    "steps": [
+      "Start on hands and knees, hands beneath shoulders and knees beneath hips.",
+      "Reach one arm forward and the opposite leg back while keeping your trunk still.",
+      "Return slowly and change sides. Use a smaller reach if you lose balance."
+    ],
+    "cue": "Keep your hips level rather than twisting to reach higher.",
+    "source": "https://www.acefitness.org/resources/everyone/exercise-library/14/bird-dog/"
+  },
+  {
+    "id": "incline-push-up",
+    "name": "Incline push-up",
+    "category": "Upper body",
+    "equipment": "Stable bench or wall",
+    "steps": [
+      "Place your hands on a secure bench or wall and step your feet back.",
+      "Keep your body aligned as you bend your elbows and bring your chest toward the support.",
+      "Press away with control. Use a higher support to make the movement easier."
+    ],
+    "cue": "Check that the support cannot move or tip.",
+    "source": "https://hw.qld.gov.au/physical-activity/push-ups-on-bench-wall-floor/"
+  },
+  {
+    "id": "push-up",
+    "name": "Push-up",
+    "category": "Upper body",
+    "equipment": "Bodyweight",
+    "steps": [
+      "Place hands slightly wider than shoulders and extend your legs behind you.",
+      "Brace your trunk and lower your chest by bending your elbows.",
+      "Press the floor away, keeping your hips and shoulders moving together."
+    ],
+    "cue": "Choose an incline variation if your lower back sags.",
+    "source": "https://www.nasm.org/resource-center/exercise-library/push-up"
+  }
+]
