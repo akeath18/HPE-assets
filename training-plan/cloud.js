@@ -1,4 +1,4 @@
-import {API_URL} from './service-config.js?v=coach2';
+import {API_URL} from './service-config.js?v=coach3';
 export class Cloud {
   constructor(){this.session=null;this.refreshing=null;try{this.session=JSON.parse(localStorage.getItem('hpe-session')||sessionStorage.getItem('hpe-session')||'null');}catch{}}
   get configured(){return API_URL.startsWith('https://');}

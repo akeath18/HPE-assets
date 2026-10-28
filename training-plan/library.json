@@ -10,7 +10,10 @@
       "Return to the start and alternate sides. Shorten the reach if your trunk moves."
     ],
     "cue": "Keep breathing as you move slowly.",
-    "source": "https://www.nasm.org/resource-center/exercise-library/dead-bug"
+    "source": "https://www.nasm.org/resource-center/exercise-library/dead-bug",
+    "defaultSets": "3",
+    "defaultReps": "8-12",
+    "defaultRest": "60 sec"
   },
   {
     "id": "plank",
@@ -23,7 +26,10 @@
       "Breathe steadily for the prescribed time, then lower with control. End the hold if you cannot maintain your position."
     ],
     "cue": "Do not let your hips sag or hold your breath.",
-    "source": "https://www.nasm.org/resource-center/exercise-library/plank"
+    "source": "https://www.nasm.org/resource-center/exercise-library/plank",
+    "defaultSets": "3",
+    "defaultReps": "20-30 sec",
+    "defaultRest": "60 sec"
   },
   {
     "id": "dumbbell-rdl",
@@ -36,7 +42,10 @@
       "Bring your hips forward to return to standing without leaning backward."
     ],
     "cue": "Learn the hip hinge with your trainer before adding load.",
-    "source": "https://www.nasm.org/resource-center/exercise-library/dumbbell-romanian-deadlift"
+    "source": "https://www.nasm.org/resource-center/exercise-library/dumbbell-romanian-deadlift",
+    "defaultSets": "3",
+    "defaultReps": "8-12",
+    "defaultRest": "60 sec"
   },
   {
     "id": "goblet-squat",
@@ -49,7 +58,10 @@
       "Stand tall again without leaning back. Keep the weight close throughout."
     ],
     "cue": "Keep knees moving in the same direction as your toes.",
-    "source": "https://www.nasm.org/resource-center/exercise-library/goblet-squat"
+    "source": "https://www.nasm.org/resource-center/exercise-library/goblet-squat",
+    "defaultSets": "3",
+    "defaultReps": "8-12",
+    "defaultRest": "60 sec"
   },
   {
     "id": "bridge",
@@ -62,7 +74,10 @@
       "Pause briefly, then lower slowly to the mat."
     ],
     "cue": "Move from your hips, not by pushing your ribs upward.",
-    "source": "https://www.acefitness.org/resources/everyone/exercise-library/49/glute-bridge/"
+    "source": "https://www.acefitness.org/resources/everyone/exercise-library/49/glute-bridge/",
+    "defaultSets": "3",
+    "defaultReps": "8-12",
+    "defaultRest": "60 sec"
   },
   {
     "id": "bird-dog",
@@ -75,7 +90,10 @@
       "Return slowly and change sides. Use a smaller reach if you lose balance."
     ],
     "cue": "Keep your hips level rather than twisting to reach higher.",
-    "source": "https://www.acefitness.org/resources/everyone/exercise-library/14/bird-dog/"
+    "source": "https://www.acefitness.org/resources/everyone/exercise-library/14/bird-dog/",
+    "defaultSets": "3",
+    "defaultReps": "8-12",
+    "defaultRest": "60 sec"
   },
   {
     "id": "incline-push-up",
@@ -88,7 +106,10 @@
       "Press away with control. Use a higher support to make the movement easier."
     ],
     "cue": "Check that the support cannot move or tip.",
-    "source": "https://hw.qld.gov.au/physical-activity/push-ups-on-bench-wall-floor/"
+    "source": "https://hw.qld.gov.au/physical-activity/push-ups-on-bench-wall-floor/",
+    "defaultSets": "3",
+    "defaultReps": "8-12",
+    "defaultRest": "60 sec"
   },
   {
     "id": "push-up",
@@ -101,6 +122,313 @@
       "Press the floor away, keeping your hips and shoulders moving together."
     ],
     "cue": "Choose an incline variation if your lower back sags.",
-    "source": "https://www.nasm.org/resource-center/exercise-library/push-up"
+    "source": "https://www.nasm.org/resource-center/exercise-library/push-up",
+    "defaultSets": "3",
+    "defaultReps": "8-12",
+    "defaultRest": "60 sec"
+  },
+  {
+    "id": "bodyweight-squat",
+    "name": "Bodyweight squat",
+    "category": "Lower body",
+    "equipment": "None",
+    "steps": [
+      "Stand with feet comfortably apart.",
+      "Sit your hips down and back while keeping feet planted.",
+      "Press through your feet to stand tall."
+    ],
+    "cue": "Choose a comfortable range and stop if you feel pain.",
+    "source": "",
+    "defaultSets": "3",
+    "defaultReps": "8-12",
+    "defaultRest": "60 sec"
+  },
+  {
+    "id": "reverse-lunge",
+    "name": "Reverse lunge",
+    "category": "Lower body",
+    "equipment": "None",
+    "steps": [
+      "Stand tall with feet hip-width apart.",
+      "Step one foot back and bend both knees within a comfortable range.",
+      "Push through the front foot and return to standing."
+    ],
+    "cue": "Choose a comfortable range and stop if you feel pain.",
+    "source": "",
+    "defaultSets": "3",
+    "defaultReps": "8-12",
+    "defaultRest": "60 sec"
+  },
+  {
+    "id": "step-up",
+    "name": "Step-up",
+    "category": "Lower body",
+    "equipment": "Stable step",
+    "steps": [
+      "Face a stable, low step.",
+      "Place one foot fully on the step and lean slightly forward.",
+      "Press through that foot to stand on the step, then lower slowly."
+    ],
+    "cue": "Choose a comfortable range and stop if you feel pain.",
+    "source": "",
+    "defaultSets": "3",
+    "defaultReps": "8-12",
+    "defaultRest": "60 sec"
+  },
+  {
+    "id": "split-squat",
+    "name": "Split squat",
+    "category": "Lower body",
+    "equipment": "None",
+    "steps": [
+      "Stand in a staggered stance with room to balance.",
+      "Bend both knees and lower under control.",
+      "Press through your front foot to return to the start."
+    ],
+    "cue": "Choose a comfortable range and stop if you feel pain.",
+    "source": "",
+    "defaultSets": "3",
+    "defaultReps": "8-12",
+    "defaultRest": "60 sec"
+  },
+  {
+    "id": "calf-raise",
+    "name": "Standing calf raise",
+    "category": "Lower body",
+    "equipment": "None",
+    "steps": [
+      "Stand tall near a stable support.",
+      "Rise onto the balls of your feet without rolling outward.",
+      "Pause briefly and lower your heels slowly."
+    ],
+    "cue": "Choose a comfortable range and stop if you feel pain.",
+    "source": "",
+    "defaultSets": "3",
+    "defaultReps": "8-12",
+    "defaultRest": "60 sec"
+  },
+  {
+    "id": "db-floor-press",
+    "name": "Dumbbell floor press",
+    "category": "Upper body",
+    "equipment": "Dumbbells",
+    "steps": [
+      "Lie on your back with knees bent and weights over your chest.",
+      "Lower your upper arms gently toward the floor.",
+      "Press the weights upward without arching excessively."
+    ],
+    "cue": "Choose a comfortable range and stop if you feel pain.",
+    "source": "",
+    "defaultSets": "3",
+    "defaultReps": "8-12",
+    "defaultRest": "60 sec"
+  },
+  {
+    "id": "db-shoulder-press",
+    "name": "Dumbbell shoulder press",
+    "category": "Upper body",
+    "equipment": "Dumbbells",
+    "steps": [
+      "Stand or sit tall with weights near shoulder height.",
+      "Press upward within a comfortable range without leaning back.",
+      "Lower the weights slowly to shoulder height."
+    ],
+    "cue": "Choose a comfortable range and stop if you feel pain.",
+    "source": "",
+    "defaultSets": "3",
+    "defaultReps": "8-12",
+    "defaultRest": "60 sec"
+  },
+  {
+    "id": "one-arm-row",
+    "name": "One-arm dumbbell row",
+    "category": "Upper body",
+    "equipment": "Dumbbell and bench",
+    "steps": [
+      "Support one hand on a stable bench and hold a weight in the other.",
+      "Pull the elbow toward your hip without twisting your trunk.",
+      "Lower the weight slowly and repeat on the other side."
+    ],
+    "cue": "Choose a comfortable range and stop if you feel pain.",
+    "source": "",
+    "defaultSets": "3",
+    "defaultReps": "8-12",
+    "defaultRest": "60 sec"
+  },
+  {
+    "id": "band-row",
+    "name": "Standing band row",
+    "category": "Upper body",
+    "equipment": "Resistance band",
+    "steps": [
+      "Secure a band at chest height and hold the ends.",
+      "Pull elbows back while keeping shoulders relaxed.",
+      "Return arms forward slowly without losing posture."
+    ],
+    "cue": "Choose a comfortable range and stop if you feel pain.",
+    "source": "",
+    "defaultSets": "3",
+    "defaultReps": "8-12",
+    "defaultRest": "60 sec"
+  },
+  {
+    "id": "band-pull-apart",
+    "name": "Band pull-apart",
+    "category": "Upper body",
+    "equipment": "Resistance band",
+    "steps": [
+      "Hold a light band in front of your chest.",
+      "Move your hands apart while keeping your shoulders down.",
+      "Return slowly without letting the band snap back."
+    ],
+    "cue": "Choose a comfortable range and stop if you feel pain.",
+    "source": "",
+    "defaultSets": "3",
+    "defaultReps": "8-12",
+    "defaultRest": "60 sec"
+  },
+  {
+    "id": "biceps-curl",
+    "name": "Dumbbell biceps curl",
+    "category": "Upper body",
+    "equipment": "Dumbbells",
+    "steps": [
+      "Stand tall with weights at your sides.",
+      "Bend your elbows to raise the weights without swinging.",
+      "Lower slowly until your elbows are nearly straight."
+    ],
+    "cue": "Choose a comfortable range and stop if you feel pain.",
+    "source": "",
+    "defaultSets": "3",
+    "defaultReps": "8-12",
+    "defaultRest": "60 sec"
+  },
+  {
+    "id": "triceps-extension",
+    "name": "Band triceps pressdown",
+    "category": "Upper body",
+    "equipment": "Resistance band",
+    "steps": [
+      "Secure a band overhead and hold the ends with elbows by your sides.",
+      "Straighten your elbows without moving your upper arms.",
+      "Return slowly to the starting position."
+    ],
+    "cue": "Choose a comfortable range and stop if you feel pain.",
+    "source": "",
+    "defaultSets": "3",
+    "defaultReps": "8-12",
+    "defaultRest": "60 sec"
+  },
+  {
+    "id": "side-plank",
+    "name": "Side plank",
+    "category": "Core",
+    "equipment": "Mat",
+    "steps": [
+      "Lie on your side with elbow under your shoulder and knees bent if needed.",
+      "Lift your hips into a straight line while breathing.",
+      "Lower with control and repeat on the other side."
+    ],
+    "cue": "Choose a comfortable range and stop if you feel pain.",
+    "source": "",
+    "defaultSets": "3",
+    "defaultReps": "20-30 sec",
+    "defaultRest": "60 sec"
+  },
+  {
+    "id": "bird-dog-row",
+    "name": "Standing single-leg balance",
+    "category": "Balance",
+    "equipment": "None",
+    "steps": [
+      "Stand near a stable support.",
+      "Shift weight onto one leg and lift the other foot slightly.",
+      "Hold steadily, then switch sides."
+    ],
+    "cue": "Choose a comfortable range and stop if you feel pain.",
+    "source": "",
+    "defaultSets": "3",
+    "defaultReps": "20 sec / side",
+    "defaultRest": "60 sec"
+  },
+  {
+    "id": "farmer-carry",
+    "name": "Farmer carry",
+    "category": "Full body",
+    "equipment": "Dumbbells",
+    "steps": [
+      "Stand tall holding weights at your sides.",
+      "Walk slowly with short controlled steps and breathe normally.",
+      "Set the weights down carefully after the prescribed distance or time."
+    ],
+    "cue": "Choose a comfortable range and stop if you feel pain.",
+    "source": "",
+    "defaultSets": "3",
+    "defaultReps": "20-30 sec",
+    "defaultRest": "60 sec"
+  },
+  {
+    "id": "hip-hinge",
+    "name": "Bodyweight hip hinge",
+    "category": "Lower body",
+    "equipment": "None",
+    "steps": [
+      "Stand with knees soft and hands on your hips.",
+      "Push your hips backward while keeping your back steady.",
+      "Squeeze your hips forward to stand tall."
+    ],
+    "cue": "Choose a comfortable range and stop if you feel pain.",
+    "source": "",
+    "defaultSets": "3",
+    "defaultReps": "8-12",
+    "defaultRest": "60 sec"
+  },
+  {
+    "id": "wall-sit",
+    "name": "Wall sit",
+    "category": "Lower body",
+    "equipment": "Wall",
+    "steps": [
+      "Stand with your back against a stable wall.",
+      "Slide down to a comfortable knee bend with feet planted.",
+      "Breathe steadily and stand up when the hold is complete."
+    ],
+    "cue": "Choose a comfortable range and stop if you feel pain.",
+    "source": "",
+    "defaultSets": "3",
+    "defaultReps": "20-30 sec",
+    "defaultRest": "60 sec"
+  },
+  {
+    "id": "seated-row",
+    "name": "Seated resistance band row",
+    "category": "Upper body",
+    "equipment": "Resistance band",
+    "steps": [
+      "Sit tall and secure a band around a stable anchor.",
+      "Pull the band toward your ribs with elbows close to your body.",
+      "Slowly extend your arms without rounding forward."
+    ],
+    "cue": "Choose a comfortable range and stop if you feel pain.",
+    "source": "",
+    "defaultSets": "3",
+    "defaultReps": "8-12",
+    "defaultRest": "60 sec"
+  },
+  {
+    "id": "march-in-place",
+    "name": "March in place",
+    "category": "Cardio",
+    "equipment": "None",
+    "steps": [
+      "Stand tall with room to move and a support nearby if needed.",
+      "Alternate lifting each knee to a comfortable height.",
+      "Keep breathing and maintain a steady controlled rhythm."
+    ],
+    "cue": "Choose a comfortable range and stop if you feel pain.",
+    "source": "",
+    "defaultSets": "2",
+    "defaultReps": "30 sec",
+    "defaultRest": "60 sec"
   }
 ]
